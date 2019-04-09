@@ -2,18 +2,17 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    // url: '/user/login',
-    url: '/common/login',
+    url: '/user/login',
     method: 'post',
     data
   })
 }
 
-export function getInfo(token) {
+export function getMenu() {
   return request({
-    url: '/user/info',
+    url: '/backend/wechat/menu/list',
     method: 'get',
-    params: { token }
+    params: {}
   })
 }
 
