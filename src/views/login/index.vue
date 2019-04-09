@@ -22,7 +22,7 @@
           auto-complete="on"
         />
       </el-form-item>
-
+      <!---->
       <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
         <el-form-item prop="password">
           <span class="svg-container">
