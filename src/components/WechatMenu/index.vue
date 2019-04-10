@@ -1,5 +1,5 @@
 <template>
-  <div class="public-account-management clearfix">
+  <div class="public-account-management clearfix" style="margin-bottom: 80px;">
     <!--左边配置菜单-->
     <div class="left">
       <div class="menu clearfix">
@@ -8,7 +8,7 @@
           <div class="menu_item" :class="{'active': isActive == i}" @click="menuFun(i,item)">{{ item.name }}</div>
           <!--以下为二级菜单-->
           <div v-if="isSubMenuFlag == i" class="submenu">
-            <div v-for="(subItem, k) in item.sub_button.list" :key="k" class="subtitle">
+            <div v-for="(subItem, k) in item.sub_button" :key="k" class="subtitle">
               <div
                 class="menu_subItem"
                 :class="{ 'active': isSubMenuActive == i + '' +k }"
@@ -17,7 +17,7 @@
               </div>
             </div>
             <!--  二级菜单加号， 当长度 小于  5 才显示二级菜单的加号  -->
-            <div v-if="item.sub_button.list.length < 5" class="menu_bottom menu_addicon" @click="addSubMenu(item)"><i
+            <div v-if="item.sub_button.length < 5" class="menu_bottom menu_addicon" @click="addSubMenu(item)"><i
               class="el-icon-plus"
             /></div>
           </div>
@@ -117,13 +117,13 @@
                   clearable
                 />
               </div>
-              <p class="blue">tips:需要和公众号进行关联才可以把小程序绑定带微信菜单上哟！</p>
+              <p class="blue">tips:需要和公众号进行关联才可以把小程序绑定带微信菜单上！</p>
             </div>
           </div>
         </div>
 
       </div>
-      <div>menu对象值：{{ menu }}</div>
+      <!--<div>menu对象值：{{ menu }}</div>-->
     </div>
     <!--一进页面就显示的默认页面，当点击左边按钮的时候，就不显示了-->
     <div v-if="showRightFlag" class="right">
@@ -134,8 +134,6 @@
 </template>
 <script>
 /**
-   *时间：2018/08/26
-   *作者:Summer
    *功能:
    * 公众号管理页面（基于vue-cli + elementUI + mockjs）
    * 如果想迁移到其他UI框架，里面更改的地方，就是：
@@ -162,7 +160,7 @@
    *  6、提交的时候，整个menu提交，type值是什么，后台获取的也是对应的内容，如果同个菜单
    *  的其他内容也填写了，也不妨碍。
    */
-import { getMenu } from '@/api/wechat'
+import { getMenu, addMenu } from '@/api/wechat'
 export default {
   name: 'WechatMenu',
   components: {},
@@ -173,23 +171,7 @@ export default {
       showRightFlag: true, // 右边配置显示默认详情还是配置详情
       menu: {
         // // 一级菜单
-        button: [
-          //   {
-          //     type: "click",
-          //     name: "菜单1",
-          //     // key: "menu1",关键词
-          //     url: "",//跳转链接
-          //     media_id:"",//素材名称--图文消息
-          //     sub_button: [
-          //       {
-          //         type: "",//media_id:素材内容; view:跳转链接
-          //         name: "子菜单1",
-          //         url: "",//跳转链接
-          //         media_id:"",//素材名称--图文消息
-          //       },
-          //     ]
-          //   }
-        ]
+        button: []
       }, // 横向菜单
       isActive: -1, // 一级菜单点中样式
       isSubMenuActive: -1, // 一级菜单点中样式
@@ -229,36 +211,16 @@ export default {
   },
   methods: {
     // 调用素材内容 “选择素材”的弹框数据，模拟从微信返回的数据
-    mockMenuFun() {
+    mockMediaFun() {
       /* getMenu().then(res => {
         console.log(res.data.selfmenu_info)
         this.menu.button = res.data.selfmenu_info.button
       })*/
-      /* this.$http(
-          {
-            url: "/api/menu",
-            method: 'get'
-          }
-        )
-          .then((res) => {
-            console.log(res.data)
-            this.menu.button = res.data.button;
-          });*/
     },
     // 模拟调取菜单数据
-    mockMediaFun() {
-      /* this.$http(
-          {
-            url: "/api/data",
-            method: 'get'
-          }
-        )
-          .then((res) => {
-            this.tableData = res.data;
-          });*/
+    mockMenuFun() {
       getMenu().then(res => {
-        console.log(res.data.selfmenu_info)
-        this.menu.button = res.data.selfmenu_info.button
+        this.menu.button = res.data.menu.button
       })
     },
     // 素材内容弹框的选择按钮函数
@@ -267,14 +229,25 @@ export default {
       this.tempObj.media_id = row.name
     },
     saveFun() {
-      console.log(this.menu)
+      this.$confirm('此操作将更新微信菜单，是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        console.log(this.menu)
+        addMenu(this.menu).then(res => {
+          console.log(res)
+        })
+      }).catch(() => {
+
+      })
     },
     // 一级菜单点击事件
     menuFun(i, item) {
       debugger
-      if (!item.sub_button) {
+      /*    if (!item.sub_button) {
         item['sub_button'] = { list: [] }
-      }
+      }*/
       debugger
       this.showRightFlag = false // 右边菜单隐藏
       // console.log(i);
@@ -310,9 +283,7 @@ export default {
             name: '菜单3',
             // url: "",//跳转链接
             // media_id:"",//素材名称--图文消息
-            sub_button: {
-              list: []
-            }
+            sub_button: []
           }
         )
       }
@@ -323,9 +294,7 @@ export default {
             name: '菜单2',
             // url: "",//跳转链接
             // media_id:"",//素材名称--图文消息
-            sub_button: {
-              list: []
-            }
+            sub_button: []
           }
         )
       }
@@ -333,9 +302,9 @@ export default {
     // 添加横向二级菜单
     addSubMenu(item) {
       debugger
-      const subMenuKeyLength = item.sub_button.list.length // 获取二级菜单key长度
+      const subMenuKeyLength = item.sub_button.length // 获取二级菜单key长度
       if (subMenuKeyLength === 4) {
-        this.$set(item.sub_button.list, '4',
+        this.$set(item.sub_button, '4',
           {
             // type: "",
             name: '子菜单5'
@@ -345,7 +314,7 @@ export default {
         )
       }
       if (subMenuKeyLength === 3) {
-        this.$set(item.sub_button.list, '3',
+        this.$set(item.sub_button, '3',
           {
             // type: "",
             name: '子菜单4'
@@ -355,7 +324,7 @@ export default {
         )
       }
       if (subMenuKeyLength === 2) {
-        this.$set(item.sub_button.list, '2',
+        this.$set(item.sub_button, '2',
           {
             // type: "",
             name: '子菜单3'
@@ -365,7 +334,7 @@ export default {
         )
       }
       if (subMenuKeyLength === 1) {
-        this.$set(item.sub_button.list, '1',
+        this.$set(item.sub_button, '1',
           {
             // type: "",
             name: '子菜单2'
@@ -375,7 +344,7 @@ export default {
         )
       }
       if (subMenuKeyLength === 0) {
-        this.$set(item.sub_button.list, '0',
+        this.$set(item.sub_button, '0',
           {
             // type: "",
             name: '子菜单1'
@@ -408,7 +377,7 @@ export default {
       }
       // 二级菜单的删除方法
       if (this.tempSelfObj.grand === '2') {
-        this.menu.button[this.tempSelfObj.index].sub_button.list.splice(this.tempSelfObj.secondIndex, 1)
+        this.menu.button[this.tempSelfObj.index].sub_button.splice(this.tempSelfObj.secondIndex, 1)
       }
       this.$message({
         type: 'success',
@@ -436,8 +405,8 @@ export default {
   }
 
   .public-account-management {
-    min-width: 1200px;
-    width: 1200px;
+    min-width: 900px;
+    width: 1000px;
     margin: 0 auto;
     .left {
       float: left;

@@ -15,6 +15,13 @@ export function getMenu() {
     params: {}
   })
 }
+export function addMenu(data) {
+  return request({
+    url: '/backend/wechat/menu/add',
+    method: 'post',
+    data
+  })
+}
 
 export function logout() {
   return request({
