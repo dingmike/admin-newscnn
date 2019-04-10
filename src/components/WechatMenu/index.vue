@@ -8,7 +8,7 @@
           <div class="menu_item" :class="{'active': isActive == i}" @click="menuFun(i,item)">{{ item.name }}</div>
           <!--以下为二级菜单-->
           <div v-if="isSubMenuFlag == i" class="submenu">
-            <div v-for="(subItem, k) in item.sub_button" :key="k" class="subtitle">
+            <div v-for="(subItem, k) in item.sub_button.list" :key="k" class="subtitle">
               <div
                 class="menu_subItem"
                 :class="{ 'active': isSubMenuActive == i + '' +k }"
@@ -17,7 +17,7 @@
               </div>
             </div>
             <!--  二级菜单加号， 当长度 小于  5 才显示二级菜单的加号  -->
-            <div v-if="item.sub_button.length < 5" class="menu_bottom menu_addicon" @click="addSubMenu(item)"><i
+            <div v-if="item.sub_button.list.length < 5" class="menu_bottom menu_addicon" @click="addSubMenu(item)"><i
               class="el-icon-plus"
             /></div>
           </div>
@@ -230,10 +230,10 @@ export default {
   methods: {
     // 调用素材内容 “选择素材”的弹框数据，模拟从微信返回的数据
     mockMenuFun() {
-      getMenu().then(res => {
+      /* getMenu().then(res => {
         console.log(res.data.selfmenu_info)
         this.menu.button = res.data.selfmenu_info.button
-      })
+      })*/
       /* this.$http(
           {
             url: "/api/menu",
@@ -271,13 +271,19 @@ export default {
     },
     // 一级菜单点击事件
     menuFun(i, item) {
-      this.showRightFlag = false// 右边菜单隐藏
+      debugger
+      if (!item.sub_button) {
+        item['sub_button'] = { list: [] }
+      }
+      debugger
+      this.showRightFlag = false // 右边菜单隐藏
       // console.log(i);
-      this.tempObj = item// 这个如果放在顶部，flag会没有。因为重新赋值了。
-      this.tempSelfObj.grand = '1'// 表示一级菜单
-      this.tempSelfObj.index = i// 表示一级菜单索引
+      this.tempObj = item // 这个如果放在顶部，flag会没有。因为重新赋值了。
+      this.tempSelfObj.grand = '1' // 表示一级菜单
+      this.tempSelfObj.index = i // 表示一级菜单索引
 
       this.isActive = i // 一级菜单选中样式
+      debugger
       this.isSubMenuFlag = i // 二级菜单显示标志
       this.isSubMenuActive = -1 // 二级菜单去除选中样式
     },
@@ -304,7 +310,9 @@ export default {
             name: '菜单3',
             // url: "",//跳转链接
             // media_id:"",//素材名称--图文消息
-            sub_button: []
+            sub_button: {
+              list: []
+            }
           }
         )
       }
@@ -315,16 +323,19 @@ export default {
             name: '菜单2',
             // url: "",//跳转链接
             // media_id:"",//素材名称--图文消息
-            sub_button: []
+            sub_button: {
+              list: []
+            }
           }
         )
       }
     },
     // 添加横向二级菜单
     addSubMenu(item) {
-      const subMenuKeyLength = item.sub_button.length // 获取二级菜单key长度
+      debugger
+      const subMenuKeyLength = item.sub_button.list.length // 获取二级菜单key长度
       if (subMenuKeyLength === 4) {
-        this.$set(item.sub_button, '4',
+        this.$set(item.sub_button.list, '4',
           {
             // type: "",
             name: '子菜单5'
@@ -334,7 +345,7 @@ export default {
         )
       }
       if (subMenuKeyLength === 3) {
-        this.$set(item.sub_button, '3',
+        this.$set(item.sub_button.list, '3',
           {
             // type: "",
             name: '子菜单4'
@@ -344,7 +355,7 @@ export default {
         )
       }
       if (subMenuKeyLength === 2) {
-        this.$set(item.sub_button, '2',
+        this.$set(item.sub_button.list, '2',
           {
             // type: "",
             name: '子菜单3'
@@ -354,7 +365,7 @@ export default {
         )
       }
       if (subMenuKeyLength === 1) {
-        this.$set(item.sub_button, '1',
+        this.$set(item.sub_button.list, '1',
           {
             // type: "",
             name: '子菜单2'
@@ -364,7 +375,7 @@ export default {
         )
       }
       if (subMenuKeyLength === 0) {
-        this.$set(item.sub_button, '0',
+        this.$set(item.sub_button.list, '0',
           {
             // type: "",
             name: '子菜单1'
@@ -373,6 +384,7 @@ export default {
           }
         )
       }
+      this.$forceUpdate()
     },
     // 删除当前菜单
     deleteMenu(obj) {
@@ -396,7 +408,7 @@ export default {
       }
       // 二级菜单的删除方法
       if (this.tempSelfObj.grand === '2') {
-        this.menu.button[this.tempSelfObj.index].sub_button.splice(this.tempSelfObj.secondIndex, 1)
+        this.menu.button[this.tempSelfObj.index].sub_button.list.splice(this.tempSelfObj.secondIndex, 1)
       }
       this.$message({
         type: 'success',
