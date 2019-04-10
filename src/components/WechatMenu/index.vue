@@ -234,7 +234,6 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        console.log(this.menu)
         addMenu(this.menu).then(res => {
           console.log(res)
         })
@@ -244,32 +243,21 @@ export default {
     },
     // 一级菜单点击事件
     menuFun(i, item) {
-      debugger
-      /*    if (!item.sub_button) {
-        item['sub_button'] = { list: [] }
-      }*/
-      debugger
       this.showRightFlag = false // 右边菜单隐藏
-      // console.log(i);
       this.tempObj = item // 这个如果放在顶部，flag会没有。因为重新赋值了。
       this.tempSelfObj.grand = '1' // 表示一级菜单
       this.tempSelfObj.index = i // 表示一级菜单索引
-
       this.isActive = i // 一级菜单选中样式
-      debugger
       this.isSubMenuFlag = i // 二级菜单显示标志
       this.isSubMenuActive = -1 // 二级菜单去除选中样式
     },
     // 二级菜单点击事件
     subMenuFun(item, subItem, index, k) {
       this.showRightFlag = false // 右边菜单隐藏
-
       this.tempObj = subItem // 将点击的数据放到临时变量，对象有引用作用
-
       this.tempSelfObj.grand = '2' // 表示二级菜单
       this.tempSelfObj.index = index // 表示一级菜单索引
       this.tempSelfObj.secondIndex = k // 表示二级菜单索引
-
       this.isSubMenuActive = index + '' + k // 二级菜单选中样式
       this.isActive = -1// 一级菜单去除样式
     },
@@ -301,7 +289,6 @@ export default {
     },
     // 添加横向二级菜单
     addSubMenu(item) {
-      debugger
       const subMenuKeyLength = item.sub_button.length // 获取二级菜单key长度
       if (subMenuKeyLength === 4) {
         this.$set(item.sub_button, '4',
