@@ -17,6 +17,12 @@ const wechatRouter = {
       component: () => import('@/views/wechat/menu'),
       name: 'wechat-menu',
       meta: { title: 'menu' }
+    },
+    {
+      path: 'dynamic-table',
+      component: () => import('@/views/dashboard/editor'),
+      name: 'wechat-menu',
+      meta: { title: 'menu' }
     }
   ]
 }
