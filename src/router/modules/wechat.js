@@ -13,16 +13,16 @@ const wechatRouter = {
   },
   children: [
     {
-      path: 'dynamic-table',
+      path: 'wechat/menu',
       component: () => import('@/views/wechat/menu'),
       name: 'wechat-menu',
       meta: { title: 'menu' }
     },
     {
-      path: 'dynamic-table',
-      component: () => import('@/views/dashboard/editor'),
-      name: 'wechat-menu',
-      meta: { title: 'menu' }
+      path: '',
+      component: () => import('@/views/wechat/user'),
+      name: 'wechat/user',
+      meta: { title: 'user' }
     }
   ]
 }
