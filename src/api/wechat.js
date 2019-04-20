@@ -38,3 +38,11 @@ export function getUserList(params) {
     params
   })
 }
+// 更新用户信息
+export function updateUser(data) {
+  return request({
+    url: '/backend/wechat/user/update',
+    method: 'post',
+    data
+  })
+}
