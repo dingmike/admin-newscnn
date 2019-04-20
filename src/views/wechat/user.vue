@@ -182,7 +182,7 @@
         <el-form-item label="用户昵称" prop="nickname">
           <el-input v-model="temp.nickname" />
         </el-form-item>
-        <el-form-item label="用户名" prop="user_name">
+        <el-form-item label="用户名称" prop="user_name">
           <el-input v-model="temp.user_name" />
         </el-form-item>
         <el-form-item label="手机号" prop="user_phone">
