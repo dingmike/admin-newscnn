@@ -30,3 +30,11 @@ export function logout() {
   })
 }
 
+// 获取用户列表
+export function getUserList(params) {
+  return request({
+    url: '/backend/wechat/user/list',
+    method: 'get',
+    params
+  })
+}
