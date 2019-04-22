@@ -429,7 +429,7 @@ export default {
           const tempData = Object.assign({}, this.temp)
           // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateUser(tempData).then((res) => {
-            if (res.data.nModified === 1) {
+            if (res.data) {
               this.$notify({
                 title: '成功',
                 message: '更新成功',
