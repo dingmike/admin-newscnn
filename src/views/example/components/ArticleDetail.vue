@@ -18,8 +18,13 @@
           <Warning />
 
           <el-col :span="24">
-            <el-form-item style="margin-bottom: 40px;" prop="title">
+            <el-form-item style="margin-bottom: 40px;" prop="article_title">
               <MDinput v-model="postForm.article_title" :maxlength="100" name="name" required>
+                标题
+              </MDinput>
+            </el-form-item>
+            <el-form-item style="margin-bottom: 40px;" prop="chinese_title">
+              <MDinput v-model="postForm.chinese_title" :maxlength="100" name="name" required>
                 标题
               </MDinput>
             </el-form-item>
@@ -103,6 +108,7 @@ import { fetchArticle, createArticle } from '@/api/article'
 const defaultForm = {
   status: 2, // 发布状态： 1已发布，0：未发布， 2：草稿
   article_title: '', // 文章题目
+  chinese_title: '', // 文章中文题目
   article_author: '', // 文章作者
   article_grade: '', // 文章级别
   memo: '', // 文章说明
