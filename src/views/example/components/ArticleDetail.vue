@@ -15,36 +15,34 @@
 
       <div class="createPost-main-container">
         <el-row>
-          <Warning />
+          <!--<Warning />-->
 
           <el-col :span="24">
             <el-form-item style="margin-bottom: 40px;" prop="article_title">
               <MDinput v-model="postForm.article_title" :maxlength="100" name="name" required>
-                标题
+                英文标题
               </MDinput>
             </el-form-item>
             <el-form-item style="margin-bottom: 40px;" prop="chinese_title">
               <MDinput v-model="postForm.chinese_title" :maxlength="100" name="name" required>
-                标题
+                中文标题
               </MDinput>
             </el-form-item>
-
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="8">
                   <el-form-item label-width="45px" label="作者:" class="postInfo-container-item">
-                    <el-select v-model="postForm.article_author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="搜索用户">
+                    <el-input v-model="postForm.article_author" placeholder="" />
+                    <!--<el-select v-model="postForm.article_author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="搜索用户">
                       <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
-                    </el-select>
+                    </el-select>-->
                   </el-form-item>
                 </el-col>
-
                 <el-col :span="10">
                   <el-form-item label-width="80px" label="发布时间:" class="postInfo-container-item">
                     <el-date-picker v-model="postForm.deploy_time" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" />
                   </el-form-item>
                 </el-col>
-
                 <el-col :span="6">
                   <el-form-item label-width="60px" label="难度:" class="postInfo-container-item">
                     <!-- <el-rate
@@ -101,10 +99,10 @@ import Tinymce from '@/components/Tinymce'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { validURL } from '@/utils/validate'
-import { searchUser } from '@/api/remoteSearch'
-import Warning from './Warning'
+// import { searchUser } from '@/api/remoteSearch'
+// import Warning from './Warning'
 // import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
-import { fetchArticle, createArticle } from '@/api/article'
+import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 const defaultForm = {
   status: 2, // 发布状态： 1已发布，0：未发布， 2：草稿
   article_title: '', // 文章题目
@@ -132,7 +130,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Sticky, Warning },
+  components: { Tinymce, MDinput, Sticky },
   props: {
     isEdit: {
       type: Boolean,
@@ -243,15 +241,28 @@ export default {
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true
-          createArticle(this.postForm).then((res) => {
-            this.$notify({
-              title: '成功',
-              message: '发布文章成功',
-              type: 'success',
-              duration: 2000
+          if (this.isEdit) {
+            updateArticle(this.postForm).then((res) => {
+              this.$notify({
+                title: '成功',
+                message: '更新文章成功',
+                type: 'success',
+                duration: 2000
+              })
+              this.postForm.status = 'published'
             })
-            this.postForm.status = 'published'
-          })
+          } else {
+            createArticle(this.postForm).then((res) => {
+              this.$notify({
+                title: '成功',
+                message: '发布文章成功',
+                type: 'success',
+                duration: 2000
+              })
+              this.postForm.status = 'published'
+            })
+          }
+
           this.loading = false
         } else {
           console.log('error submit!!')
@@ -274,12 +285,6 @@ export default {
         duration: 1000
       })
       this.postForm.status = 'draft'
-    },
-    getRemoteUserList(query) {
-      searchUser(query).then(response => {
-        if (!response.data.items) return
-        this.userListOptions = response.data.items.map(v => v.name)
-      })
     }
   }
 }
