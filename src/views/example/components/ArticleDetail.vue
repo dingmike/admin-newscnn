@@ -105,7 +105,7 @@ import Tinymce from '@/components/Tinymce'
 // import Upload from '@/components/Upload/singleImage3'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
-import { validURL } from '@/utils/validate'
+// import { validURL } from '@/utils/validate'
 // import { Loading } from 'element-ui'
 // import { searchUser } from '@/api/remoteSearch'
 // import Warning from './Warning'
@@ -148,21 +148,6 @@ export default {
           type: 'error'
         })
         callback(new Error(rule.field + '为必传项'))
-      } else {
-        callback()
-      }
-    }
-    const validateSourceUri = (rule, value, callback) => {
-      if (value) {
-        if (validURL(value)) {
-          callback()
-        } else {
-          this.$message({
-            message: '外链url填写不正确',
-            type: 'error'
-          })
-          callback(new Error('外链url填写不正确'))
-        }
       } else {
         callback()
       }
@@ -213,7 +198,7 @@ export default {
         article_title: [{ validator: validateRequire }],
         chinese_title: [{ validator: validateRequire }],
         article_brief: [{ validator: validateRequire, trigger: 'blur' }],
-        article_author: [{ validator: validateSourceUri, trigger: 'blur' }]
+        article_author: [{ validator: validateRequire, trigger: 'blur' }]
       },
       tempRoute: {}
     }
