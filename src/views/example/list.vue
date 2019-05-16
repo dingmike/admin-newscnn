@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="标题" width="180">
+    <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style="width: 100%">
+      <el-table-column align="center" label="标题" width="240px">
         <template slot-scope="scope">
           <span>{{ scope.row.article_title }}</span>
         </template>
@@ -12,7 +12,28 @@
           <span>{{ scope.row.article_author }}</span>
         </template>
       </el-table-column>
-
+      <el-table-column width="120px" align="center" label="价格">
+        <template slot-scope="scope">
+          <span>{{ scope.row.pay_price }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column width="120px" align="center" label="翻译价格">
+        <template slot-scope="scope">
+          <span>{{ scope.row.translate_price }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column width="120px" align="center" label="难度">
+        <template slot-scope="scope">
+          <span>{{ scope.row.article_grade | gradeFilter }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column class-name="status-col" label="状态" width="110">
+        <template slot-scope="{row}">
+          <el-tag :type="row.status | statusTypeFilter">
+            {{ row.status | statusFilter }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column width="180px" align="center" label="发布时间">
         <template slot-scope="scope">
           <span>{{ scope.row.deploy_time | parseUTCtime }}</span>
@@ -26,14 +47,6 @@
         </template>
       </el-table-column>-->
 
-      <el-table-column class-name="status-col" label="状态" width="110">
-        <template slot-scope="{row}">
-          <el-tag type="info">
-            {{ row.status | statusFilter }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
       <!--     <el-table-column min-width="300px" label="Title">
         <template slot-scope="{row}">
           <router-link :to="'/example/edit/'+row.id" class="link-type">
@@ -42,13 +55,14 @@
         </template>
       </el-table-column>-->
 
-      <el-table-column align="center" label="Actions" width="120">
+      <el-table-column align="left" label="Actions" width="100px">
         <template slot-scope="scope">
-          <router-link :to="'/example/edit/'+scope.row.id">
-            <el-button type="primary" size="small" icon="el-icon-edit">
-              编辑
-            </el-button>
-          </router-link>
+          <div>
+            <router-link style="display: inline-block" :to="'/example/edit/'+scope.row.id">
+              <el-button type="primary" size="small" icon="el-icon-edit" circle />
+            </router-link>
+            <el-button v-show="scope.row.status!==1" type="danger" size="small" icon="el-icon-delete" circle @click="handleModifyStatus(scope.row)" />
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -65,6 +79,10 @@ export default {
   name: 'ArticleList',
   components: { Pagination },
   filters: {
+    statusTypeFilter(status) {
+      const statusArr = ['danger', 'success', 'info']
+      return statusArr[status]
+    },
     statusFilter(status) {
       switch (status) {
         case 1 :
@@ -73,6 +91,26 @@ export default {
           return '未发布'
         case 2 :
           return '草稿'
+        default:
+          break
+      }
+    },
+    gradeFilter(grade) {
+      switch (grade) {
+        case 0 :
+          return '高中'
+        case 1 :
+          return 'CET-4'
+        case 2 :
+          return 'CET-6'
+        case 3 :
+          return '雅思'
+        case 4 :
+          return '托福'
+        case 5 :
+          return '专6'
+        case 6 :
+          return '专8'
         default:
           break
       }
@@ -99,6 +137,7 @@ export default {
   data() {
     return {
       list: null,
+      fitWidth: false,
       total: 0,
       listLoading: true,
       listQuery: {

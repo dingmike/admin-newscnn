@@ -1,6 +1,6 @@
 <template>
   <div class="createPost-container">
-    <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
+    <el-form ref="postForm" :model="postForm" :rules="rules" size="small" class="form-container">
       <sticky :z-index="10" :class-name="'sub-navbar '+postForm.status">
         <!--<CommentDropdown v-model="postForm.comment_disabled" />-->
         <!--<PlatformDropdown v-model="postForm.platforms" />-->
@@ -17,12 +17,12 @@
         <el-row>
           <!--<Warning />-->
           <el-col :span="24">
-            <el-form-item style="margin-bottom: 40px;" prop="article_title">
+            <el-form-item style="margin-bottom: 20px;" prop="article_title">
               <MDinput v-model="postForm.article_title" :maxlength="100" name="name" required>
                 英文标题
               </MDinput>
             </el-form-item>
-            <el-form-item style="margin-bottom: 40px;" prop="chinese_title">
+            <el-form-item style="margin-bottom: 20px;" prop="chinese_title">
               <MDinput v-model="postForm.chinese_title" :maxlength="100" name="name" required>
                 中文标题
               </MDinput>
@@ -30,21 +30,21 @@
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label-width="45px" label="作者:" class="postInfo-container-item">
-                    <el-input v-model="postForm.article_author" placeholder="" />
+                  <el-form-item label-width="45px" label="作者:" class="postInfo-container-item" prop="article_author">
+                    <el-input v-model="postForm.article_author" size="mini" placeholder="" />
                     <!--<el-select v-model="postForm.article_author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="搜索用户">
                       <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
                     </el-select>-->
                   </el-form-item>
                 </el-col>
                 <el-col :span="10">
-                  <el-form-item label-width="80px" label="发布时间:" class="postInfo-container-item">
-                    <el-date-picker v-model="postForm.deploy_time" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" />
+                  <el-form-item label-width="80px" label="发布时间:" class="postInfo-container-item" prop="deploy_time">
+                    <el-date-picker v-model="postForm.deploy_time" size="mini" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
-                  <el-form-item label-width="60px" label="难度:" class="postInfo-container-item">
-                    <el-select v-model="postForm.article_grade" placeholder="请选择难度">
+                  <el-form-item label-width="60px" label="难度:" class="postInfo-container-item" prop="article_grade">
+                    <el-select v-model="postForm.article_grade" size="mini" placeholder="请选择难度">
                       <el-option
                         v-for="item in gradeOptions"
                         :key="item.value"
@@ -55,11 +55,28 @@
                   </el-form-item>
                 </el-col>
               </el-row>
+              <el-row>
+                <el-col :span="8">
+                  <el-form-item label-width="45px" label="价格:" class="postInfo-container-item" prop="pay_price">
+                    <el-input-number v-model="postForm.pay_price" size="mini" :precision="2" :step="0.1" :max="1000" /> 元
+                  </el-form-item>
+                </el-col>
+                <el-col :span="10">
+                  <el-form-item label-width="90px" label="翻译价格:" class="postInfo-container-item" pro="translate_price">
+                    <el-input-number v-model="postForm.translate_price" size="mini" :precision="2" :step="0.1" :max="1000" /> 元
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item label-width="90px" label="支付人数:" class="postInfo-container-item" prop="pay_person_num">
+                    <el-input-number v-model="postForm.pay_person_num" size="mini" :step="1" :max="1000000" /> 人
+                  </el-form-item>
+                </el-col>
+              </el-row>
             </div>
           </el-col>
         </el-row>
 
-        <el-form-item style="margin-bottom: 40px;" label-width="45px" label="简介:">
+        <el-form-item style="margin-bottom: 40px;" label-width="45px" label="简介:" prop="article_brief">
           <el-input v-model="postForm.article_brief" :rows="1" type="textarea" class="article-textarea" autosize placeholder="请输入内容" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}字</span>
         </el-form-item>
@@ -173,6 +190,18 @@ export default {
         {
           label: '雅思',
           value: 3
+        },
+        {
+          label: '托福',
+          value: 4
+        },
+        {
+          label: '专6',
+          value: 5
+        },
+        {
+          label: '专8',
+          value: 6
         }
       ],
       deployMessageData: '发布文章成功',
@@ -181,10 +210,10 @@ export default {
       loading: false,
       userListOptions: [],
       rules: {
-        image_uri: [{ validator: validateRequire }],
-        title: [{ validator: validateRequire }],
-        content: [{ validator: validateRequire }],
-        source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
+        article_title: [{ validator: validateRequire }],
+        chinese_title: [{ validator: validateRequire }],
+        article_brief: [{ validator: validateRequire, trigger: 'blur' }],
+        article_author: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
       tempRoute: {}
     }
