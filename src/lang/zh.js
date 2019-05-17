@@ -50,6 +50,8 @@ export default {
     page401: '401',
     page404: '404',
     errorLog: '错误日志',
+    requestLog: '请求日志',
+    sysLog: '系统日志',
     excel: 'Excel',
     exportExcel: '导出 Excel',
     selectExcel: '导出 已选择项',

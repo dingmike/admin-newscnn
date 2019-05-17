@@ -248,13 +248,20 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/error-log',
+    path: '/sys-log',
     component: Layout,
+    meta: { title: 'sysLog' },
     redirect: 'noredirect',
     children: [
       {
-        path: 'log',
-        component: () => import('@/views/errorLog/index'),
+        path: 'requestLog',
+        component: () => import('@/views/errorLog/requestLog'),
+        name: 'ErrorLog',
+        meta: { title: 'requestLog', icon: 'bug' }
+      },
+      {
+        path: 'errorsLog',
+        component: () => import('@/views/errorLog/errorLog'),
         name: 'ErrorLog',
         meta: { title: 'errorLog', icon: 'bug' }
       }
