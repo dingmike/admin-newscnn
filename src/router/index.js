@@ -250,7 +250,7 @@ export const asyncRoutes = [
   {
     path: '/sys-log',
     component: Layout,
-    meta: { title: 'sysLog' },
+    meta: { title: 'sysLog', icon: 'bug' },
     redirect: 'noredirect',
     children: [
       {
