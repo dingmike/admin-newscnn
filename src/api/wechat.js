@@ -22,7 +22,13 @@ export function addMenu(data) {
     data
   })
 }
-
+export function deleteUser(id) {
+  return request({
+    url: '/backend/wechat/user/deleteUser',
+    method: 'post',
+    data: { id }
+  })
+}
 export function logout() {
   return request({
     url: '/user/logout',

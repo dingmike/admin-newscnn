@@ -97,14 +97,6 @@
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             {{ $t('table.edit') }}
           </el-button>
-          <el-button
-            v-if="row.status!='deleted'"
-            size="mini"
-            type="danger"
-            @click="handleModifyStatus(row,'deleted')"
-          >
-            {{ $t('table.delete') }}
-          </el-button>
         </template>
       </el-table-column>
       <!--          <el-table-column :label="$t('table.title')" min-width="150px">
@@ -239,7 +231,7 @@
 
 <script>
 import { fetchPv, createArticle } from '@/api/article'
-import { getUserList, updateUser } from '@/api/wechat'
+import { getUserList, updateUser, deleteUser } from '@/api/wechat'
 import waves from '@/directive/waves' // Waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
@@ -421,6 +413,29 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+    },
+    deleteUser(id) {
+      this.$confirm('确定将选择数据删除?', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          deleteUser({ id: id }).then((res) => {
+            if (res.data) {
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+              })
+              this.getList()
+            }
+          })
+        })
+        .then(() => {
+
+        })
     },
     // 更新用户
     updateUser() {

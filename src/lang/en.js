@@ -28,6 +28,7 @@ export default {
     lineChart: 'Line Chart',
     mixChart: 'Mix Chart',
     example: 'Example',
+    article: '文章管理',
     nested: 'Nested Routes',
     menu1: 'Menu 1',
     'menu1-1': 'Menu 1-1',

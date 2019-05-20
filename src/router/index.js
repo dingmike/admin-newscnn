@@ -176,39 +176,37 @@ export const asyncRoutes = [
   nestedRouter,
   tableRouter,
   wechatRouter,
-
   {
-    path: '/example',
+    path: '/article',
     component: Layout,
-    redirect: '/example/list',
-    name: 'Example',
+    redirect: '/article/list',
+    name: 'Article',
     meta: {
-      title: 'example',
+      title: 'article',
       icon: 'example'
     },
     children: [
       {
         path: 'create',
-        component: () => import('@/views/example/create'),
+        component: () => import('@/views/article/create'),
         name: 'CreateArticle',
         meta: { title: 'createArticle', icon: 'edit' }
       },
       {
         path: 'edit/:id',
-        component: () => import('@/views/example/edit'),
+        component: () => import('@/views/article/edit'),
         name: 'EditArticle',
-        meta: { title: 'editArticle', noCache: true, activeMenu: '/example/list' },
+        meta: { title: 'editArticle', noCache: true, activeMenu: '/article/list' },
         hidden: true
       },
       {
         path: 'list',
-        component: () => import('@/views/example/list'),
+        component: () => import('@/views/article/list'),
         name: 'ArticleList',
         meta: { title: 'articleList', icon: 'list' }
       }
     ]
   },
-
   {
     path: '/tab',
     component: Layout,
