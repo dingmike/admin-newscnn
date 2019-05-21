@@ -40,6 +40,26 @@ export function parseTime(time, cFormat) {
   return time_str
 }
 
+export function parseUTCtime(UTCDateString) {
+  if (!UTCDateString) {
+    return '-'
+  }
+  function formatFunc(str) { // 格式化显示
+    return str > 9 ? str : '0' + str
+  }
+  const date2 = new Date(UTCDateString) // 这步是关键
+  const year = date2.getFullYear()
+  const mon = formatFunc(date2.getMonth() + 1)
+  const day = formatFunc(date2.getDate())
+  let hour = date2.getHours()
+  const noon = hour >= 12 ? 'PM' : 'AM'
+  hour = hour >= 12 ? hour - 12 : hour
+  hour = formatFunc(hour)
+  const min = formatFunc(date2.getMinutes())
+  const seconds = date2.getSeconds()
+  return year + '-' + mon + '-' + day + ' ' + noon + ' ' + hour + ':' + min + ':' + seconds
+}
+
 export function formatTime(time, option) {
   if (('' + time).length === 10) {
     time = parseInt(time) * 1000
