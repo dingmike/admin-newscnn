@@ -22,7 +22,16 @@
         />
       </el-tooltip>
     </div>
-    <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style="width: 100%">
+    <el-table
+      v-loading="listLoading"
+      :data="list"
+      border
+      :fit="fitWidth"
+      size="small"
+      stripe
+      highlight-current-row
+      style="width: 100%"
+    >
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
@@ -95,13 +104,26 @@
       <el-table-column align="center" label="Actions" width="100px">
         <template slot-scope="scope">
           <div>
-            <el-button v-show="scope.row.status!==1" type="danger" size="small" icon="el-icon-delete" circle @click="handleDelete(scope.row)" />
+            <el-button
+              v-show="scope.row.status!==1"
+              type="danger"
+              size="small"
+              icon="el-icon-delete"
+              circle
+              @click="handleDelete(scope.row)"
+            />
           </div>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="getList"
+    />
   </div>
 </template>
 
@@ -118,9 +140,11 @@ export default {
       if (!UTCDateString) {
         return '-'
       }
+
       function formatFunc(str) { // 格式化显示
         return str > 9 ? str : '0' + str
       }
+
       const date2 = new Date(UTCDateString) // 这步是关键
       const year = date2.getFullYear()
       const mon = formatFunc(date2.getMonth() + 1)
@@ -193,17 +217,20 @@ export default {
     font-size: 12px;
     width: 100%;
   }
+
   .demo-table-expand label {
     width: 50px;
     color: #99a9bf;
     font-size: 14px;
   }
+
   .demo-table-expand .el-form-item {
     margin-right: 0;
     margin-bottom: 0;
     width: 60%;
   }
-  .demo-table-expand .el-form-item span{
+
+  .demo-table-expand .el-form-item span {
     font-size: 10px;
   }
 </style>
