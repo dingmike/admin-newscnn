@@ -219,7 +219,6 @@ export const asyncRoutes = [
       }
     ]
   },
-
   {
     path: '/error',
     component: Layout,
@@ -244,7 +243,6 @@ export const asyncRoutes = [
       }
     ]
   },
-
   {
     path: '/sys-log',
     component: Layout,
