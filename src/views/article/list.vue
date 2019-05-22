@@ -58,7 +58,7 @@
       <el-table-column align="left" label="Actions" width="100px">
         <template slot-scope="scope">
           <div>
-            <router-link style="display: inline-block" :to="'/example/edit/'+scope.row.id">
+            <router-link style="display: inline-block" :to="'/article/edit/'+scope.row.id">
               <el-button type="primary" size="small" icon="el-icon-edit" circle />
             </router-link>
             <el-button v-show="scope.row.status!==1" type="danger" size="small" icon="el-icon-delete" circle @click="handleModifyStatus(scope.row)" />

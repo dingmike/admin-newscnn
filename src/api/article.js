@@ -8,6 +8,14 @@ export function fetchList(query) {
   })
 }
 
+export function fetchArticleOrderList(query) {
+  return request({
+    url: '/backend/article/order/list',
+    method: 'get',
+    params: query
+  })
+}
+
 export function fetchArticle(id) {
   return request({
     url: '/backend/article/detail',
