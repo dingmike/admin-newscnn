@@ -218,6 +218,9 @@ export default {
 
         this.listLoading = false
       })
+    },
+    handleFilter() {
+      this.getList()
     }
   }
 }
