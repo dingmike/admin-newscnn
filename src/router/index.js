@@ -12,6 +12,8 @@ import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
 import wechatRouter from './modules/wechat'
+import articleOrderRouter from './modules/articleOrder'
+import articleRouter from './modules/article'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -176,37 +178,8 @@ export const asyncRoutes = [
   nestedRouter,
   tableRouter,
   wechatRouter,
-  {
-    path: '/article',
-    component: Layout,
-    redirect: '/article/list',
-    name: 'Article',
-    meta: {
-      title: 'article',
-      icon: 'example'
-    },
-    children: [
-      {
-        path: 'create',
-        component: () => import('@/views/article/create'),
-        name: 'CreateArticle',
-        meta: { title: 'createArticle', icon: 'edit' }
-      },
-      {
-        path: 'edit/:id',
-        component: () => import('@/views/article/edit'),
-        name: 'EditArticle',
-        meta: { title: 'editArticle', noCache: true, activeMenu: '/article/list' },
-        hidden: true
-      },
-      {
-        path: 'list',
-        component: () => import('@/views/article/list'),
-        name: 'ArticleList',
-        meta: { title: 'articleList', icon: 'list' }
-      }
-    ]
-  },
+  articleRouter,
+  articleOrderRouter,
   {
     path: '/tab',
     component: Layout,

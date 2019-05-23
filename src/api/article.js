@@ -15,6 +15,14 @@ export function fetchArticleOrderList(query) {
     params: query
   })
 }
+// 暂时不支持
+export function reactRefundArticleOrder(data) {
+  return request({
+    url: '/backend/article/order/reactRefund',
+    method: 'post',
+    data
+  })
+}
 
 export function fetchArticle(id) {
   return request({

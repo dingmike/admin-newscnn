@@ -2,22 +2,35 @@
 
 import Layout from '@/layout'
 
-const orderRouter = {
-  path: '/order',
+const articleRouter = {
+  path: '/article',
   component: Layout,
-  redirect: '/order/articleOrder',
-  name: 'order',
+  redirect: '/article/list',
+  name: 'Article',
   meta: {
-    title: 'order',
-    icon: 'table'
+    title: 'article',
+    icon: 'example'
   },
   children: [
     {
-      path: '/order/articleOrder',
-      component: () => import('@/views/order/articleOrder'),
-      name: 'articleOrder',
-      meta: { title: 'articleOrder' }
+      path: 'create',
+      component: () => import('@/views/article/create'),
+      name: 'CreateArticle',
+      meta: { title: 'createArticle', icon: 'edit' }
+    },
+    {
+      path: 'edit/:id',
+      component: () => import('@/views/article/edit'),
+      name: 'EditArticle',
+      meta: { title: 'editArticle', noCache: true, activeMenu: '/article/list' },
+      hidden: true
+    },
+    {
+      path: 'list',
+      component: () => import('@/views/article/list'),
+      name: 'ArticleList',
+      meta: { title: 'articleList', icon: 'list' }
     }
   ]
 }
-export default orderRouter
+export default articleRouter
