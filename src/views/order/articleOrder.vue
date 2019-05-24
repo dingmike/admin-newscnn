@@ -227,9 +227,6 @@ export default {
       })
     },
     clearFilter() {
-      this.getList()
-    },
-    handleFilterNow() {
       this.listQuery = {
         page: 1,
         limit: 10,
@@ -237,6 +234,9 @@ export default {
         article_name: '',
         openid: ''
       }
+      this.getList()
+    },
+    handleFilterNow() {
       this.getList()
     }
   }
