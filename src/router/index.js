@@ -14,6 +14,7 @@ import nestedRouter from './modules/nested'
 import wechatRouter from './modules/wechat'
 import articleOrderRouter from './modules/articleOrder'
 import articleRouter from './modules/article'
+import systemRouter from './modules/system'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -180,6 +181,7 @@ export const asyncRoutes = [
   wechatRouter,
   articleRouter,
   articleOrderRouter,
+  systemRouter,
   {
     path: '/tab',
     component: Layout,
