@@ -30,6 +30,7 @@ export default {
     example: 'Example',
     wechat: 'Wechat',
     menu: 'Wechat Menu',
+    user: 'Wechat User',
     article: 'Article',
     order: 'Order',
     articleOrder: 'Article Order',

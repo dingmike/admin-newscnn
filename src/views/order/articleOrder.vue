@@ -1,13 +1,15 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" :placeholder="$t('table.title')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.status" placeholder="选择订单状态" clearable style="width: 90px" class="filter-item">
+      <el-input v-model="listQuery.article_name" :placeholder="$t('table.title')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-input v-model="listQuery.openid" placeholder="Openid" style="width: 200px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-select v-model="listQuery.status" placeholder="选择订单状态" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option v-for="item in orderType" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" size="small" @click="handleFilterNow">
         {{ $t('table.search') }}
       </el-button>
+      <el-button v-waves class="filter-item" size="small" plain @click="clearFilter">重 置</el-button>
     </div>
 
     <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style="width: 100%">
@@ -27,6 +29,9 @@
             <el-form-item label="文章单价">
               <span>{{ props.row.article.pay_price }}</span>
             </el-form-item>
+            <el-form-item label="用户微信昵称">
+              <span>{{ props.row.user.nickname }}</span>
+            </el-form-item>
           </el-form>
         </template>
       </el-table-column>
@@ -36,8 +41,8 @@
         </template>
       </el-table-column>
       <el-table-column width="120px" align="center" label="下单微信昵称">
-        <template slot-scope="scope">
-          <span>{{ scope.row.user.nickname }}</span>
+        <template slot-scope="{row}">
+          <span>{{ row.user === null|| row.user === '' ? '无' : row.user.nickname }}</span>
         </template>
       </el-table-column>
       <el-table-column width="120px" align="center" label="订单价格">
@@ -105,10 +110,12 @@
 <script>
 import { fetchArticleOrderList } from '@/api/article'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import waves from '@/directive/waves' // Waves directive
 
 export default {
   name: 'ArticleList',
   components: { Pagination },
+  directives: { waves },
   filters: {
     // //0 默认新创建  1 预支付创建 2 已支付  3 申请退款中 4 退款完成
     statusFilter(status) {
@@ -219,7 +226,17 @@ export default {
         this.listLoading = false
       })
     },
-    handleFilter() {
+    clearFilter() {
+      this.getList()
+    },
+    handleFilterNow() {
+      this.listQuery = {
+        page: 1,
+        limit: 10,
+        status: '',
+        article_name: '',
+        openid: ''
+      }
       this.getList()
     }
   }

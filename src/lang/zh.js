@@ -30,6 +30,7 @@ export default {
     example: '综合实例',
     wechat: '微信公众号',
     menu: '微信菜单',
+    user: '微信用户',
     article: '文章管理',
     order: '订单管理',
     articleOrder: '文章订单',
