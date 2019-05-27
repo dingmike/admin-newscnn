@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
+    <!--    <div class="filter-container">
       <el-input v-model="listQuery.article_name" :placeholder="$t('table.title')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
       <el-input v-model="listQuery.openid" placeholder="Openid" style="width: 200px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
       <el-select v-model="listQuery.status" placeholder="选择订单状态" style="width: 130px" class="filter-item" size="small" clearable>
@@ -11,7 +11,7 @@
       </el-button>
       <el-button v-waves class="filter-item" size="small" plain @click="clearFilter">重 置</el-button>
       <el-button v-waves class="filter-item" type="primary" size="small" @click="clearFilter">新 增</el-button>
-    </div>
+    </div>-->
 
     <div class="filter-container">
       <el-button v-waves class="filter-item" type="primary" size="small" @click="addSchedule">新 增</el-button>
@@ -22,68 +22,39 @@
 
     <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style="width: 100%">
 
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="OPENID">
-              <span>{{ props.row.openid }}</span>
-            </el-form-item>
-            <el-form-item label="用户姓名">
-              <span>{{ props.row.userName === null|| props.row.userName ===''? '暂无': props.row.userName }}</span>
-            </el-form-item>
-            <el-form-item label="电话号">
-              <span>{{ props.row.phone === null||props.row.phone === ''? '暂无': props.row.phone }}</span>
-            </el-form-item>
-            <el-form-item label="文章单价">
-              <span>{{ props.row.article.pay_price }}</span>
-            </el-form-item>
-            <el-form-item label="用户微信昵称">
-              <span>{{ props.row.user.nickname }}</span>
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="文章标题" width="240px">
+      <el-table-column align="center" label="定时任务名称" width="240px">
         <template slot-scope="scope">
-          <span>{{ scope.row.article_name }}</span>
+          <span>{{ scope.row.timer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="120px" align="center" label="下单微信昵称">
+      <el-table-column width="120px" align="center" label="控制器">
         <template slot-scope="{row}">
-          <span>{{ row.user === null|| row.user === '' ? '无' : row.user.nickname }}</span>
+          <span>{{ row.timer_controller }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="120px" align="center" label="订单价格">
+      <el-table-column width="120px" align="center" label="参数">
         <template slot-scope="scope">
-          <span>{{ scope.row.fee }}</span>
+          <span>{{ scope.row.timer_param }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="120px" align="center" label="文章单价">
+      <el-table-column width="120px" align="center" label="CRONS">
         <template slot-scope="scope">
-          <span>{{ scope.row.article.pay_price }}</span>
+          <span>{{ scope.row.crons }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="120px" align="center" label="难度">
+      <el-table-column width="120px" align="center" label="备注">
         <template slot-scope="scope">
-          <span>{{ scope.row.article.article_grade | gradeFilter }}</span>
+          <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="120px" align="center" label="支付方式">
+      <el-table-column width="120px" align="center" label="任务状态">
         <template slot-scope="scope">
-          <span>{{ scope.row.pay_type === 1? '微信支付': '其他' }}</span>
+          <span>{{ scope.row.timer_status }}</span>
         </template>
       </el-table-column>
-      <!-- //0 默认新创建  1 预支付创建 2 已支付  3 申请退款中 4 退款完成-->
-      <el-table-column class-name="status-col" label="订单状态" width="100">
-        <template slot-scope="{row}">
-          <el-tag size="small">
-            {{ row.status | statusFilter }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column width="180px" align="center" label="下单时间">
+      <el-table-column width="180px" align="center" label="创建时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.order_time }}</span>
+          <span>{{ scope.row.set_time }}</span>
           <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
         </template>
       </el-table-column>
@@ -114,7 +85,10 @@
           <el-input v-model="scheduleValue.timer_param" type="textarea" placeholder="输入参数" style="width: 600px" />
         </el-form-item>
         <el-form-item label="CRONS：" prop="crons">
-          <el-input v-model="scheduleValue.crons" type="textarea" placeholder="输入crons表达式" style="width: 600px" />
+          <el-input v-model="scheduleValue.crons" type="text" placeholder="输入crons表达式" style="width: 600px" />
+        </el-form-item>
+        <el-form-item label="备注：" prop="remark">
+          <el-input v-model="scheduleValue.remark" type="textarea" placeholder="输入备注" style="width: 600px" />
         </el-form-item>
         <el-form-item label="任务状态：" prop="timer_status">
           <el-radio-group v-model="scheduleValue.timer_status">
@@ -132,8 +106,7 @@
 </template>
 
 <script>
-import { fetchArticleOrderList } from '@/api/article'
-import { addTimer } from '@/api/system'
+import { addTimer, fetchList } from '@/api/system'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // Waves directive
 import { Loading } from 'element-ui'
@@ -201,6 +174,7 @@ export default {
   },
   data() {
     return {
+      deviceEditTitle: '添加定时任务',
       scheduleValue: {
         timer_name: '', // 定时任务名称
         timer_controller: '', // 定时方法名称
@@ -208,6 +182,18 @@ export default {
         crons: '', // cron表达式
         timer_status: '', // 1正常  0停止
         remark: ''
+      },
+      rules: {
+        timer_name: [{ required: true, message: '请输入任务名称', trigger: 'blur' },
+          { min: 2, max: 120, message: '长度在 2 到 120 个字符', trigger: 'blur' }
+        ],
+        timer_controller: [{ required: true, message: '请输入广告内容', trigger: 'blur' },
+          { max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }],
+        timer_param: [{ max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }],
+        crons: [{ required: true, message: '请输入CORON表达式', trigger: 'blur' },
+          { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }],
+        timer_status: [{ required: true, message: '请选择状态', trigger: 'blur' }],
+        remark: [{ max: 200, message: '长度在 2 到 200 个字符', trigger: 'blur' }]
       },
       LoadingOptions: {
         lock: true,
@@ -223,10 +209,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
-        status: '',
-        article_name: '',
-        openid: ''
+        limit: 10
       },
       orderType: [
         {
@@ -283,9 +266,9 @@ export default {
     },
     getList() {
       this.listLoading = true
-      fetchArticleOrderList(this.listQuery).then(response => {
-        this.list = response.data.data.docs
-        this.total = response.data.data.total
+      fetchList(this.listQuery).then(response => {
+        this.list = response.data.docs
+        this.total = response.data.total
 
         this.listLoading = false
       })
