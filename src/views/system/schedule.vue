@@ -14,7 +14,7 @@
     </div>
 
     <div class="filter-container">
-      <el-button v-waves class="filter-item" type="primary" size="small" @click="clearFilter">新 增</el-button>
+      <el-button v-waves class="filter-item" type="primary" size="small" @click="addSchedule">新 增</el-button>
       <el-button v-waves class="filter-item" size="small" type="danger" @click="clearFilter">暂 停</el-button>
       <el-button v-waves class="filter-item" size="small" type="warning" @click="clearFilter">恢 复</el-button>
       <el-button v-waves class="filter-item" size="small" type="success" @click="clearFilter">立即执行</el-button>
@@ -88,20 +88,6 @@
         </template>
       </el-table-column>
 
-      <!-- <el-table-column width="100px" label="Importance">
-        <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
-        </template>
-      </el-table-column>-->
-
-      <!--     <el-table-column min-width="300px" label="Title">
-        <template slot-scope="{row}">
-          <router-link :to="'/example/edit/'+row.id" class="link-type">
-            <span>{{ row.title }}</span>
-          </router-link>
-        </template>
-      </el-table-column>-->
-
       <el-table-column align="left" label="订单操作" width="100px">
         <template slot-scope="scope">
           <!--退款-->
@@ -112,13 +98,45 @@
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+
+    <!--编辑定时任务-->
+    <el-dialog width="60%" :fullscreen="fullForm" :title="deviceEditTitle" :visible.sync="editVisible">
+      <el-form ref="scheduleForm" :model="scheduleValue" :rules="rules" label-width="120px" size="small">
+        <el-form-item label="定时任务名称：" prop="timer_name">
+          <el-input v-model="scheduleValue.timer_name" placeholder="输入定时任务名称" style="width: 600px" />
+        </el-form-item>
+
+        <el-form-item label="控制器：" prop="timer_controller">
+          <el-input v-model="scheduleValue.timer_controller" type="textarea" placeholder="输入定时器控制器" style="width: 600px" />
+        </el-form-item>
+
+        <el-form-item label="参数：" prop="timer_param">
+          <el-input v-model="scheduleValue.timer_param" type="textarea" placeholder="输入参数" style="width: 600px" />
+        </el-form-item>
+        <el-form-item label="CRONS：" prop="crons">
+          <el-input v-model="scheduleValue.crons" type="textarea" placeholder="输入crons表达式" style="width: 600px" />
+        </el-form-item>
+        <el-form-item label="任务状态：" prop="timer_status">
+          <el-radio-group v-model="scheduleValue.timer_status">
+            <el-radio :label="1">开启</el-radio>
+            <el-radio :label="0">关闭</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item style="text-align: center">
+          <el-button type="primary" size="medium" @click="handleFinishCommit">提交</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { fetchArticleOrderList } from '@/api/article'
+import { addTimer } from '@/api/system'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // Waves directive
+import { Loading } from 'element-ui'
 
 export default {
   name: 'ArticleList',
@@ -183,8 +201,24 @@ export default {
   },
   data() {
     return {
+      scheduleValue: {
+        timer_name: '', // 定时任务名称
+        timer_controller: '', // 定时方法名称
+        timer_param: '', // timer_param
+        crons: '', // cron表达式
+        timer_status: '', // 1正常  0停止
+        remark: ''
+      },
+      LoadingOptions: {
+        lock: true,
+        text: '正在加载...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      },
       list: null,
+      editVisible: false,
       fitWidth: false,
+      fullForm: false,
       total: 0,
       listLoading: true,
       listQuery: {
@@ -222,6 +256,28 @@ export default {
     this.getList()
   },
   methods: {
+    addSchedule() {
+      this.editVisible = true
+    },
+    handleFinishCommit() {
+      this.$refs['scheduleForm'].validate((valid) => {
+        if (valid) {
+          const loadingInstance5 = Loading.service(this.LoadingOptions)
+          console.log(this.scheduleValue)
+          addTimer(this.scheduleValue).then(() => {
+            loadingInstance5.close()
+            this.editVisible = false
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
     handleDeleteOrder() {
 
     },
