@@ -15,19 +15,29 @@
 
     <div class="filter-container">
       <el-button v-waves class="filter-item" type="primary" size="small" @click="addSchedule">新 增</el-button>
-      <el-button v-waves class="filter-item" size="small" type="danger" @click="clearFilter">暂 停</el-button>
-      <el-button v-waves class="filter-item" size="small" type="warning" @click="clearFilter">恢 复</el-button>
-      <el-button v-waves class="filter-item" size="small" type="success" @click="clearFilter">立即执行</el-button>
     </div>
 
     <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style="width: 100%">
-
-      <el-table-column align="center" label="定时任务名称" width="240px">
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="备注">
+              <span>{{ props.row.remark }}</span>
+            </el-form-item>
+          </el-form>
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="TimerId">
+              <span>{{ props.row.timer_id }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="定时任务名称" width="180px">
         <template slot-scope="scope">
           <span>{{ scope.row.timer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="120px" align="center" label="控制器">
+      <el-table-column width="160px" align="center" label="控制器">
         <template slot-scope="{row}">
           <span>{{ row.timer_controller }}</span>
         </template>
@@ -42,12 +52,7 @@
           <span>{{ scope.row.crons }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="120px" align="center" label="备注">
-        <template slot-scope="scope">
-          <span>{{ scope.row.remark }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column width="120px" align="center" label="任务状态">
+      <el-table-column width="100px" align="center" label="任务状态">
         <template slot-scope="scope">
           <span>{{ scope.row.timer_status }}</span>
         </template>
@@ -58,55 +63,123 @@
           <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
         </template>
       </el-table-column>
-
-      <el-table-column align="left" label="订单操作" width="100px">
+      <el-table-column align="left" label="操作" width="340px">
         <template slot-scope="scope">
-          <!--退款-->
-          <el-tooltip class="item" effect="dark" content="退款" placement="top-start">
-            <el-button v-show="scope.row.status === 2" type="success" icon="el-icon-check" size="small" circle @click="handleDeleteOrder(scope.row)" />
+          <el-tooltip class="item" effect="dark" content="编辑" placement="top-start">
+            <el-button v-waves class="filter-item" icon="el-icon-edit" size="mini" circle @click="goEdit(scope)" />
           </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
+            <el-button v-waves type="danger" size="mini" icon="el-icon-delete" circle @click="deleteTimer(scope)" />
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="立即执行" placement="top-start">
+            <el-button v-waves type="success" size="mini" icon="el-icon-bell" circle @click="runTimer(scope)" />
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="暂停" placement="top-start">
+            <el-button v-waves size="mini" icon="el-icon-remove" circle @click="cancelTimer(scope)" />
+          </el-tooltip>
+          <el-button v-waves class="filter-item" size="mini" type="warning" @click="clearFilter">恢 复</el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <!--编辑定时任务-->
-    <el-dialog width="60%" :fullscreen="fullForm" :title="deviceEditTitle" :visible.sync="editVisible">
-      <el-form ref="scheduleForm" :model="scheduleValue" :rules="rules" label-width="120px" size="small">
-        <el-form-item label="定时任务名称：" prop="timer_name">
-          <el-input v-model="scheduleValue.timer_name" placeholder="输入定时任务名称" style="width: 600px" />
-        </el-form-item>
+    <el-dialog width="80%" :fullscreen="fullForm" :title="deviceEditTitle" :visible.sync="editVisible">
+      <el-row :gutter="40">
+        <el-col :span="12">
+          <el-form ref="scheduleForm" :model="scheduleValue" :rules="rules" label-width="120px" size="small">
+            <el-form-item label="定时任务名称：" prop="timer_name">
+              <el-input v-model="scheduleValue.timer_name" placeholder="输入定时任务名称" />
+            </el-form-item>
 
-        <el-form-item label="控制器：" prop="timer_controller">
-          <el-input v-model="scheduleValue.timer_controller" type="textarea" placeholder="输入定时器控制器" style="width: 600px" />
-        </el-form-item>
+            <el-form-item label="控制器：" prop="timer_controller">
+              <el-input v-model="scheduleValue.timer_controller" type="text" placeholder="输入定时器控制器" />
+            </el-form-item>
 
-        <el-form-item label="参数：" prop="timer_param">
-          <el-input v-model="scheduleValue.timer_param" type="textarea" placeholder="输入参数" style="width: 600px" />
-        </el-form-item>
-        <el-form-item label="CRONS：" prop="crons">
-          <el-input v-model="scheduleValue.crons" type="text" placeholder="输入crons表达式" style="width: 600px" />
-        </el-form-item>
-        <el-form-item label="备注：" prop="remark">
-          <el-input v-model="scheduleValue.remark" type="textarea" placeholder="输入备注" style="width: 600px" />
-        </el-form-item>
-        <el-form-item label="任务状态：" prop="timer_status">
-          <el-radio-group v-model="scheduleValue.timer_status">
-            <el-radio :label="1">开启</el-radio>
-            <el-radio :label="0">关闭</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item style="text-align: center">
-          <el-button type="primary" size="medium" @click="handleFinishCommit">提交</el-button>
-        </el-form-item>
-      </el-form>
+            <el-form-item label="参数：" prop="timer_param">
+              <el-input v-model="scheduleValue.timer_param" type="textarea" placeholder="输入参数" />
+            </el-form-item>
+            <el-form-item label="CRONS：" prop="crons">
+              <el-input v-model="scheduleValue.crons" type="text" placeholder="输入crons表达式" />
+            </el-form-item>
+            <el-form-item label="备注：" prop="remark">
+              <el-input v-model="scheduleValue.remark" type="textarea" placeholder="输入备注" />
+            </el-form-item>
+            <el-form-item label="任务状态：" prop="timer_status">
+              <el-radio-group v-model="scheduleValue.timer_status">
+                <el-radio :label="1">开启</el-radio>
+                <el-radio :label="0">关闭</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item style="text-align: center">
+              <el-button type="primary" size="medium" @click="handleFinishCommit">提 交</el-button>
+              <el-button size="medium" @click="editVisible=false">取 消</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-col :span="12">
+          <el-row class="">
+            <el-col :span="8">
+              0 15 10 * * ? *
+            </el-col>
+            <el-col :span="16">
+              每天10点15分触发
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">0 25 0/1 * * ?</el-col>
+            <el-col :span="16">每隔1小时执行一次从25分钟开始</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">0 0 1 * * ?</el-col>
+            <el-col :span="16">每天凌晨1点执行一次</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">0 */1 * * * ?</el-col>
+            <el-col :span="16">每隔1分钟执行一次</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">0 15 10 * * ? 2018</el-col>
+            <el-col :span="16">2018年每天10点15分触发</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">0 * 14 * * ?</el-col>
+            <el-col :span="16">每天下午的 2点到2点59分每分触发</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">0 0/5 14 * * ?</el-col>
+            <el-col :span="16">每天下午的 2点到2点59分(整点开始，每隔5分触发)</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">0 0/5 14,18 * * ?</el-col>
+            <el-col :span="16">每天下午的 2点到2点59分、18点到18点59分(整点开始，每隔5分触发)</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">0 0-5 14 * * ?</el-col>
+            <el-col :span="16">每天下午的 2点到2点05分每分触发</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">0 15 10 ? * 6L</el-col>
+            <el-col :span="16">每月最后一周的星期五的10点15分触发</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">0 15 10 ? * 6#3</el-col>
+            <el-col :span="16">每月的第三周的星期五开始触发</el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">0 0 0,13,18,21 * * ?</el-col>
+            <el-col :span="16">每天的0点、13点、18点、21点都执行一次</el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+
     </el-dialog>
 
   </div>
 </template>
 
 <script>
-import { addTimer, fetchList } from '@/api/system'
+import { addTimer, fetchList, updateTimer, deleteTimer, runTimer, cancelTimer } from '@/api/system'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // Waves directive
 import { Loading } from 'element-ui'
@@ -174,6 +247,7 @@ export default {
   },
   data() {
     return {
+      isEdit: false,
       deviceEditTitle: '添加定时任务',
       scheduleValue: {
         timer_name: '', // 定时任务名称
@@ -181,7 +255,8 @@ export default {
         timer_param: '', // timer_param
         crons: '', // cron表达式
         timer_status: '', // 1正常  0停止
-        remark: ''
+        remark: '',
+        timer_id: ''
       },
       rules: {
         timer_name: [{ required: true, message: '请输入任务名称', trigger: 'blur' },
@@ -239,7 +314,71 @@ export default {
     this.getList()
   },
   methods: {
+    cancelTimer(item) {
+      const loadingInstance9 = Loading.service(this.LoadingOptions)
+      cancelTimer({ id: item.row._id }).then(() => {
+        loadingInstance9.close()
+        this.getList()
+        this.$message({
+          type: 'success',
+          message: '任务暂停成功!'
+        })
+      })
+    },
+    runTimer(item) {
+      const loadingInstance7 = Loading.service(this.LoadingOptions)
+      runTimer({ id: item.row._id }).then(() => {
+        loadingInstance7.close()
+        this.getList()
+        this.$message({
+          type: 'success',
+          message: '任务启动成功!'
+        })
+      })
+    },
+    deleteTimer(item) {
+      this.$confirm('确定将选择数据删除?', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          const loadingInstance6 = Loading.service(this.LoadingOptions)
+          deleteTimer({ id: item.row._id }).then(() => {
+            loadingInstance6.close()
+            this.editVisible = false
+            this.getList()
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          })
+        })
+        .then(() => {
+          this.getList()
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+        })
+    },
+    goEdit(item) {
+      this.isEdit = true
+      this.scheduleValue = item.row
+      this.editVisible = true
+      this.deviceEditTitle = '编辑定时任务'
+    },
     addSchedule() {
+      this.isEdit = false
+      this.scheduleValue = {
+        timer_name: '', // 定时任务名称
+        timer_controller: '', // 定时方法名称
+        timer_param: '', // timer_param
+        crons: '', // cron表达式
+        timer_status: '', // 1正常  0停止
+        remark: '',
+        timer_id: ''
+      }
       this.editVisible = true
     },
     handleFinishCommit() {
@@ -247,14 +386,27 @@ export default {
         if (valid) {
           const loadingInstance5 = Loading.service(this.LoadingOptions)
           console.log(this.scheduleValue)
-          addTimer(this.scheduleValue).then(() => {
-            loadingInstance5.close()
-            this.editVisible = false
-            this.$message({
-              type: 'success',
-              message: '操作成功!'
+          if (this.isEdit) {
+            updateTimer(this.scheduleValue).then(() => {
+              loadingInstance5.close()
+              this.editVisible = false
+              this.getList()
+              this.$message({
+                type: 'success',
+                message: '修改成功!'
+              })
             })
-          })
+          } else {
+            addTimer(this.scheduleValue).then(() => {
+              loadingInstance5.close()
+              this.editVisible = false
+              this.getList()
+              this.$message({
+                type: 'success',
+                message: '操作成功!'
+              })
+            })
+          }
         } else {
           console.log('error submit!!')
           return false
