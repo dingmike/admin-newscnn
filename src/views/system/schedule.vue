@@ -54,7 +54,7 @@
       </el-table-column>
       <el-table-column width="100px" align="center" label="任务状态">
         <template slot-scope="scope">
-          <span>{{ scope.row.timer_status }}</span>
+          <span>{{ scope.row.timer_status === 0 ? '暂停' : '启动' }}</span>
         </template>
       </el-table-column>
       <el-table-column width="180px" align="center" label="创建时间">
@@ -105,12 +105,12 @@
             <el-form-item label="备注：" prop="remark">
               <el-input v-model="scheduleValue.remark" type="textarea" placeholder="输入备注" />
             </el-form-item>
-            <el-form-item label="任务状态：" prop="timer_status">
+            <!--<el-form-item label="任务状态：" prop="timer_status">
               <el-radio-group v-model="scheduleValue.timer_status">
                 <el-radio :label="1">开启</el-radio>
                 <el-radio :label="0">关闭</el-radio>
               </el-radio-group>
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item style="text-align: center">
               <el-button type="primary" size="medium" @click="handleFinishCommit">提 交</el-button>
               <el-button size="medium" @click="editVisible=false">取 消</el-button>
@@ -254,7 +254,7 @@ export default {
         timer_controller: '', // 定时方法名称
         timer_param: '', // timer_param
         crons: '', // cron表达式
-        timer_status: '', // 1正常  0停止
+        timer_status: 0, // 1正常  0停止
         remark: '',
         timer_id: ''
       },
