@@ -32,6 +32,7 @@ export default {
     menu: '微信菜单',
     user: '微信用户',
     article: '文章管理',
+    files: '文件管理',
     schedule: '定时任务',
     system: '系统管理',
     order: '订单管理',

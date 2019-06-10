@@ -31,6 +31,7 @@ export default {
     wechat: 'Wechat',
     menu: 'Wechat Menu',
     user: 'Wechat User',
+    files: 'Files',
     schedule: 'Schedule',
     article: 'Article',
     system: 'System',

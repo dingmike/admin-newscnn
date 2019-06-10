@@ -17,6 +17,12 @@ const systemRouter = {
       component: () => import('@/views/system/schedule'),
       name: 'schedule',
       meta: { title: 'schedule' }
+    },
+    {
+      path: 'files',
+      component: () => import('@/views/system/files'),
+      name: 'files',
+      meta: { title: 'files' }
     }
   ]
 }

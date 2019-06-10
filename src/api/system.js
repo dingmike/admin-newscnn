@@ -44,3 +44,18 @@ export function cancelTimer(data) {
   })
 }
 
+// 文件管理
+export function filesList(query) {
+  return request({
+    url: '/backend/upload/list',
+    method: 'get',
+    params: query
+  })
+}
+export function deleteFile(data) {
+  return request({
+    url: '/backend/upload/delete',
+    method: 'post',
+    data: data
+  })
+}
