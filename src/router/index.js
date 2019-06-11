@@ -218,7 +218,7 @@ export const asyncRoutes = [
       }
     ]
   },
-  {
+  /*  {
     path: '/sys-log',
     component: Layout,
     meta: { title: 'sysLog', icon: 'bug' },
@@ -237,7 +237,7 @@ export const asyncRoutes = [
         meta: { title: 'errorLog', icon: 'bug' }
       }
     ]
-  },
+  },*/
 
   {
     path: '/excel',

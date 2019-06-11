@@ -23,6 +23,18 @@ const systemRouter = {
       component: () => import('@/views/system/files'),
       name: 'files',
       meta: { title: 'files' }
+    },
+    {
+      path: 'requestLog',
+      component: () => import('@/views/errorLog/requestLog'),
+      name: 'ErrorLog',
+      meta: { title: 'requestLog', icon: 'bug' }
+    },
+    {
+      path: 'errorsLog',
+      component: () => import('@/views/errorLog/errorLog'),
+      name: 'ErrorLog',
+      meta: { title: 'errorLog', icon: 'bug' }
     }
   ]
 }
