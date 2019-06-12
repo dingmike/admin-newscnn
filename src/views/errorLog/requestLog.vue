@@ -50,9 +50,9 @@
             <el-form-item label="query">
               <span>{{ props.row.query }}</span>
             </el-form-item>
-            <el-form-item label="response">
+            <!--<el-form-item label="response">
               <span>{{ props.row.response }}</span>
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item label="userAgent">
               <span>{{ props.row.userAgent }}</span>
             </el-form-item>
