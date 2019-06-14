@@ -6,10 +6,10 @@
         <!--<PlatformDropdown v-model="postForm.platforms" />-->
         <!--<SourceUrlDropdown v-model="postForm.source_uri" />-->
         <el-button :loading="loading" style="margin-left: 10px;" type="success" @click="deployArticle">
-          发布
+          发 布
         </el-button>
         <el-button :loading="loading" type="warning" @click="draftForm">
-          草稿
+          草 稿
         </el-button>
       </sticky>
 

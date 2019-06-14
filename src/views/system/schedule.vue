@@ -450,7 +450,7 @@ export default {
         })
     },
     goEdit(item) {
-      if (item.timer_status === 0) {
+      if (item.row.timer_status === 0) {
         this.isEdit = true
         this.scheduleValue = item.row
         this.editVisible = true

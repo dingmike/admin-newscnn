@@ -1,5 +1,8 @@
 <template>
   <div class="app-container">
+    <div class="filter-container">
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-plus" size="small" @click="addNewArticle">新建文章</el-button>
+    </div>
     <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style="width: 100%">
       <el-table-column align="center" label="标题" width="240px">
         <template slot-scope="scope">
@@ -150,6 +153,9 @@ export default {
     this.getList()
   },
   methods: {
+    addNewArticle() {
+      this.$router.push({ path: '/article/create' })
+    },
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
