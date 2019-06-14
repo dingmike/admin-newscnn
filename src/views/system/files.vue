@@ -28,13 +28,13 @@
       </el-table-column>
       <el-table-column width="180px" align="center" label="文件类型">
         <template slot-scope="scope">
-          <span>{{ scope.row.file_type }}</span>
+          <span>{{ scope.row.file_type | typeFilter }}</span>
           <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
         </template>
       </el-table-column>
       <el-table-column width="180px" align="center" label="上传时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.order_time }}</span>
+          <span>{{ scope.row.upload_time }}</span>
           <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
         </template>
       </el-table-column>
@@ -56,13 +56,15 @@
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
+        :before-upload="beforeFileUpload"
+        :on-success="handleUploadSuccess"
         multiple
         :limit="10"
         :on-exceed="handleExceed"
         :file-list="fileList"
       >
         <el-button size="small" type="primary">点击上传</el-button>
-        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        <div slot="tip" class="el-upload__tip">上传文件大小不超过20M</div>
       </el-upload>
     </el-dialog>
   </div>
@@ -80,38 +82,16 @@ export default {
   directives: { waves },
   filters: {
     // //0 默认新创建  1 预支付创建 2 已支付  3 申请退款中 4 退款完成
-    statusFilter(status) {
-      switch (status) {
+    typeFilter(type) {
+      switch (type) {
         case 1 :
-          return '预支付创建'
+          return 'image'
         case 0 :
-          return '新创建'
+          return 'other'
         case 2 :
-          return '已支付'
+          return 'audio'
         case 3 :
-          return '申请退款中'
-        case 4 :
-          return '退款完成'
-        default:
-          break
-      }
-    },
-    gradeFilter(grade) {
-      switch (grade) {
-        case 0 :
-          return '高中'
-        case 1 :
-          return 'CET-4'
-        case 2 :
-          return 'CET-6'
-        case 3 :
-          return '雅思'
-        case 4 :
-          return '托福'
-        case 5 :
-          return '专6'
-        case 6 :
-          return '专8'
+          return 'video'
         default:
           break
       }
@@ -246,8 +226,24 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-    beforeRemove(file, fileList) {
+    beforeRemove(file) {
       return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    handleUploadSuccess(res) {
+      if (res.code === 200) {
+        this.getList()
+      }
+    },
+    beforeFileUpload(file) {
+      // const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 20
+      // if (!isJPG) {
+      //   this.$message.error('上传头像图片只能是 JPG 格式!')
+      // }
+      if (!isLt2M) {
+        this.$message.error('上传文件大小不能超过 20MB!')
+      }
+      return isLt2M
     }
   }
 }

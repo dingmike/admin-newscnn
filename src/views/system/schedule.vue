@@ -21,47 +21,47 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="延迟时间（ms）">
+            <el-form-item label="延迟时间（ms）:">
               <span>{{ props.row.opts_delay }}</span>
             </el-form-item>
           </el-form>
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="失败尝试次数">
+            <el-form-item label="失败尝试次数:">
               <span>{{ props.row.opts_attempts }}</span>
             </el-form-item>
           </el-form>
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="执行完是否删除日志">
+            <el-form-item label="执行完是否删除日志:">
               <span>{{ props.row.opts_removeOnComplete }}</span>
             </el-form-item>
           </el-form>
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="执行失败后是否删除日志">
+            <el-form-item label="执行失败后是否删除日志:">
               <span>{{ props.row.opts_removeOnFail }}</span>
             </el-form-item>
           </el-form>
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="执行开始日期">
+            <el-form-item label="执行开始日期:">
               <span>{{ props.row.opts_repeat_startDate }}</span>
             </el-form-item>
           </el-form>
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="执行结束日期">
+            <el-form-item label="执行结束日期:">
               <span>{{ props.row.opts_repeat_endDate }}</span>
             </el-form-item>
           </el-form>
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="redis保存prefix名称">
+            <el-form-item label="redis保存prefix名称:">
               <span>{{ props.row.prefix }}</span>
             </el-form-item>
           </el-form>
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="备注">
+            <el-form-item label="备注：">
               <span>{{ props.row.remark }}</span>
             </el-form-item>
           </el-form>
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="TimerId">
+            <el-form-item label="TimerId:">
               <span>{{ props.row.timer_id }}</span>
             </el-form-item>
           </el-form>
@@ -104,25 +104,33 @@
       </el-table-column>
       <el-table-column width="180px" align="center" label="创建时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.set_time }}</span>
+          <span>{{ scope.row.meta.createAt }}</span>
           <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
         </template>
       </el-table-column>
-      <el-table-column align="left" label="操作" width="340px">
+      <el-table-column width="180px" align="center" label="更新时间">
+        <template slot-scope="scope">
+          <span>{{ scope.row.meta.updateAt }}</span>
+          <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
+        </template>
+      </el-table-column>
+      <el-table-column align="left" label="操作" width="340px" fixed="right">
         <template slot-scope="scope">
           <el-tooltip class="item" effect="dark" content="编辑" placement="top-start">
             <el-button v-waves class="filter-item" icon="el-icon-edit" size="mini" circle @click="goEdit(scope)" />
-          </el-tooltip>
-          <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
-            <el-button v-waves type="danger" size="mini" icon="el-icon-delete" circle @click="deleteQueue(scope)" />
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="立即执行" placement="top-start">
             <el-button v-waves type="success" size="mini" icon="el-icon-bell" circle @click="runQueue(scope)" />
           </el-tooltip>
           <el-tooltip class="item" effect="dark" content="暂停" placement="top-start">
-            <el-button v-waves size="mini" icon="el-icon-remove" circle @click="pauseQueue(scope)" />
+            <el-button v-waves type="warning" size="mini" icon="el-icon-remove" circle @click="pauseQueue(scope)" />
           </el-tooltip>
-          <el-button v-waves class="filter-item" size="mini" type="warning" @click="resumeQueue(scope)">恢 复</el-button>
+          <el-tooltip class="item" effect="dark" content="恢复" placement="top-start">
+            <el-button v-waves type="success" size="mini" icon="el-icon-check" circle @click="resumeQueue(scope)" />
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
+            <el-button v-waves type="danger" size="mini" icon="el-icon-delete" circle @click="deleteQueue(scope)" />
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
@@ -278,43 +286,6 @@ export default {
   components: { Pagination },
   directives: { waves },
   filters: {
-    // //0 默认新创建  1 预支付创建 2 已支付  3 申请退款中 4 退款完成
-    statusFilter(status) {
-      switch (status) {
-        case 1 :
-          return '预支付创建'
-        case 0 :
-          return '新创建'
-        case 2 :
-          return '已支付'
-        case 3 :
-          return '申请退款中'
-        case 4 :
-          return '退款完成'
-        default:
-          break
-      }
-    },
-    gradeFilter(grade) {
-      switch (grade) {
-        case 0 :
-          return '高中'
-        case 1 :
-          return 'CET-4'
-        case 2 :
-          return 'CET-6'
-        case 3 :
-          return '雅思'
-        case 4 :
-          return '托福'
-        case 5 :
-          return '专6'
-        case 6 :
-          return '专8'
-        default:
-          break
-      }
-    },
     parseUTCtime(UTCDateString) {
       if (!UTCDateString) {
         return '-'
@@ -434,6 +405,7 @@ export default {
     pauseQueue(item) {
       const loadingInstance9 = Loading.service(this.LoadingOptions)
       const parmas = {
+        id: item.row.id,
         queueName: item.row.queue_name,
         queueHost: item.row.queue_host
       }
@@ -446,18 +418,7 @@ export default {
         })
       })
     },
-    runTimer(item) {
-      const loadingInstance7 = Loading.service(this.LoadingOptions)
-      runQueue({ id: item.row._id }).then(() => {
-        loadingInstance7.close()
-        this.getList()
-        this.$message({
-          type: 'success',
-          message: '任务启动成功!'
-        })
-      })
-    },
-    deleteTimer(item) {
+    deleteQueue(item) {
       this.$confirm('确定将选择数据删除?', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -465,7 +426,12 @@ export default {
       })
         .then(() => {
           const loadingInstance6 = Loading.service(this.LoadingOptions)
-          deleteQueue({ id: item.row._id }).then(() => {
+          const parmas = {
+            id: item.row.id,
+            queueName: item.row.queue_name,
+            queueHost: item.row.queue_host
+          }
+          deleteQueue(parmas).then(() => {
             loadingInstance6.close()
             this.editVisible = false
             this.getList()
@@ -484,10 +450,17 @@ export default {
         })
     },
     goEdit(item) {
-      this.isEdit = true
-      this.scheduleValue = item.row
-      this.editVisible = true
-      this.deviceEditTitle = '编辑定时任务'
+      if (item.timer_status === 0) {
+        this.isEdit = true
+        this.scheduleValue = item.row
+        this.editVisible = true
+        this.deviceEditTitle = '编辑定时任务'
+      } else {
+        this.$message({
+          type: 'warning',
+          message: '任务暂停后才能编辑任务!'
+        })
+      }
     },
     addSchedule() {
       this.isEdit = false
@@ -508,6 +481,7 @@ export default {
       }
       this.editVisible = true
     },
+    // 提交数据
     handleFinishCommit() {
       this.$refs['scheduleForm'].validate((valid) => {
         if (valid) {
@@ -540,17 +514,17 @@ export default {
         }
       })
     },
-    handleDeleteOrder() {
-
-    },
     runQueue(item) {
       const parmas = {
+        id: item.row.id,
         queueName: item.row.queue_name,
         queueHost: item.row.queue_host,
-        jobName: item.row.job_name
+        jobName: item.row.job_name,
+        timerController: item.row.timer_controller
       }
       runQueue(parmas).then(response => {
         console.log(response)
+        this.getList()
         this.$message({
           type: 'success',
           message: '启动成功!'
@@ -559,11 +533,13 @@ export default {
     },
     resumeQueue(item) {
       const parmas = {
+        id: item.row.id,
         queueName: item.row.queue_name,
         queueHost: item.row.queue_host
       }
       resumeQueue(parmas).then(response => {
         console.log(response)
+        this.getList()
         this.$message({
           type: 'success',
           message: '启动成功!'
@@ -575,7 +551,6 @@ export default {
       fetchList(this.listQuery).then(response => {
         this.list = response.data.docs
         this.total = response.data.total
-
         this.listLoading = false
       })
     },
