@@ -90,19 +90,92 @@
         </el-form-item>
 
         <el-form-item prop="article_analysis" label-width="45px" label="解析:" style="margin-bottom: 30px;">
-          <Tinymce ref="editor" v-model="postForm.article_analysis" :height="400" />
+          <!--<Tinymce ref="editor" v-model="postForm.article_analysis" :height="400" />-->
+          <el-button type="success" @click="goSetAnalysis">
+            去创建讲解内容
+          </el-button>
         </el-form-item>
         <!-- <el-form-item prop="image_uri" style="margin-bottom: 30px;">
           <Upload v-model="postForm.image_uri" />
         </el-form-item>-->
       </div>
     </el-form>
+
+    <el-dialog title="讲解内容" width="65%" :fullscreen="isFullScreen" :visible.sync="showSetAnalysis">
+      <div>
+        <el-form ref="postForm" :model="analysisForm" :rules="rules" size="small" class="form-container">
+          <el-form-item prop="article_analysis" label-width="45px" label="单词:" style="margin-bottom: 30px;">
+            <el-button type="success" @click="goAddOneWord">
+              添加一个单词
+            </el-button>
+          </el-form-item>
+          <el-form-item prop="article_analysis" label-width="45px" label="句子:" style="margin-bottom: 30px;">
+            <el-button type="success" @click="goAddOneSentence">
+              添加一个句子
+            </el-button>
+          </el-form-item>
+          <el-form-item prop="article_analysis" label-width="45px" label="音频:" style="margin-bottom: 30px;" />
+          <el-form-item prop="article_analysis" label-width="45px" label="视频:" style="margin-bottom: 30px;" />
+        </el-form>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showSetAnalysis = false">取 消</el-button>
+        <el-button type="primary" @click="showSetAnalysis = true">确 定</el-button>
+      </div>
+      <el-dialog
+        width="50%"
+        title="添加单词"
+        :visible.sync="showWordBox"
+        append-to-body
+      >
+        <div>
+          <el-form ref="postForm" :model="analysisWords" :rules="rules" size="small" class="form-container">
+            <el-form-item prop="ename" label-width="80px" label="英文">
+              <el-input v-model="analysisWords.ename" placeholder="请输入内容" />
+            </el-form-item>
+            <el-form-item prop="symbol" label-width="80px" label="音标">
+              <el-input v-model="analysisWords.symbol" placeholder="请输入内容" />
+            </el-form-item>
+            <el-form-item prop="cname" label-width="80px" label="中文">
+              <el-input v-model="analysisWords.cname" placeholder="请输入内容" />
+            </el-form-item>
+            <el-form-item prop="sentence" label-width="80px" label="例句">
+              <el-input v-model="analysisWords.sentence" placeholder="请输入内容" />
+            </el-form-item>
+            <el-form-item prop="sentence" label-width="80px" label="例句中文">
+              <el-input v-model="analysisWords.csentence" placeholder="请输入内容" />
+            </el-form-item>
+            <el-form-item prop="wordAudio" label-width="80px" label="单词发音">
+              <el-input v-model="analysisWords.wordAudio" placeholder="请输入内容" />
+              <SingleFile v-model="analysisWords.wordAudio" />
+            </el-form-item>
+            <el-form-item prop="sentenceAudio" label-width="80px" label="例句发音">
+              <el-input v-model="analysisWords.sentenceAudio" placeholder="请输入内容" />
+              <SingleFile v-model="analysisWords.sentenceAudio" />
+            </el-form-item>
+            <el-form-item prop="teacherAudio" label-width="80px" label="老师音频">
+              <el-input v-model="analysisWords.teacherAudio" placeholder="请输入内容" />
+              <SingleFile v-model="analysisWords.teacherAudio" />
+            </el-form-item>
+            <el-form-item prop="video" label-width="80px" label="视频">
+              <el-input v-model="analysisWords.video" placeholder="请输入内容" />
+              <SingleFile v-model="analysisWords.video" />
+            </el-form-item>
+          </el-form>
+        </div>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="showWordBox = false">关 闭</el-button>
+          <el-button type="primary" @click="showWordBox = true">设 置</el-button>
+        </div>
+      </el-dialog>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import Tinymce from '@/components/Tinymce'
-// import Upload from '@/components/Upload/singleImage3'
+import SingleFile from '@/components/Upload/singleFile'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 // import { validURL } from '@/utils/validate'
@@ -130,10 +203,39 @@ const defaultForm = {
   pay_price: '', // 支付价格
   pay_person_num: '' // 购买人数
 }
+const defaultAnalysisForm = {
+  words: [
+    {
+      ename: 'learn',
+      symbol: '美 /lɝn/ ',
+      cname: 'vt. 学习；得知；认识到',
+      sentence: 'we learn a lot language!',
+      csentence: '我学了好多',
+      wordAudio: 'http://www.bejson.com/',
+      sentenceAudio: 'http://www.bejson.com/',
+      teacherAudio: 'http://www.bejson.com/',
+      video: 'http://www.bejson.com/'
+    },
+    {
+      ename: 'learn',
+      symbol: '美 /lɝn/ ',
+      cname: 'vt. 学习；得知；认识到',
+      sentence: '',
+      csentence: '我学了好多',
+      wordAudio: 'http://www.bejson.com/',
+      sentenceAudio: 'http://www.bejson.com/',
+      teacherAudio: 'http://www.bejson.com/',
+      video: 'http://www.bejson.com/'
+    }
+  ],
+  sentence: [],
+  analysis_audio: '',
+  analysis_video: ''
+}
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Sticky },
+  components: { Tinymce, MDinput, Sticky, SingleFile },
   props: {
     isEdit: {
       type: Boolean,
@@ -153,6 +255,21 @@ export default {
       }
     }
     return {
+      analysisWords: {
+        ename: 'learn',
+        symbol: '美 /lɝn/ ',
+        cname: 'vt. 学习；得知；认识到',
+        sentence: 'we learn a lot language!',
+        csentence: '我学了好多',
+        wordAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
+        sentenceAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
+        teacherAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
+        video: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm'
+      },
+      showWordBox: false,
+      showSentenceBox: false,
+      showSetAnalysis: false,
+      isFullScreen: false,
       LoadingOptions: {
         lock: true,
         text: 'Loading',
@@ -161,37 +278,38 @@ export default {
       },
       gradeOptions: [
         {
-          label: '高中',
+          label: '初中',
           value: 0
         },
         {
-          label: 'CET-4',
+          label: '高中',
           value: 1
         },
         {
-          label: 'CET-6',
+          label: 'CET-4',
           value: 2
         },
         {
-          label: '雅思',
+          label: 'CET-6',
           value: 3
         },
         {
-          label: '托福',
+          label: '雅思',
           value: 4
         },
         {
-          label: '专6',
+          label: '托福',
           value: 5
         },
         {
-          label: '专8',
+          label: '专6',
           value: 6
         }
       ],
       deployMessageData: '发布文章成功',
       updateMessageData: '更新文章成功',
       postForm: Object.assign({}, defaultForm),
+      analysisForm: Object.assign({}, defaultAnalysisForm),
       loading: false,
       userListOptions: [],
       rules: {
@@ -225,6 +343,15 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
+    goAddOneSentence() {
+      this.showSentenceBox = true
+    },
+    goAddOneWord() {
+      this.showWordBox = true
+    },
+    goSetAnalysis() {
+      this.showSetAnalysis = true
+    },
     fetchData(id) {
       fetchArticle(id).then(response => {
         this.postForm = response.data

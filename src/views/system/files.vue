@@ -52,7 +52,7 @@
     <el-dialog width="40%" :fullscreen="fullForm" title="上传文件" :visible.sync="uploadVisible">
       <el-upload
         class="upload-demo"
-        action="http://cnnapi.ngrok.tecfcs.com/common/upload"
+        :action="uploadAction"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :before-remove="beforeRemove"
@@ -117,6 +117,7 @@ export default {
   },
   data() {
     return {
+      uploadAction: process.env.VUE_APP_BASE_API + '/common/upload',
       fullForm: false,
       uploadVisible: false,
       multipleSelection: [],
