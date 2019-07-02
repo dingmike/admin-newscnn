@@ -448,7 +448,9 @@ export default {
       this.postForm.article_analysis.words.splice(this.analysisForm.words.indexOf(item), 1)
     },
     setOneSentence() {
-      this.postForm.article_analysis.sentence.push(this.analysisSentence)
+      if (!this.isEditSentence) {
+        this.postForm.article_analysis.sentence.push(this.analysisSentence)
+      }
       this.showSentenceBox = false
     },
     setOneWord() {
