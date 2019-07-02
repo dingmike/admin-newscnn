@@ -349,6 +349,8 @@ export default {
         teacherAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
         video: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm'
       },
+      isEditWord: false,
+      isEditSentence: false,
       showWordBox: false,
       showSentenceBox: false,
       showSetAnalysis: false,
