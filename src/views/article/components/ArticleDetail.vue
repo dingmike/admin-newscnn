@@ -442,17 +442,19 @@ export default {
       this.postForm.article_analysis = JSON.stringify(this.analysisForm)
     },
     deleteSentence(item) {
-      this.analysisForm.sentence.splice(this.analysisForm.sentence.indexOf(item), 1)
+      this.postForm.article_analysis.sentence.splice(this.analysisForm.sentence.indexOf(item), 1)
     },
     deleteWord(item) {
-      this.analysisForm.words.splice(this.analysisForm.words.indexOf(item), 1)
+      this.postForm.article_analysis.words.splice(this.analysisForm.words.indexOf(item), 1)
     },
     setOneSentence() {
-      this.analysisForm.sentence.push(this.analysisSentence)
+      this.postForm.article_analysis.sentence.push(this.analysisSentence)
       this.showSentenceBox = false
     },
     setOneWord() {
-      this.analysisForm.words.push(this.analysisWords)
+      if (!this.isEditWord) {
+        this.postForm.article_analysis.words.push(this.analysisWords)
+      }
       this.showWordBox = false
     },
     goAddOneSentence() {
