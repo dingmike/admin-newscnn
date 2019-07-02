@@ -103,46 +103,75 @@
 
     <el-dialog title="讲解内容" width="65%" :fullscreen="isFullScreen" :visible.sync="showSetAnalysis">
       <div>
-        <el-form ref="postForm" :model="analysisForm" :rules="rules" size="small" class="form-container">
-          <el-form-item prop="article_analysis" label-width="45px" label="单词:" style="margin-bottom: 30px;">
-            <el-button type="success" @click="goAddOneWord">
-              添加一个单词
-            </el-button>
+        <el-form ref="postForm" :model="postForm.article_analysis" :rules="rules" size="small" class="form-container">
+          <el-form-item prop="words" label-width="45px" label="单词:" style="margin-bottom: 30px;">
+            <div>
+              <el-tag
+                v-for="(item, index) in postForm.article_analysis.words"
+                :key="index"
+                closable
+                type="success"
+                :disable-transitions="false"
+                @click="editWord(item)"
+                @close="deleteWord(item)"
+              >
+                {{ item.ename }}
+              </el-tag>
+              <el-button class="button-new-tag" size="small" @click="goAddOneWord">+ New Word</el-button>
+            </div>
           </el-form-item>
-          <el-form-item prop="article_analysis" label-width="45px" label="句子:" style="margin-bottom: 30px;">
-            <el-button type="success" @click="goAddOneSentence">
-              添加一个句子
-            </el-button>
+          <el-form-item prop="sentence" label-width="45px" label="句子:" style="margin-bottom: 30px;">
+            <div>
+              <el-tag
+                v-for="(item, index) in postForm.article_analysis.sentence"
+                :key="index"
+                closable
+                type="success"
+                :disable-transitions="false"
+                @click="editSentence(item)"
+                @close="deleteSentence(item)"
+              >
+                {{ item.ename }}
+              </el-tag>
+              <el-button class="button-new-tag" size="small" @click="goAddOneSentence">+ New Sentence</el-button>
+            </div>
           </el-form-item>
-          <el-form-item prop="article_analysis" label-width="45px" label="音频:" style="margin-bottom: 30px;" />
-          <el-form-item prop="article_analysis" label-width="45px" label="视频:" style="margin-bottom: 30px;" />
+          <el-form-item prop="analysis_audio" label-width="45px" label="音频:" style="margin-bottom: 30px;">
+            <el-input v-model="postForm.article_analysis.analysis_audio" placeholder="请输入内容" />
+            <SingleFile v-model="postForm.article_analysis.analysis_audio" />
+          </el-form-item>
+          <el-form-item prop="analysis_video" label-width="45px" label="视频:" style="margin-bottom: 30px;">
+            <el-input v-model="postForm.article_analysis.analysis_video" placeholder="请输入内容" />
+            <SingleFile v-model="postForm.article_analysis.analysis_video" />
+          </el-form-item>
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="showSetAnalysis = false">取 消</el-button>
-        <el-button type="primary" @click="showSetAnalysis = true">确 定</el-button>
+        <el-button size="small" @click="showSetAnalysis = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="setAllAnalysis">确 定</el-button>
       </div>
+      <!--添加单词 5个-->
       <el-dialog
         width="50%"
-        title="添加单词"
+        title="添加重点单词"
         :visible.sync="showWordBox"
         append-to-body
       >
         <div>
-          <el-form ref="postForm" :model="analysisWords" :rules="rules" size="small" class="form-container">
-            <el-form-item prop="ename" label-width="80px" label="英文">
+          <el-form ref="postForm2" :model="analysisWords" :rules="rules" size="small" class="form-container">
+            <el-form-item prop="ename" label-width="80px" label="英文单词">
               <el-input v-model="analysisWords.ename" placeholder="请输入内容" />
             </el-form-item>
-            <el-form-item prop="symbol" label-width="80px" label="音标">
+            <el-form-item prop="symbol" label-width="80px" label="单词音标">
               <el-input v-model="analysisWords.symbol" placeholder="请输入内容" />
             </el-form-item>
-            <el-form-item prop="cname" label-width="80px" label="中文">
+            <el-form-item prop="cname" label-width="80px" label="单词中文">
               <el-input v-model="analysisWords.cname" placeholder="请输入内容" />
             </el-form-item>
-            <el-form-item prop="sentence" label-width="80px" label="例句">
+            <el-form-item prop="sentence" label-width="80px" label="例句英文">
               <el-input v-model="analysisWords.sentence" placeholder="请输入内容" />
             </el-form-item>
-            <el-form-item prop="sentence" label-width="80px" label="例句中文">
+            <el-form-item prop="csentence" label-width="80px" label="例句中文">
               <el-input v-model="analysisWords.csentence" placeholder="请输入内容" />
             </el-form-item>
             <el-form-item prop="wordAudio" label-width="80px" label="单词发音">
@@ -163,10 +192,43 @@
             </el-form-item>
           </el-form>
         </div>
-
         <div slot="footer" class="dialog-footer">
-          <el-button @click="showWordBox = false">关 闭</el-button>
-          <el-button type="primary" @click="showWordBox = true">设 置</el-button>
+          <el-button size="small" @click="showWordBox = false">关 闭</el-button>
+          <el-button type="primary" size="small" @click="setOneWord">设 置</el-button>
+        </div>
+      </el-dialog>
+      <!--添加句子 2个-->
+      <el-dialog
+        width="50%"
+        title="添加重点句子"
+        :visible.sync="showSentenceBox"
+        append-to-body
+      >
+        <div>
+          <el-form ref="postForm3" :model="analysisSentence" :rules="rules" size="small" class="form-container">
+            <el-form-item prop="ename" label-width="80px" label="句子英文">
+              <el-input v-model="analysisSentence.ename" placeholder="请输入内容" />
+            </el-form-item>
+            <el-form-item prop="cname" label-width="80px" label="句子中文">
+              <el-input v-model="analysisSentence.cname" placeholder="请输入内容" />
+            </el-form-item>
+            <el-form-item prop="sentenceAudio" label-width="80px" label="句子音频">
+              <el-input v-model="analysisSentence.sentenceAudio" placeholder="请输入内容" />
+              <SingleFile v-model="analysisSentence.sentenceAudio" />
+            </el-form-item>
+            <el-form-item prop="teacherAudio" label-width="80px" label="老师音频">
+              <el-input v-model="analysisSentence.teacherAudio" placeholder="请输入内容" />
+              <SingleFile v-model="analysisSentence.teacherAudio" />
+            </el-form-item>
+            <el-form-item prop="video" label-width="80px" label="视频">
+              <el-input v-model="analysisSentence.video" placeholder="请输入内容" />
+              <SingleFile v-model="analysisSentence.video" />
+            </el-form-item>
+          </el-form>
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button size="small" @click="showSentenceBox = false">关 闭</el-button>
+          <el-button type="primary" size="small" @click="setOneSentence">设 置</el-button>
         </div>
       </el-dialog>
     </el-dialog>
@@ -178,6 +240,7 @@ import Tinymce from '@/components/Tinymce'
 import SingleFile from '@/components/Upload/singleFile'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
+// import waves from '@/directive/waves' // Waves directive
 // import { validURL } from '@/utils/validate'
 // import { Loading } from 'element-ui'
 // import { searchUser } from '@/api/remoteSearch'
@@ -203,7 +266,7 @@ const defaultForm = {
   pay_price: '', // 支付价格
   pay_person_num: '' // 购买人数
 }
-const defaultAnalysisForm = {
+/* const defaultAnalysisForm = {
   words: [
     {
       ename: 'learn',
@@ -217,7 +280,7 @@ const defaultAnalysisForm = {
       video: 'http://www.bejson.com/'
     },
     {
-      ename: 'learn',
+      ename: 'learn2',
       symbol: '美 /lɝn/ ',
       cname: 'vt. 学习；得知；认识到',
       sentence: '',
@@ -228,10 +291,23 @@ const defaultAnalysisForm = {
       video: 'http://www.bejson.com/'
     }
   ],
-  sentence: [],
+  sentence: [
+    {
+      ename: 'Shortcut for saving one or more documents to the database.Shortcut for saving one or more documents to the database.',
+      cname: '将一个或多个文档保存到数据库的快捷方式。',
+      audio: 'http://www.bejson.com/',
+      video: 'http://www.bejson.com/'
+    },
+    {
+      ename: 'Shortcut for saving one or more documents to the database.  ',
+      cname: '将一个或多个文档保存到数据库的快捷方式。',
+      audio: 'http://www.bejson.com/',
+      video: 'http://www.bejson.com/'
+    }
+  ],
   analysis_audio: '',
   analysis_video: ''
-}
+}*/
 
 export default {
   name: 'ArticleDetail',
@@ -255,6 +331,13 @@ export default {
       }
     }
     return {
+      analysisSentence: {
+        ename: 'Shortcut for saving one or more documents to the database.  ',
+        cname: '将一个或多个文档保存到数据库的快捷方式。',
+        sentenceAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
+        teacherAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
+        video: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm'
+      },
       analysisWords: {
         ename: 'learn',
         symbol: '美 /lɝn/ ',
@@ -309,7 +392,7 @@ export default {
       deployMessageData: '发布文章成功',
       updateMessageData: '更新文章成功',
       postForm: Object.assign({}, defaultForm),
-      analysisForm: Object.assign({}, defaultAnalysisForm),
+      // analysisForm: Object.assign({}, defaultAnalysisForm),
       loading: false,
       userListOptions: [],
       rules: {
@@ -343,6 +426,33 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
+    editSentence(item) {
+      this.analysisSentence = item
+      this.showSentenceBox = true
+    },
+    editWord(item) {
+      this.analysisWords = item
+      this.showWordBox = true
+    },
+    // 添加讲解数据
+    setAllAnalysis() {
+      // 转换为json字符串
+      this.postForm.article_analysis = JSON.stringify(this.analysisForm)
+    },
+    deleteSentence(item) {
+      this.analysisForm.sentence.splice(this.analysisForm.sentence.indexOf(item), 1)
+    },
+    deleteWord(item) {
+      this.analysisForm.words.splice(this.analysisForm.words.indexOf(item), 1)
+    },
+    setOneSentence() {
+      this.analysisForm.sentence.push(this.analysisSentence)
+      this.showSentenceBox = false
+    },
+    setOneWord() {
+      this.analysisForm.words.push(this.analysisWords)
+      this.showWordBox = false
+    },
     goAddOneSentence() {
       this.showSentenceBox = true
     },
@@ -354,6 +464,8 @@ export default {
     },
     fetchData(id) {
       fetchArticle(id).then(response => {
+        // 转换为对象进行渲染数据
+        response.data.article_analysis = JSON.parse(response.data.article_analysis)
         this.postForm = response.data
         this.setTagsViewTitle()
       }).catch(err => {
@@ -447,6 +559,17 @@ export default {
     position: absolute;
     right: -10px;
     top: 0px;
+  }
+  .el-tag + .el-tag {
+    margin-left: 10px;
+  }
+  .button-new-tag {
+    margin-left: 10px;
+    height: 32px;
+    line-height: 30px;
+    padding-top: 0;
+    margin-top: 6px;
+    padding-bottom: 0;
   }
 }
 </style>

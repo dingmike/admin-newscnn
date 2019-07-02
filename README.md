@@ -212,3 +212,6 @@ Modern browsers and Internet Explorer 10+.
 [MIT](https://github.com/PanJiaChen/vue-element-admin/blob/master/LICENSE)
 
 Copyright (c) 2017-present PanJiaChen
+
+## npm检查代码命令
+npm run lint -- --fix

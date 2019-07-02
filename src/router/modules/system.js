@@ -27,7 +27,7 @@ const systemRouter = {
     {
       path: 'requestLog',
       component: () => import('@/views/errorLog/requestLog'),
-      name: 'ErrorLog',
+      name: 'requestLog',
       meta: { title: 'requestLog', icon: 'bug' }
     },
     {

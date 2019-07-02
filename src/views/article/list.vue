@@ -77,10 +77,12 @@
 <script>
 import { fetchList } from '@/api/article'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import waves from '@/directive/waves' // Waves directive
 
 export default {
   name: 'ArticleList',
   components: { Pagination },
+  directives: { waves },
   filters: {
     statusTypeFilter(status) {
       const statusArr = ['danger', 'success', 'info']

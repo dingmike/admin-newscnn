@@ -13,7 +13,7 @@
       :on-exceed="handleExceed"
       :file-list="fileList"
     >
-      <el-button size="mini" type="primary">点击上传</el-button>
+      <el-button size="mini" type="primary" style="float: left">上传</el-button>
       <div slot="tip" class="el-upload__tip">上传文件大小不超过50M</div>
     </el-upload>
   </div>
@@ -85,7 +85,13 @@ export default {
 <style lang="scss" scoped>
     @import "~@/styles/mixin.scss";
     .upload-container {
-        width: 400px;
+      width: 400px;
+      margin-top: 4px;
+      .image-uploader{
+        .el-upload{
+          text-align: left;
+        }
+      }
     }
 
 </style>
