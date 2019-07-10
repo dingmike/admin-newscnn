@@ -2,13 +2,13 @@
   <div class="app-container">
     <el-card class="operate-container" shadow="never">
       <i class="el-icon-tickets" style="margin-top: 5px" />
-      <span style="margin-top: 5px">数据列表</span>
+      <span style="margin-top: 5px">分类列表</span>
       <el-button
         class="btn-add"
         size="mini"
         @click="handleAddProductCate()"
       >
-        添加
+        添 加
       </el-button>
     </el-card>
     <div class="table-container">
