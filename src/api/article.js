@@ -32,11 +32,11 @@ export function fetchArticle(id) {
   })
 }
 
-export function fetchPv(pv) {
+export function deleteArticle(data) {
   return request({
-    url: '/article/pv',
-    method: 'get',
-    params: { pv }
+    url: '/backend/article/delete',
+    method: 'post',
+    data
   })
 }
 

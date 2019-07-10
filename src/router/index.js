@@ -15,6 +15,7 @@ import wechatRouter from './modules/wechat'
 import articleOrderRouter from './modules/articleOrder'
 import articleRouter from './modules/article'
 import systemRouter from './modules/system'
+import articleCateRouter from './modules/articleCate'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -179,6 +180,7 @@ export const asyncRoutes = [
   nestedRouter,
   tableRouter,
   wechatRouter,
+  articleCateRouter,
   articleRouter,
   articleOrderRouter,
   systemRouter,
