@@ -7,6 +7,14 @@ export function fetchList(query) {
     params: query
   })
 }
+// 所有已发布的分类
+export function fetchAllList(query) {
+  return request({
+    url: '/backend/category/allList',
+    method: 'get',
+    params: query
+  })
+}
 
 export function fetchCategoryDetail(id) {
   return request({

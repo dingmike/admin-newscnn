@@ -16,7 +16,8 @@ const articleCateRouter = {
       path: 'add',
       component: () => import('@/views/articleCate/add'),
       name: 'AddArticleCate',
-      meta: { title: 'addArticleCate', icon: 'edit' }
+      meta: { title: 'addArticleCate', icon: 'edit' },
+      hidden: true
     },
     {
       path: 'update',
@@ -30,6 +31,27 @@ const articleCateRouter = {
       component: () => import('@/views/articleCate/index'),
       name: 'ArticleCateList',
       meta: { title: 'articleCateList', icon: 'list' }
+    },
+    // 课程目录
+    {
+      path: 'addCourse',
+      component: () => import('@/views/course/add'),
+      name: 'AddCourse',
+      meta: { title: 'addCourse', icon: 'edit' },
+      hidden: true
+    },
+    {
+      path: 'updateCourse',
+      component: () => import('@/views/course/update'),
+      name: 'UpdateCourse',
+      meta: { title: 'updateCourse', noCache: true, activeMenu: '/course/list' },
+      hidden: true
+    },
+    {
+      path: 'courseList',
+      component: () => import('@/views/course/index'),
+      name: 'CourseList',
+      meta: { title: 'courseList', icon: 'list' }
     }
   ]
 }
