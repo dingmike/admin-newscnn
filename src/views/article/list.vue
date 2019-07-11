@@ -1,76 +1,88 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-plus" size="small" @click="addNewArticle">新建文章</el-button>
-    </div>
-    <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="标题" width="240px">
-        <template slot-scope="scope">
-          <span>{{ scope.row.article_title }}</span>
-        </template>
-      </el-table-column>
+    <el-card class="operate-container" shadow="never">
+      <i class="el-icon-tickets" style="margin-top: 5px" />
+      <span style="margin-top: 5px">分类列表</span>
+      <el-button
+        v-waves
+        class="btn-add"
+        size="mini"
+        type="primary"
+        icon="el-icon-plus"
+        @click="addNewArticle"
+      >添 加</el-button>
+    </el-card>
+    <div class="table-container">
+      <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" style="width: 100%" stripe highlight-current-row>
+        <el-table-column align="center" label="标题" width="240">
+          <template slot-scope="scope">
+            <span>{{ scope.row.article_title }}</span>
+          </template>
+        </el-table-column>
 
-      <el-table-column width="120px" align="center" label="作者">
-        <template slot-scope="scope">
-          <span>{{ scope.row.article_author }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column width="120px" align="center" label="价格">
-        <template slot-scope="scope">
-          <span>{{ scope.row.pay_price }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column width="120px" align="center" label="翻译价格">
-        <template slot-scope="scope">
-          <span>{{ scope.row.translate_price }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column width="120px" align="center" label="难度">
-        <template slot-scope="scope">
-          <span>{{ scope.row.article_grade | gradeFilter }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="状态" width="110">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusTypeFilter">
-            {{ row.status | statusFilter }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column width="180px" align="center" label="发布时间">
-        <template slot-scope="scope">
-          <span>{{ scope.row.deploy_time | parseUTCtime }}</span>
-          <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
-        </template>
-      </el-table-column>
+        <el-table-column align="center" label="作者">
+          <template slot-scope="scope">
+            <span>{{ scope.row.article_author }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="价格">
+          <template slot-scope="scope">
+            <span>{{ scope.row.pay_price }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="翻译价格">
+          <template slot-scope="scope">
+            <span>{{ scope.row.translate_price }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="难度">
+          <template slot-scope="scope">
+            <span>{{ scope.row.article_grade | gradeFilter }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="状态">
+          <template slot-scope="{row}">
+            <el-tag :type="row.status | statusTypeFilter">
+              {{ row.status | statusFilter }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="发布时间">
+          <template slot-scope="scope">
+            <span>{{ scope.row.deploy_time | parseUTCtime }}</span>
+            <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
+          </template>
+        </el-table-column>
 
-      <!-- <el-table-column width="100px" label="Importance">
-        <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
-        </template>
-      </el-table-column>-->
+        <!-- <el-table-column width="100px" label="Importance">
+          <template slot-scope="scope">
+            <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
+          </template>
+        </el-table-column>-->
 
-      <!--     <el-table-column min-width="300px" label="Title">
-        <template slot-scope="{row}">
-          <router-link :to="'/example/edit/'+row.id" class="link-type">
-            <span>{{ row.title }}</span>
-          </router-link>
-        </template>
-      </el-table-column>-->
-
-      <el-table-column align="left" label="Actions" width="100px">
-        <template slot-scope="scope">
-          <div>
-            <router-link style="display: inline-block" :to="'/article/edit/'+scope.row.id">
-              <el-button type="primary" size="small" icon="el-icon-edit" circle />
+        <!--     <el-table-column min-width="300px" label="Title">
+          <template slot-scope="{row}">
+            <router-link :to="'/example/edit/'+row.id" class="link-type">
+              <span>{{ row.title }}</span>
             </router-link>
-            <el-button v-show="scope.row.status!==1" type="danger" size="small" icon="el-icon-delete" circle @click="handleModifyStatus(scope.row)" />
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+          </template>
+        </el-table-column>-->
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+        <el-table-column align="left" label="Actions" width="140">
+          <template slot-scope="scope">
+            <div>
+              <router-link style="display: inline-block" :to="'/article/edit/'+scope.row.id">
+                <el-button type="primary" size="small" icon="el-icon-edit" circle />
+              </router-link>
+              <el-button v-show="scope.row.status!==1" type="danger" size="small" icon="el-icon-delete" circle @click="handleModifyStatus(scope.row)" />
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="pagination-container">
+      <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    </div>
   </div>
 </template>
 
@@ -142,7 +154,7 @@ export default {
   data() {
     return {
       list: null,
-      fitWidth: false,
+      fitWidth: true,
       total: 0,
       listLoading: true,
       listQuery: {

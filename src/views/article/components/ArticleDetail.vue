@@ -1,6 +1,6 @@
 <template>
   <div class="createPost-container">
-    <el-form ref="postForm" :model="postForm" :rules="rules" size="small" class="form-container">
+    <el-form ref="postForm" :model="postForm" :rules="rules" size="small" class="">
       <sticky :z-index="10" :class-name="'sub-navbar '+postForm.status">
         <!--<CommentDropdown v-model="postForm.comment_disabled" />-->
         <!--<PlatformDropdown v-model="postForm.platforms" />-->
@@ -103,7 +103,7 @@
 
     <el-dialog title="讲解内容" width="65%" :fullscreen="isFullScreen" :visible.sync="showSetAnalysis">
       <div>
-        <el-form ref="postForm" :model="postForm.article_analysis" :rules="rules" size="small" class="form-container">
+        <el-form ref="postForm" :model="postForm.article_analysis" :rules="rules" size="small" class="">
           <el-form-item prop="words" label-width="45px" label="单词:" style="margin-bottom: 30px;">
             <div>
               <el-tag
@@ -158,7 +158,7 @@
         append-to-body
       >
         <div>
-          <el-form ref="postForm2" :model="analysisWords" :rules="rules" size="small" class="form-container">
+          <el-form ref="postForm2" :model="analysisWords" :rules="rules" size="small" class="">
             <el-form-item prop="ename" label-width="80px" label="英文单词">
               <el-input v-model="analysisWords.ename" placeholder="请输入内容" />
             </el-form-item>
@@ -205,7 +205,7 @@
         append-to-body
       >
         <div>
-          <el-form ref="postForm3" :model="analysisSentence" :rules="rules" size="small" class="form-container">
+          <el-form ref="postForm3" :model="analysisSentence" :rules="rules" size="small" class="">
             <el-form-item prop="ename" label-width="80px" label="句子英文">
               <el-input v-model="analysisSentence.ename" placeholder="请输入内容" />
             </el-form-item>
@@ -266,7 +266,7 @@ const defaultForm = {
   pay_price: '', // 支付价格
   pay_person_num: '' // 购买人数
 }
-/* const defaultAnalysisForm = {
+const defaultAnalysisForm = {
   words: [
     {
       ename: 'learn',
@@ -307,7 +307,7 @@ const defaultForm = {
   ],
   analysis_audio: '',
   analysis_video: ''
-}*/
+}
 
 export default {
   name: 'ArticleDetail',
@@ -394,7 +394,7 @@ export default {
       deployMessageData: '发布文章成功',
       updateMessageData: '更新文章成功',
       postForm: Object.assign({}, defaultForm),
-      // analysisForm: Object.assign({}, defaultAnalysisForm),
+      analysisForm: Object.assign({}, defaultAnalysisForm),
       loading: false,
       userListOptions: [],
       rules: {
@@ -429,23 +429,28 @@ export default {
   },
   methods: {
     editSentence(item) {
+      this.isEditSentence = true
       this.analysisSentence = item
       this.showSentenceBox = true
     },
     editWord(item) {
+      this.isEditWord = true
       this.analysisWords = item
       this.showWordBox = true
     },
     // 添加讲解数据
     setAllAnalysis() {
-      // 转换为json字符串
-      this.postForm.article_analysis = JSON.stringify(this.analysisForm)
+      console.log(this.postForm.article_analysis)
+      this.showSetAnalysis = false
+      // this.postForm.article_analysis = JSON.stringify(this.analysisForm)
     },
     deleteSentence(item) {
-      this.postForm.article_analysis.sentence.splice(this.analysisForm.sentence.indexOf(item), 1)
+      // this.postForm.article_analysis.sentence.splice(this.postForm.article_analysis.sentence.indexOf(item), 1)
+      this.postForm.article_analysis.sentence.splice(this.postForm.article_analysis.sentence.indexOf(item), 1)
     },
     deleteWord(item) {
-      this.postForm.article_analysis.words.splice(this.analysisForm.words.indexOf(item), 1)
+      // this.postForm.article_analysis.words.splice(this.postForm.article_analysis.words.indexOf(item), 1)
+      this.postForm.article_analysis.words.splice(this.postForm.article_analysis.words.indexOf(item), 1)
     },
     setOneSentence() {
       if (!this.isEditSentence) {
@@ -461,9 +466,11 @@ export default {
     },
     goAddOneSentence() {
       this.showSentenceBox = true
+      this.isEditSentence = false
     },
     goAddOneWord() {
       this.showWordBox = true
+      this.isEditWord = false
     },
     goSetAnalysis() {
       this.showSetAnalysis = true
@@ -473,6 +480,8 @@ export default {
         // 转换为对象进行渲染数据
         response.data.article_analysis = JSON.parse(response.data.article_analysis)
         this.postForm = response.data
+        // this.analysisForm = JSON.parse(JSON.stringify(this.postForm.article_analysis));
+        // this.postForm.article_analysis = JSON.stringify(this.analysisForm)
         this.setTagsViewTitle()
       }).catch(err => {
         console.log(err)
@@ -492,11 +501,13 @@ export default {
     },
     submitForm() {
       // let loadingInstance = Loading.service(this.LoadingOptions);
+      this.postNow = JSON.parse(JSON.stringify(this.postForm))
+      this.postNow.article_analysis = JSON.stringify(this.postNow.article_analysis)
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true
           if (this.isEdit) {
-            updateArticle(this.postForm).then((res) => {
+            updateArticle(this.postNow).then((res) => {
               // loadingInstance.close();
               if (res.code === 200) {
                 this.$notify({
@@ -509,7 +520,7 @@ export default {
               this.loading = false
             })
           } else {
-            createArticle(this.postForm).then((res) => {
+            createArticle(this.postNow).then((res) => {
               // loadingInstance.close();
               if (res.code === 200) {
                 this.$notify({

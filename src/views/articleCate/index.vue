@@ -18,6 +18,7 @@
         style="width: 100%"
         :data="list"
         border
+        highlight-current-row
       >
         <!--        <el-table-column label="编号" width="100" align="center">
           <template slot-scope="scope">{{scope.row.id}}</template>
