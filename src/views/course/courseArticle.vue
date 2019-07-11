@@ -142,7 +142,7 @@
           label-width="150px"
         >
           <el-form-item label="文章类型：" prop="name">
-            <el-select v-model="courseArticle.course_category" filterable size="mini" placeholder="请选择分类">
+            <el-select v-model="courseArticle.course_category" filterable size="mini" placeholder="请选择分类" @change="changeCate">
               <el-option
                 v-for="item in categories"
                 :key="item.id"
@@ -282,6 +282,10 @@ export default {
     this.fetchCategory()
   },
   methods: {
+    // 加载分类下的文章
+    changeCate(item) {
+      console.log(item)
+    },
     fetchCategory() {
       fetchCategory().then(response => {
         this.categories = response.data
