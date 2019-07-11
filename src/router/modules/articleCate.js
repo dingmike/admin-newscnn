@@ -52,6 +52,13 @@ const articleCateRouter = {
       component: () => import('@/views/course/index'),
       name: 'CourseList',
       meta: { title: 'courseList', icon: 'list' }
+    },
+    {
+      path: 'courseArticle',
+      component: () => import('@/views/course/courseArticle'),
+      name: 'CourseArticle',
+      meta: { title: 'courseArticle', noCache: true, activeMenu: '/course/list' },
+      hidden: true
     }
   ]
 }

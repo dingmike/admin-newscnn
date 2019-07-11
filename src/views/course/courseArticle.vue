@@ -2,11 +2,11 @@
   <div class="app-container">
     <el-card class="operate-container" shadow="never">
       <i class="el-icon-tickets" style="margin-top: 5px" />
-      <span style="margin-top: 5px">分类列表</span>
+      <span style="margin-top: 5px">课程文章列表</span>
       <el-button
         class="btn-add"
         size="mini"
-        @click="handleAddProductCate()"
+        @click="handleAddArticleCate()"
       >
         添 加
       </el-button>
@@ -96,8 +96,8 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              @click="goCourseArticle(scope.$index, scope.row)"
-            >课程文章
+              @click="handleUpdate(scope.$index, scope.row)"
+            >管理文章
             </el-button>
             <el-button
               size="mini"
@@ -126,12 +126,62 @@
         @current-change="handleCurrentChange"
       />
     </div>
+
+    <el-dialog
+      title="课程中的文章"
+      :visible.sync="dialogVisible"
+      width="40%"
+    >
+      <span>课程名称：</span>
+      <span>{{ courseDetail.name }}</span>
+      <el-card class="course-form-container" shadow="never">
+        <el-form
+          ref="courseArticleFrom"
+          :model="courseArticle"
+          :rules="rules"
+          label-width="150px"
+        >
+          <el-form-item label="文章类型：" prop="name">
+            <el-select v-model="courseArticle.course_category" filterable size="mini" placeholder="请选择分类">
+              <el-option
+                v-for="item in categories"
+                :key="item.id"
+                :label="item.category_name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="文章：" prop="name">
+            <el-select v-model="courseArticle.course_category" size="mini" placeholder="请选择文章">
+              <el-option
+                v-for="item in categories"
+                :key="item.id"
+                :label="item.category_name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit('productCateFrom')">提交</el-button>
+            <el-button v-if="!isEdit" @click="resetForm('productCateFrom')">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">关 闭</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 // import {fetchList,deleteProductCate,updateShowStatus,updateNavStatus} from '@/api/articleCate'
-import { fetchList, deleteCourse, updateCourseStatus } from '@/api/course'
+// import { fetchList as fetchCourseArticle, fetchCourseArticleDetail, createCourseArticle, updateCourse } from '@/api/courseArticle'
+import { fetchList as fetchCourseArticle } from '@/api/courseArticle'
+// import { fetchList, deleteCourse, updateCourseStatus } from '@/api/course'
+import { deleteCourse, updateCourseStatus } from '@/api/course'
+import { fetchAllList as fetchCategory } from '@/api/articleCate'
 export default {
   name: 'ProductCateList',
   filters: {
@@ -206,6 +256,10 @@ export default {
   },
   data() {
     return {
+      courseArticle: {},
+      courseArticleList: [],
+      courseDetail: {},
+      dialogVisible: false,
       list: null,
       total: null,
       listLoading: true,
@@ -225,14 +279,17 @@ export default {
   created() {
     this.resetParentId()
     this.getList()
+    this.fetchCategory()
   },
   methods: {
+    fetchCategory() {
+      fetchCategory().then(response => {
+        this.categories = response.data
+      })
+    },
     // 添加文章到课程
     handleAddArticle() {
 
-    },
-    goCourseArticle(index, row) {
-      this.$router.push({ path: '/articleCate/courseArticle', query: { id: row.id }})
     },
     resetParentId() {
       if (this.$route.query.parentId != null) {
@@ -241,12 +298,13 @@ export default {
         this.parentId = 0
       }
     },
-    handleAddProductCate() {
-      this.$router.push('/articleCate/addCourse')
+    handleAddArticleCate() {
+      // this.$router.push('/articleCate/addCourse')
+      this.dialogVisible = true
     },
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
+      fetchCourseArticle(this.listQuery).then(response => {
         this.listLoading = false
         this.list = response.data.docs
         this.total = response.data.total
