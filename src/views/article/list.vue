@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card class="operate-container" shadow="never">
       <i class="el-icon-tickets" style="margin-top: 5px" />
-      <span style="margin-top: 5px">分类列表</span>
+      <span style="margin-top: 5px">文章列表</span>
       <el-button
         v-waves
         class="btn-add"
@@ -14,12 +14,16 @@
     </el-card>
     <div class="table-container">
       <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" style="width: 100%" stripe highlight-current-row>
+        <el-table-column align="center" label="类型" width="140">
+          <template slot-scope="scope">
+            <span>{{ scope.row.category ? scope.row.category.category_name: '无' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column align="center" label="标题" width="240">
           <template slot-scope="scope">
             <span>{{ scope.row.article_title }}</span>
           </template>
         </el-table-column>
-
         <el-table-column align="center" label="作者">
           <template slot-scope="scope">
             <span>{{ scope.row.article_author }}</span>
@@ -27,12 +31,12 @@
         </el-table-column>
         <el-table-column align="center" label="价格">
           <template slot-scope="scope">
-            <span>{{ scope.row.pay_price }}</span>
+            <span>{{ scope.row.pay_price }}元</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="翻译价格">
           <template slot-scope="scope">
-            <span>{{ scope.row.translate_price }}</span>
+            <span>{{ scope.row.translate_price }}元</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="难度">
@@ -40,14 +44,14 @@
             <span>{{ scope.row.article_grade | gradeFilter }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="状态">
+        <el-table-column align="center" label="状态" width="100">
           <template slot-scope="{row}">
             <el-tag :type="row.status | statusTypeFilter">
               {{ row.status | statusFilter }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="发布时间">
+        <el-table-column align="center" label="发布时间" width="140">
           <template slot-scope="scope">
             <span>{{ scope.row.deploy_time | parseUTCtime }}</span>
             <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->

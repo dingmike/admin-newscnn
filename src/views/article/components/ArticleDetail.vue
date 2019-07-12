@@ -75,7 +75,16 @@
             </div>
           </el-col>
         </el-row>
-
+        <el-form-item label="文章类型：" prop="name">
+          <el-select v-model="postForm.category" filterable size="mini" placeholder="请选择分类">
+            <el-option
+              v-for="item in categories"
+              :key="item.id"
+              :label="item.category_name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item style="margin-bottom: 40px;" label-width="45px" label="简介:" prop="article_brief">
           <el-input v-model="postForm.article_brief" :rows="1" type="textarea" class="article-textarea" autosize placeholder="请输入内容" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}字</span>
@@ -247,16 +256,24 @@ import Sticky from '@/components/Sticky' // 粘性header组件
 // import Warning from './Warning'
 // import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'
+import { fetchAllList as fetchCategory } from '@/api/articleCate'
+
 const defaultForm = {
   status: 0, // 发布状态： 1已发布，0：未发布， 2：草稿
   article_title: '', // 文章题目
   chinese_title: '', // 文章中文题目
+  category: '',
   article_author: '', // 文章作者
   article_grade: '', // 文章级别
   memo: '', // 文章说明
   article_content: '', // 文章内容
   article_translate: '', // 文章翻译
-  article_analysis: '', // 文章解析
+  article_analysis: {
+    words: [],
+    sentence: [],
+    analysis_audio: '',
+    analysis_video: ''
+  }, // 文章解析
   article_brief: '', // 文章摘要
   source_uri: '', // 文章外链
   image_uri: '', // 文章图片
@@ -355,6 +372,7 @@ export default {
       showSentenceBox: false,
       showSetAnalysis: false,
       isFullScreen: false,
+      categories: [],
       LoadingOptions: {
         lock: true,
         text: 'Loading',
@@ -421,13 +439,18 @@ export default {
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
-
+    this.fetchCategory()
     // Why need to make a copy of this.$route here?
     // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewTitle function, this.$route is no longer pointing to the current page
     // https://github.com/PanJiaChen/vue-element-admin/issues/1221
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
+    fetchCategory() {
+      fetchCategory().then(response => {
+        this.categories = response.data
+      })
+    },
     editSentence(item) {
       this.isEditSentence = true
       this.analysisSentence = item

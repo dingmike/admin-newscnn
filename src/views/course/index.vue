@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card class="operate-container" shadow="never">
       <i class="el-icon-tickets" style="margin-top: 5px" />
-      <span style="margin-top: 5px">分类列表</span>
+      <span style="margin-top: 5px">课程列表</span>
       <el-button
         class="btn-add"
         size="mini"
@@ -232,6 +232,7 @@ export default {
 
     },
     goCourseArticle(index, row) {
+      // this.$router.push({ name: 'CourseArticle', params: {id: row.id, courseName: row.course_title, courseCategory: row.course_category}})
       this.$router.push({ path: '/articleCate/courseArticle', query: { id: row.id }})
     },
     resetParentId() {

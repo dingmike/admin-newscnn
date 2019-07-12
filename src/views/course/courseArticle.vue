@@ -2,13 +2,13 @@
   <div class="app-container">
     <el-card class="operate-container" shadow="never">
       <i class="el-icon-tickets" style="margin-top: 5px" />
-      <span style="margin-top: 5px">课程文章列表</span>
+      <span style="margin-top: 5px">课程:{{ courseTitle }}</span>
       <el-button
         class="btn-add"
         size="mini"
         @click="handleAddArticleCate()"
       >
-        添 加
+        添加文章
       </el-button>
     </el-card>
     <div class="table-container">
@@ -24,81 +24,23 @@
         <!--        <el-table-column label="编号" width="100" align="center">
           <template slot-scope="scope">{{scope.row.id}}</template>
         </el-table-column>-->
-        <el-table-column label="图标" align="center" width="80">
+        <el-table-column label="文章标题" width="" align="left">
           <template slot-scope="scope">
-            <div class="icon-img">
-              <img :src="scope.row.icon" alt="tu">
-            </div>
+            <span class="font-extra-small">{{ scope.row.article.article_title }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="名称" width="120" align="center">
+        <el-table-column label="中文标题" width="" align="left">
           <template slot-scope="scope">
-            <span class="font-extra-small">{{ scope.row.name }}</span>
+            <span class="font-extra-small">{{ scope.row.article.chinese_title }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="副标题" width="120" align="center">
+        <el-table-column align="center" label="难度">
           <template slot-scope="scope">
-            <span class="font-extra-small">{{ scope.row.course_title }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="价格">
-          <template slot-scope="scope">
-            <span>{{ scope.row.price }}元</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="折扣">
-          <template slot-scope="scope">
-            <span>{{ scope.row.discount }}折</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="天数">
-          <template slot-scope="scope">
-            <span>{{ scope.row.learn_days }}天</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="购买人数">
-          <template slot-scope="scope">
-            <span>{{ scope.row.pay_person_num }}人</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="限购数量">
-          <template slot-scope="scope">
-            <span>{{ scope.row.ticket }}份</span>
-          </template>
-        </el-table-column>
-        <!-- <el-table-column label="课程简介" align="center">
-          <template slot-scope="scope">{{ scope.row.course_brief }}</template>
-        </el-table-column>-->
-        <el-table-column label="备注" align="center">
-          <template slot-scope="scope">
-            <span class="font-extra-small">{{ scope.row.remark }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="状态" width="180" align="center">
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.status"
-              :active-value="1"
-              :inactive-value="0"
-              active-text="已发布"
-              inactive-text="未发布"
-              @change="handleShowStatusChange(scope.$index, scope.row)"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="发布时间" width="150" align="center">
-          <template slot-scope="scope">
-            <span class="font-extra-small">{{ scope.row.deploy_time | parseUTCtime }}</span>
-            <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
+            <span>{{ scope.row.article.article_grade | gradeFilter }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150" align="center">
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              @click="handleUpdate(scope.$index, scope.row)"
-            >管理文章
-            </el-button>
             <el-button
               size="mini"
               @click="handleUpdate(scope.$index, scope.row)"
@@ -130,19 +72,21 @@
     <el-dialog
       title="课程中的文章"
       :visible.sync="dialogVisible"
-      width="40%"
+      width="60%"
     >
-      <span>课程名称：</span>
-      <span>{{ courseDetail.name }}</span>
+      <el-card v-if="isEdit">
+        <span>课程名称：</span>
+        <span> {{ courseArticle.course.name }}</span>
+      </el-card>
       <el-card class="course-form-container" shadow="never">
         <el-form
           ref="courseArticleFrom"
           :model="courseArticle"
           :rules="rules"
-          label-width="150px"
+          label-width="200px"
         >
-          <el-form-item label="文章类型：" prop="name">
-            <el-select v-model="courseArticle.course_category" filterable size="mini" placeholder="请选择分类" @change="changeCate">
+          <el-form-item label="文章类型：" prop="course_category">
+            <el-select v-model="courseArticle.course_category" style="width: 400px" filterable size="small" placeholder="可继续请选择分类" @change="changeCate">
               <el-option
                 v-for="item in categories"
                 :key="item.id"
@@ -151,19 +95,23 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="文章：" prop="name">
-            <el-select v-model="courseArticle.course_category" size="mini" placeholder="请选择文章">
+          <el-form-item label="文章：" prop="article">
+            <el-select v-model="courseArticle.article" v-loadmore="loadmoreOption" style="width: 400px" size="small" filterable placeholder="请选择文章">
               <el-option
-                v-for="item in categories"
+                v-for="item in articleList"
                 :key="item.id"
-                :label="item.category_name"
+                :label="item.chinese_title"
                 :value="item.id"
               />
             </el-select>
+          </el-form-item>
+
+          <el-form-item label="学习天数排序:" class="postInfo-container-item" prop="sort_day">
+            第  <el-input-number v-model="courseArticle.sort_day" size="small" :step="1" :max="365" />  天
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit('productCateFrom')">提交</el-button>
-            <el-button v-if="!isEdit" @click="resetForm('productCateFrom')">重置</el-button>
+            <el-button type="primary" size="small" @click="onSubmit('courseArticleFrom')">提交</el-button>
+            <el-button v-if="!isEdit" size="small" @click="resetForm('courseArticleFrom')">重置</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -177,13 +125,24 @@
 
 <script>
 // import {fetchList,deleteProductCate,updateShowStatus,updateNavStatus} from '@/api/articleCate'
-// import { fetchList as fetchCourseArticle, fetchCourseArticleDetail, createCourseArticle, updateCourse } from '@/api/courseArticle'
-import { fetchList as fetchCourseArticle } from '@/api/courseArticle'
+// import { fetchList as fetchCourseArticle, fetchCourseArticleDetail, createCourseArticle, updateCourseArticle } from '@/api/courseArticle'
+import { fetchList as fetchCourseArticle, createCourseArticle, updateCourseArticle, deleteCourseArticle } from '@/api/courseArticle'
 // import { fetchList, deleteCourse, updateCourseStatus } from '@/api/course'
-import { deleteCourse, updateCourseStatus } from '@/api/course'
+import { updateCourseStatus, fetchCourseDetail } from '@/api/course'
 import { fetchAllList as fetchCategory } from '@/api/articleCate'
+import { fetchCateArticleList } from '@/api/article'
+import loadmore from '@/directive/loadmore'
+
+const defaultCourseArticle = {
+  course_category: '',
+  course: '',
+  article: '',
+  sort_day: ''
+}
+
 export default {
   name: 'ProductCateList',
+  directives: { loadmore },
   filters: {
     statusTypeFilter(status) {
       const statusArr = ['danger', 'success', 'info']
@@ -256,17 +215,39 @@ export default {
   },
   data() {
     return {
-      courseArticle: {},
+      courseTitle: '',
+      courseArticle: Object.assign({}, defaultCourseArticle),
+      articleList: [], // 文章选项
       courseArticleList: [],
       courseDetail: {},
+      categories: [],
       dialogVisible: false,
       list: null,
       total: null,
+      isEdit: false,
       listLoading: true,
       listQuery: {
+        id: '',
         page: 1,
         limit: 10
       },
+      rules: {
+        article: [
+          { required: true, message: '请选择文章', trigger: 'blur' }
+        ],
+        course_category: [
+          { required: true, message: '请选择课程', trigger: 'blur' }
+        ],
+        sort_day: [
+          { required: true, message: '请为课程排序', trigger: 'blur' }
+        ]
+      },
+      cateQuery: {
+        id: '',
+        page: 1,
+        limit: 8
+      },
+      cateArticleTotal: null,
       parentId: 0
     }
   },
@@ -277,23 +258,57 @@ export default {
     }
   },
   created() {
+    debugger
+    this.listQuery.id = this.$route.query.id
+    // this.courseTitle = this.$route.params.courseName
+    // this.courseArticle.course_category = this.$route.params.courseCategory
+    // this.cateQuery.id = this.$route.params.courseCategory
+    this.fetchCourseDetail()
+  },
+  mounted() {
     this.resetParentId()
     this.getList()
-    this.fetchCategory()
   },
   methods: {
+    loadmoreOption() {
+      console.log('获取更多院线名称')
+      this.cateQuery.page = this.cateQuery.page + 1
+      if (this.cateArticleTotal > this.articleList.length) {
+        fetchCateArticleList(this.cateQuery).then(response => {
+          if (response.doc.docs.length) {
+            this.articleList = this.articleList.concat(response.doc.docs)
+          }
+          this.cateArticleTotal = response.doc.total
+        })
+      }
+    },
     // 加载分类下的文章
     changeCate(item) {
-      console.log(item)
+      if (item) {
+        this.cateQuery.id = item
+        this.cateQuery.page = 1
+        this.articleList = []
+      }
+      fetchCateArticleList(this.cateQuery).then(response => {
+        if (response.doc.docs.length) {
+          this.articleList = this.articleList.concat(response.doc.docs)
+        }
+        this.cateArticleTotal = response.doc.total
+      })
     },
     fetchCategory() {
       fetchCategory().then(response => {
         this.categories = response.data
       })
     },
-    // 添加文章到课程
-    handleAddArticle() {
-
+    fetchCourseDetail() {
+      fetchCourseDetail(this.$route.query.id).then(response => {
+        this.courseTitle = response.data.course_title
+        this.courseArticle.course = response.data.id
+        this.courseArticle.course_category = this.cateQuery.id = response.data.course_category
+        this.fetchCategory()
+        this.changeCate()
+      })
     },
     resetParentId() {
       if (this.$route.query.parentId != null) {
@@ -304,6 +319,11 @@ export default {
     },
     handleAddArticleCate() {
       // this.$router.push('/articleCate/addCourse')
+      this.isEdit = false
+      // this.courseArticle= Object.assign({}, defaultCourseArticle)
+      this.courseArticle.course_category = this.cateQuery.id
+      this.courseArticle.article = ''
+      this.courseArticle.sort_day = ''
       this.dialogVisible = true
     },
     getList() {
@@ -339,15 +359,19 @@ export default {
       console.log('handleAddProductCate')
     },
     handleUpdate(index, row) {
-      this.$router.push({ path: '/articleCate/updateCourse', query: { id: row.id }})
+      this.courseArticle = row
+      this.courseArticle.course_category = row.course.course_category
+      this.isEdit = true
+      this.dialogVisible = true
+      // this.$router.push({ path: '/articleCate/updateCourse', query: { id: row.id }})
     },
     handleDelete(index, row) {
-      this.$confirm('是否要删除该分类？', '提示', {
+      this.$confirm('是否要删除该课程文章？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteCourse({ id: row.id }).then(response => {
+        deleteCourseArticle({ id: row.id }).then(response => {
           console.log(response)
           this.$message({
             message: '删除成功',
@@ -357,6 +381,50 @@ export default {
           this.getList()
         })
       })
+    },
+    onSubmit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$confirm('是否提交数据？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            if (this.isEdit) {
+              updateCourseArticle(this.courseArticle).then(response => {
+                this.$message({
+                  message: '修改成功',
+                  type: 'success',
+                  duration: 1000
+                })
+                this.getList()
+              })
+            } else {
+              createCourseArticle(this.courseArticle).then(response => {
+                this.$refs[formName].resetFields()
+                this.resetForm(formName)
+                this.$message({
+                  message: '提交成功',
+                  type: 'success',
+                  duration: 1000
+                })
+                this.getList()
+              })
+            }
+          })
+        } else {
+          this.$message({
+            message: '验证失败',
+            type: 'error',
+            duration: 1000
+          })
+          return false
+        }
+      })
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+      this.course = Object.assign({}, defaultCourseArticle)
     }
   }
 }

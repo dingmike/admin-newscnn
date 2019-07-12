@@ -7,6 +7,13 @@ export function fetchList(query) {
     params: query
   })
 }
+export function fetchCateArticleList(query) {
+  return request({
+    url: '/backend/article/category/list',
+    method: 'get',
+    params: query
+  })
+}
 
 export function fetchArticleOrderList(query) {
   return request({

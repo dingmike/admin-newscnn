@@ -13,7 +13,7 @@
         <el-input v-model="course.course_title" />
       </el-form-item>
       <el-form-item label="课程类型：" prop="course_category">
-        <el-select v-model="course.course_category" size="mini" placeholder="请选择难度">
+        <el-select v-model="course.course_category" size="mini" placeholder="请选择课程类型">
           <el-option
             v-for="item in categories"
             :key="item.id"
