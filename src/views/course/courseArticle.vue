@@ -34,6 +34,11 @@
             <span class="font-extra-small">{{ scope.row.article.chinese_title }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="排序" width="" align="center">
+          <template slot-scope="scope">
+            <span class="font-extra-small">第-{{ scope.row.sort_day }}-天</span>
+          </template>
+        </el-table-column>
         <el-table-column align="center" label="难度">
           <template slot-scope="scope">
             <span>{{ scope.row.article.article_grade | gradeFilter }}</span>
