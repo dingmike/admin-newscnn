@@ -92,24 +92,28 @@
             <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="150" align="center">
+        <el-table-column label="操作" width="180" align="center">
           <template slot-scope="scope">
             <el-button
               size="mini"
+              type="pirmary"
+              circle
               @click="goCourseArticle(scope.$index, scope.row)"
             >课程文章
             </el-button>
             <el-button
               size="mini"
+              icon="el-icon-edit"
+              circle
               @click="handleUpdate(scope.$index, scope.row)"
-            >编辑
-            </el-button>
+            />
             <el-button
               size="mini"
               type="danger"
+              icon="el-icon-delete"
+              circle
               @click="handleDelete(scope.$index, scope.row)"
-            >删除
-            </el-button>
+            />
           </template>
         </el-table-column>
       </el-table>

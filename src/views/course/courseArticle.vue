@@ -24,6 +24,11 @@
         <!--        <el-table-column label="编号" width="100" align="center">
           <template slot-scope="scope">{{scope.row.id}}</template>
         </el-table-column>-->
+        <el-table-column label="排序" width="120" align="center">
+          <template slot-scope="scope">
+            <span class="font-extra-small">第-{{ scope.row.sort_day }}-天</span>
+          </template>
+        </el-table-column>
         <el-table-column label="文章标题" width="" align="left">
           <template slot-scope="scope">
             <span class="font-extra-small">{{ scope.row.article.article_title }}</span>
@@ -34,11 +39,7 @@
             <span class="font-extra-small">{{ scope.row.article.chinese_title }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="排序" width="" align="center">
-          <template slot-scope="scope">
-            <span class="font-extra-small">第-{{ scope.row.sort_day }}-天</span>
-          </template>
-        </el-table-column>
+
         <el-table-column align="center" label="难度">
           <template slot-scope="scope">
             <span>{{ scope.row.article.article_grade | gradeFilter }}</span>
@@ -48,15 +49,17 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
+              icon="el-icon-edit"
+              circle
               @click="handleUpdate(scope.$index, scope.row)"
-            >编辑
-            </el-button>
+            />
             <el-button
               size="mini"
               type="danger"
+              icon="el-icon-delete"
+              circle
               @click="handleDelete(scope.$index, scope.row)"
-            >删除
-            </el-button>
+            />
           </template>
         </el-table-column>
       </el-table>
