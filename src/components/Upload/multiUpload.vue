@@ -26,7 +26,12 @@ export default {
   name: 'MultiUpload',
   props: {
     // 图片属性数组
-    value: Array,
+    value: {
+      type: Array,
+      default: function() {
+        return []
+      }
+    },
     // 最大上传图片数量
     maxCount: {
       type: Number,
