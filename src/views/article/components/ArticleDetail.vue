@@ -179,7 +179,7 @@
               <el-input v-model="analysisWords.cname" placeholder="请输入内容" />
             </el-form-item>
             <el-form-item prop="sentence" label-width="80px" label="单词讲解">
-              <Tinymce v-if="showWordBox" ref="editor" v-model="analysisWords.sentence" :height="300" />
+              <Tinymce v-if="showWordBox" ref="editor" v-model="analysisWords.sentence" :height="200" />
             </el-form-item>
             <!--<el-form-item prop="sentence" label-width="80px" label="例句英文">
               <el-input v-model="analysisWords.sentence" placeholder="请输入内容" />
