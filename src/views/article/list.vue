@@ -19,9 +19,14 @@
             <span>{{ scope.row.category ? scope.row.category.category_name: '无' }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="标题" width="240">
+        <!--    <el-table-column align="center" label="英文标题" width="240">
           <template slot-scope="scope">
             <span>{{ scope.row.article_title }}</span>
+          </template>
+        </el-table-column>-->
+        <el-table-column align="center" label="中文标题" width="240">
+          <template slot-scope="scope">
+            <span>{{ scope.row.chinese_title }}</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="作者">

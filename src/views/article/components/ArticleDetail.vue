@@ -161,10 +161,11 @@
       </div>
       <!--添加单词 5个-->
       <el-dialog
-        width="50%"
+        width="65%"
         title="添加重点单词"
         :visible.sync="showWordBox"
         append-to-body
+        @close="showWordBox = false"
       >
         <div>
           <el-form ref="postForm2" :model="analysisWords" :rules="rules" size="small" class="">
@@ -177,12 +178,15 @@
             <el-form-item prop="cname" label-width="80px" label="单词中文">
               <el-input v-model="analysisWords.cname" placeholder="请输入内容" />
             </el-form-item>
-            <el-form-item prop="sentence" label-width="80px" label="例句英文">
+            <el-form-item prop="sentence" label-width="80px" label="单词讲解">
+              <Tinymce v-if="showWordBox" ref="editor" v-model="analysisWords.sentence" :height="300" />
+            </el-form-item>
+            <!--<el-form-item prop="sentence" label-width="80px" label="例句英文">
               <el-input v-model="analysisWords.sentence" placeholder="请输入内容" />
-            </el-form-item>
-            <el-form-item prop="csentence" label-width="80px" label="例句中文">
+            </el-form-item>-->
+            <!--  <el-form-item prop="csentence" label-width="80px" label="例句中文">
               <el-input v-model="analysisWords.csentence" placeholder="请输入内容" />
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item prop="wordAudio" label-width="80px" label="单词发音">
               <el-input v-model="analysisWords.wordAudio" placeholder="请输入内容" />
               <SingleFile v-model="analysisWords.wordAudio" />
@@ -208,19 +212,24 @@
       </el-dialog>
       <!--添加句子 2个-->
       <el-dialog
-        width="50%"
+        width="70%"
         title="添加重点句子"
         :visible.sync="showSentenceBox"
         append-to-body
+        @close="showSentenceBox = false"
       >
         <div>
           <el-form ref="postForm3" :model="analysisSentence" :rules="rules" size="small" class="">
             <el-form-item prop="ename" label-width="80px" label="句子英文">
-              <el-input v-model="analysisSentence.ename" placeholder="请输入内容" />
+              <!--<el-input v-model="analysisSentence.ename" placeholder="请输入内容" />-->
+              <Tinymce v-if="showSentenceBox" ref="editor" v-model="analysisSentence.ename" :height="200" />
             </el-form-item>
-            <el-form-item prop="cname" label-width="80px" label="句子中文">
+            <el-form-item prop="cname" label-width="80px" label="句子讲解">
+              <Tinymce v-if="showSentenceBox" ref="editor" v-model="analysisSentence.cname" :height="200" />
+            </el-form-item>
+            <!-- <el-form-item prop="cname" label-width="80px" label="句子中文">
               <el-input v-model="analysisSentence.cname" placeholder="请输入内容" />
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item prop="sentenceAudio" label-width="80px" label="句子音频">
               <el-input v-model="analysisSentence.sentenceAudio" placeholder="请输入内容" />
               <SingleFile v-model="analysisSentence.sentenceAudio" />

@@ -90,6 +90,8 @@ export default {
       window.tinymce.init({
         language: this.language,
         selector: `#${this.tinymceId}`,
+        // fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt",
+        fontsize_formats: '8px 10px 12px 14px 16px 18px 24px 36px',
         height: this.height,
         body_class: 'panel-body ',
         object_resizing: false,
