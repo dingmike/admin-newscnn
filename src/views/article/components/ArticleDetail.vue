@@ -134,13 +134,14 @@
               <el-tag
                 v-for="(item, index) in postForm.article_analysis.sentence"
                 :key="index"
+                class="own-hidden-words"
                 closable
                 type="success"
                 :disable-transitions="false"
                 @click="editSentence(item)"
                 @close="deleteSentence(item)"
               >
-                {{ item.ename }}
+                {{ item.title }}
               </el-tag>
               <el-button class="button-new-tag" size="small" @click="goAddOneSentence">+ New Sentence</el-button>
             </div>
@@ -220,6 +221,11 @@
       >
         <div>
           <el-form ref="postForm3" :model="analysisSentence" :rules="rules" size="small" class="">
+
+            <el-form-item prop="ename" label-width="80px" label="标题">
+              <el-input v-model="analysisSentence.title" placeholder="请输入标题" />
+            </el-form-item>
+
             <el-form-item prop="ename" label-width="80px" label="句子英文">
               <!--<el-input v-model="analysisSentence.ename" placeholder="请输入内容" />-->
               <Tinymce v-if="showSentenceBox" ref="editor" v-model="analysisSentence.ename" :height="200" />
