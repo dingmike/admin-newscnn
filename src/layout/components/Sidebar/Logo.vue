@@ -24,8 +24,8 @@ export default {
   },
   data() {
     return {
-      title: 'Vue Element Admin',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      title: '英文能力',
+      logo: 'http://mmbiz.qpic.cn/mmbiz_png/HkiaESSvHlRdztvkBUappV7XLNxSUgakszZcg6h4cyPps8JoIlBgBCF7uuFFdia9dTFQAN5AMR6VfjibR84SNh1og/640?wx_fmt=png&wxfrom=200'
     }
   }
 }
