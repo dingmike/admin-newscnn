@@ -31,6 +31,8 @@ export default {
     wechat: '微信公众号',
     menu: '微信菜单',
     user: '微信用户',
+    banner: '广告管理',
+    bannerlist: '广告管理',
     article: '文章管理',
     articleCate: '分类管理',
     addArticleCate: '添加分类',
