@@ -46,7 +46,8 @@
       </el-form-item>
       <el-form-item label="课程简介：" prop="course_brief">
         <div class="editor-container">
-          <markdown-editor ref="markdownEditor" v-model="course.course_brief" :language="language" height="300px" />
+          <!--<markdown-editor ref="markdownEditor" v-model="course.course_brief" :language="language" height="300px" />-->
+          <Tinymce ref="editor" v-model="course.course_brief" :height="300" />
         </div>
       </el-form-item>
       <el-form-item>
@@ -61,7 +62,8 @@
 import { fetchCourseDetail, createCourse, updateCourse } from '@/api/course'
 import { fetchAllList as fetchCategory } from '@/api/articleCate'
 import SingleUpload from '@/components/Upload/singleUpload'
-import MarkdownEditor from '@/components/MarkdownEditor'
+// import MarkdownEditor from '@/components/MarkdownEditor'
+import Tinymce from '@/components/Tinymce'
 import { Loading } from 'element-ui'
 
 const defaultProductCate = {
@@ -74,7 +76,7 @@ const defaultProductCate = {
 }
 export default {
   name: 'CourseDetail',
-  components: { SingleUpload, MarkdownEditor },
+  components: { SingleUpload, Tinymce },
   filters: {
     filterLabelFilter(index) {
       if (index === 0) {
@@ -119,6 +121,13 @@ export default {
         ],
         course_category: [
           { required: true, message: '请选择课程分类', trigger: 'blur' }
+        ],
+        remark: [
+          { required: false, message: '请输入课程备注', trigger: 'blur' },
+          { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }
+        ],
+        course_brief: [
+          { required: true, message: '请输入课程简介', trigger: 'blur' }
         ]
       }
     }

@@ -29,13 +29,16 @@
       <el-table-column width="280" align="center" label="广告类型（位置）">
         <template slot-scope="scope">
           <span>{{ scope.row.category | typeFilter }}</span>
-          <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
+        </template>
+      </el-table-column>
+      <el-table-column width="280" align="center" label="文字说明">
+        <template slot-scope="scope">
+          <span>{{ scope.row.memo }}</span>
         </template>
       </el-table-column>
       <el-table-column width="200" align="center" label="状态">
         <template slot-scope="scope">
           <span>{{ scope.row.status ? '启用' : '禁用' }}</span>
-          <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
         </template>
       </el-table-column>
       <el-table-column align="left" label="操作" width="300">
@@ -88,6 +91,9 @@
         <el-form-item label="跳转链接：" prop="url">
           <el-input v-model="bannerDetail.url" />
         </el-form-item>
+        <el-form-item label="跳转链接：" prop="memo">
+          <el-input v-model="bannerDetail.memo" type="textarea" :autosize="true" />
+        </el-form-item>
         <el-form-item label="状态：" prop="status">
           <el-radio-group v-model="bannerDetail.status">
             <el-radio :label="1">启用</el-radio>
@@ -138,24 +144,6 @@ export default {
         default:
           break
       }
-    },
-    parseUTCtime(UTCDateString) {
-      if (!UTCDateString) {
-        return '-'
-      }
-      function formatFunc(str) { // 格式化显示
-        return str > 9 ? str : '0' + str
-      }
-      const date2 = new Date(UTCDateString) // 这步是关键
-      const year = date2.getFullYear()
-      const mon = formatFunc(date2.getMonth() + 1)
-      const day = formatFunc(date2.getDate())
-      let hour = date2.getHours()
-      const noon = hour >= 12 ? 'PM' : 'AM'
-      hour = hour >= 12 ? hour - 12 : hour
-      hour = formatFunc(hour)
-      const min = formatFunc(date2.getMinutes())
-      return year + '-' + mon + '-' + day + ' ' + noon + ' ' + hour + ':' + min
     }
   },
   data() {
@@ -165,10 +153,10 @@ export default {
         outputType: 'jpg', // 裁剪生成图片的格式
         canScale: true, // 图片是否允许滚轮缩放
         autoCrop: true, // 是否默认生成截图框
-        autoCropWidth: 640, // 默认生成截图框宽度
-        autoCropHeight: 320, // 默认生成截图框高度
+        autoCropWidth: 570, // 默认生成截图框宽度
+        autoCropHeight: 242, // 默认生成截图框高度
         fixed: false, // 是否开启截图框宽高固定比例
-        fixedNumber: [2, 1] // 截图框的宽高比例
+        fixedNumber: [570, 242] // 截图框的宽高比例
       },
       dialogTitle: '添加广告',
       isEdit: false,
@@ -199,13 +187,17 @@ export default {
       rules: {
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' },
-          { min: 2, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }
+          { min: 2, max: 20, message: '长度在 2 到 30 个字符', trigger: 'blur' }
         ],
         category: [
           { required: true, message: '请选择广告类型', trigger: 'blur' }
         ],
         img_url: [
           { required: true, message: '请上传图片', trigger: 'blur' }
+        ],
+        memo: [
+          { required: false, message: '请输入文字说明', trigger: 'blur' },
+          { min: 2, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }
         ]
       },
       listQuery: {
@@ -220,29 +212,7 @@ export default {
         text: '正在加载...',
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
-      },
-      orderType: [
-        {
-          label: '新创建',
-          value: 0
-        },
-        {
-          label: '预支付创建',
-          value: 1
-        },
-        {
-          label: '已支付',
-          value: 2
-        },
-        {
-          label: '申请退款中',
-          value: 3
-        },
-        {
-          label: '退款完成',
-          value: 4
-        }
-      ]
+      }
     }
   },
   computed: {
@@ -266,15 +236,12 @@ export default {
     this.getList()
   },
   methods: {
-    doCrop(icon, file) {
-      console.log(icon)
-      console.log(file)
-    },
     openAddFiles() {
       this.uploadVisible = true
     },
     handleUpdate(row) {
       this.dialogTitle = '编辑：' + row.name
+      this.isEdit = true
       this.bannerDetail = row
       this.uploadVisible = true
     },
@@ -288,17 +255,20 @@ export default {
           }).then(() => {
             if (this.isEdit) {
               updateBanner(this.bannerDetail).then(response => {
+                this.getList()
+                this.uploadVisible = false
                 this.$message({
                   message: '修改成功',
                   type: 'success',
                   duration: 1000
                 })
-                this.$router.back()
               })
             } else {
               createBanner(this.bannerDetail).then(response => {
                 this.$refs[formName].resetFields()
                 this.resetForm(formName)
+                this.getList()
+                this.uploadVisible = false
                 this.$message({
                   message: '提交成功',
                   type: 'success',
@@ -326,29 +296,34 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      })
-        .then(() => {
-          const loadingInstance6 = Loading.service(this.LoadingOptions)
-          deleteBanner({ id: item.row.id }).then(response => {
+      }).then(() => {
+        const loadingInstance6 = Loading.service(this.LoadingOptions)
+        deleteBanner({ id: item.row.id }).then(response => {
+          if (response.code === 200) {
             loadingInstance6.close()
+            this.getList()
             this.$notify({
               message: '删除成功',
               type: 'success'
             })
-          })
+          } else {
+            this.$notify({
+              message: '删除失败',
+              type: 'success'
+            })
+          }
         })
-        .then(() => {
-          this.getList()
-          this.$message({
-            type: 'success',
-            message: '操作成功!'
-          })
+      }).then(() => {
+        this.getList()
+        this.$message({
+          type: 'success',
+          message: '操作成功!'
         })
+      })
     },
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        debugger
         this.list = response.data.docs
         this.total = response.data.total
         this.listLoading = false

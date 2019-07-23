@@ -180,6 +180,7 @@ export default {
           const loadingInstance6 = Loading.service(this.LoadingOptions)
           deleteFile({ file_key: item.row.file_key }).then(response => {
             loadingInstance6.close()
+            this.getList()
             this.$notify({
               message: '删除成功',
               type: 'success'

@@ -39,7 +39,7 @@
       <div style="clear: both" />
     </el-dialog>
     <el-dialog :visible.sync="dialogVisible" append-to-body>
-      <img width="100%" :src="imageUrl" alt="">
+      <img width="100%" :src="option.img" alt="">
     </el-dialog>
   </div>
 </template>
@@ -81,7 +81,6 @@ export default {
 
   data() {
     return {
-      newImg: this.imageUrl,
       dialogVisible: false,
       dialogVisible1: false,
       // 裁剪组件的基础配置option
