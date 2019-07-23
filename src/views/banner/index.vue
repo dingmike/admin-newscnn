@@ -40,6 +40,14 @@
       </el-table-column>
       <el-table-column align="left" label="操作" width="300">
         <template slot-scope="scope">
+          <el-tooltip class="item" effect="dark" content="编辑" placement="top-start">
+            <el-button
+              size="mini"
+              icon="el-icon-edit"
+              circle
+              @click="handleUpdate(scope.row)"
+            />
+          </el-tooltip>
           <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
             <el-button v-waves type="danger" size="mini" icon="el-icon-delete" circle @click="deleteFile(scope)" />
           </el-tooltip>
@@ -59,7 +67,7 @@
           <el-input v-model="bannerDetail.name" />
         </el-form-item>
         <el-form-item label="广告图类型：" prop="category">
-          <el-select v-model="bannerDetail.category" size="mini" placeholder="请选择课程类型">
+          <el-select v-model="bannerDetail.category" size="mini" placeholder="请选广告图类型">
             <el-option
               v-for="item in categories"
               :key="item.id"
@@ -70,7 +78,12 @@
         </el-form-item>
         <el-form-item label="图片：" prop="img_url">
           <el-input v-model="bannerDetail.img_url" />
-          <SingleFile v-model="bannerDetail.img_url" />
+          <upload-corp
+            v-model="bannerDetail"
+            :cropper-option="cropperOption"
+            :image-url="bannerDetail.img_url"
+          />
+          <!--<SingleFile v-model="bannerDetail.img_url" />-->
         </el-form-item>
         <el-form-item label="跳转链接：" prop="url">
           <el-input v-model="bannerDetail.url" />
@@ -81,7 +94,10 @@
             <el-radio :label="0">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
-
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit('bannerForm')">提交</el-button>
+          <el-button v-if="!isEdit" @click="resetForm('bannerForm')">重置</el-button>
+        </el-form-item>
       </el-form>
 
     </el-dialog>
@@ -89,11 +105,12 @@
 </template>
 
 <script>
-import { fetchList, deleteBanner } from '@/api/banner' // createBanner
+import { fetchList, deleteBanner, createBanner, updateBanner } from '@/api/banner' // createBanner
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // Waves directive
 import { Loading } from 'element-ui'
-import SingleFile from '@/components/Upload/singleFile'
+// import SingleFile from '@/components/Upload/singleFile'
+import UploadCorp from '@/components/Upload/uploadCorp'
 
 const defaultDetail = {
   name: '',
@@ -106,7 +123,7 @@ const defaultDetail = {
 
 export default {
   name: 'Banner',
-  components: { Pagination, SingleFile },
+  components: { Pagination, UploadCorp },
   directives: { waves },
   filters: {
     // //0 默认新创建  1 预支付创建 2 已支付  3 申请退款中 4 退款完成
@@ -143,7 +160,18 @@ export default {
   },
   data() {
     return {
+      cropperOption: {
+        img: '',
+        outputType: 'jpg', // 裁剪生成图片的格式
+        canScale: true, // 图片是否允许滚轮缩放
+        autoCrop: true, // 是否默认生成截图框
+        autoCropWidth: 640, // 默认生成截图框宽度
+        autoCropHeight: 320, // 默认生成截图框高度
+        fixed: false, // 是否开启截图框宽高固定比例
+        fixedNumber: [2, 1] // 截图框的宽高比例
+      },
       dialogTitle: '添加广告',
+      isEdit: false,
       bannerDetail: Object.assign({}, defaultDetail),
       categories: [
         {
@@ -176,8 +204,8 @@ export default {
         category: [
           { required: true, message: '请选择广告类型', trigger: 'blur' }
         ],
-        sort_day: [
-          { required: true, message: '请为课程排序', trigger: 'blur' }
+        img_url: [
+          { required: true, message: '请上传图片', trigger: 'blur' }
         ]
       },
       listQuery: {
@@ -217,12 +245,81 @@ export default {
       ]
     }
   },
+  computed: {
+    /*    cropperOption:{
+      get() {
+        if(this.bannerDetail.img_url){
+          this.cropperOptionInit.img = this.bannerDetail.img_url
+          return this.cropperOptionInit
+        }else {
+          this.cropperOptionInit.img = ''
+          return this.cropperOptionInit
+        }
+
+      },
+      set() {
+
+      }
+    }*/
+  },
   created() {
     this.getList()
   },
   methods: {
+    doCrop(icon, file) {
+      console.log(icon)
+      console.log(file)
+    },
     openAddFiles() {
       this.uploadVisible = true
+    },
+    handleUpdate(row) {
+      this.dialogTitle = '编辑：' + row.name
+      this.bannerDetail = row
+      this.uploadVisible = true
+    },
+    onSubmit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$confirm('是否提交数据？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            if (this.isEdit) {
+              updateBanner(this.bannerDetail).then(response => {
+                this.$message({
+                  message: '修改成功',
+                  type: 'success',
+                  duration: 1000
+                })
+                this.$router.back()
+              })
+            } else {
+              createBanner(this.bannerDetail).then(response => {
+                this.$refs[formName].resetFields()
+                this.resetForm(formName)
+                this.$message({
+                  message: '提交成功',
+                  type: 'success',
+                  duration: 1000
+                })
+              })
+            }
+          })
+        } else {
+          this.$message({
+            message: '验证失败',
+            type: 'error',
+            duration: 1000
+          })
+          return false
+        }
+      })
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+      this.course = Object.assign({}, defaultDetail)
     },
     deleteFile(item) {
       this.$confirm('确定将选择数据删除?', {
