@@ -91,7 +91,7 @@
         <el-form-item label="跳转链接：" prop="url">
           <el-input v-model="bannerDetail.url" />
         </el-form-item>
-        <el-form-item label="跳转链接：" prop="memo">
+        <el-form-item label="文字说明：" prop="memo">
           <el-input v-model="bannerDetail.memo" type="textarea" :autosize="true" />
         </el-form-item>
         <el-form-item label="状态：" prop="status">
