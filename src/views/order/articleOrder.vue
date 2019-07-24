@@ -4,6 +4,9 @@
       <el-input v-model="listQuery.article_name" :placeholder="$t('table.title')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
       <el-input v-model="listQuery.openid" placeholder="Openid" style="width: 200px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
       <el-select v-model="listQuery.status" placeholder="选择订单状态" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option v-for="item in orderStatus" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-select v-model="listQuery.orderType" placeholder="选择订单类型" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option v-for="item in orderType" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" size="small" @click="handleFilterNow">
@@ -26,9 +29,6 @@
             <el-form-item label="电话号">
               <span>{{ props.row.phone === null||props.row.phone === ''? '暂无': props.row.phone }}</span>
             </el-form-item>
-            <el-form-item label="文章单价">
-              <span>{{ props.row.article.pay_price }}</span>
-            </el-form-item>
             <el-form-item label="用户微信昵称">
               <span>{{ props.row.user.nickname }}</span>
             </el-form-item>
@@ -37,7 +37,12 @@
       </el-table-column>
       <el-table-column align="center" label="文章标题" width="240px">
         <template slot-scope="scope">
-          <span>{{ scope.row.article_name }}</span>
+          <span>{{ scope.row.article_name ? scope.row.article_name : '无' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="课程标题" width="240px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.course_name ? scope.row.course_name : '无' }}</span>
         </template>
       </el-table-column>
       <el-table-column width="120px" align="center" label="下单微信昵称">
@@ -52,12 +57,17 @@
       </el-table-column>
       <el-table-column width="120px" align="center" label="文章单价">
         <template slot-scope="scope">
-          <span>{{ scope.row.article.pay_price }}</span>
+          <span>{{ scope.row.article ? scope.row.article.pay_price : '无' }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="120px" align="center" label="难度">
+      <el-table-column width="120px" align="center" label="课程单价">
         <template slot-scope="scope">
-          <span>{{ scope.row.article.article_grade | gradeFilter }}</span>
+          <span>{{ scope.row.course ? scope.row.course.price : '无' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column width="120px" align="center" label="文章难度">
+        <template slot-scope="scope">
+          <span>{{ scope.row.article ? (scope.row.article.article_grade) : '' | gradeFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column width="120px" align="center" label="支付方式">
@@ -183,10 +193,25 @@ export default {
         page: 1,
         limit: 10,
         status: '',
+        orderType: '0',
         article_name: '',
         openid: ''
       },
       orderType: [
+        {
+          label: '全部',
+          value: '0'
+        },
+        {
+          label: '文章订单',
+          value: '1'
+        },
+        {
+          label: '课程订单',
+          value: '2'
+        }
+      ],
+      orderStatus: [
         {
           label: '新创建',
           value: 0
