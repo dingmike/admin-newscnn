@@ -34,7 +34,7 @@ export default {
     banner: '广告管理',
     bannerlist: '广告管理',
     article: '文章管理',
-    articleCate: '分类管理',
+    articleCate: '课程管理',
     addArticleCate: '添加分类',
     updateArticleCate: '修改分类',
     articleCateList: '分类列表',

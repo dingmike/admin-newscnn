@@ -75,16 +75,33 @@
             </div>
           </el-col>
         </el-row>
-        <el-form-item label="文章类型：" prop="name">
-          <el-select v-model="postForm.category" filterable size="mini" placeholder="请选择分类">
-            <el-option
-              v-for="item in categories"
-              :key="item.id"
-              :label="item.category_name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="文章类型：" prop="name">
+              <el-select v-model="postForm.category" filterable size="mini" placeholder="请选择分类">
+                <el-option
+                  v-for="item in categories"
+                  :key="item.id"
+                  :label="item.category_name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="是否是单独文章：" prop="is_only">
+              <el-select v-model="postForm.is_only" filterable size="mini" placeholder="请选择分类">
+                <el-option
+                  v-for="item in isOnlyOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-form-item style="margin-bottom: 40px;" label-width="45px" label="简介:" prop="article_brief">
           <el-input v-model="postForm.article_brief" :rows="1" type="textarea" class="article-textarea" autosize placeholder="请输入内容" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}字</span>
@@ -99,10 +116,10 @@
         </el-form-item>
 
         <el-form-item prop="article_analysis" label-width="45px" label="解析:" style="margin-bottom: 30px;">
-          <!--<Tinymce ref="editor" v-model="postForm.article_analysis" :height="400" />-->
-          <el-button type="success" @click="goSetAnalysis">
-            去创建讲解内容
+          <el-button v-if="postForm.is_only === 0" type="success" @click="goSetAnalysis">
+            去创建课程详细的讲解内容
           </el-button>
+          <Tinymce v-else ref="editor" v-model="postForm.article_analysis" :height="400" />
         </el-form-item>
         <!-- <el-form-item prop="image_uri" style="margin-bottom: 30px;">
           <Upload v-model="postForm.image_uri" />
@@ -278,6 +295,7 @@ const defaultForm = {
   article_title: '', // 文章题目
   chinese_title: '', // 文章中文题目
   category: '',
+  is_only: 0, // 单独的文章 1是 0不是（属于课程）
   article_author: '', // 文章作者
   article_grade: '', // 文章级别
   memo: '', // 文章说明
@@ -388,6 +406,16 @@ export default {
       showSetAnalysis: false,
       isFullScreen: false,
       categories: [],
+      isOnlyOptions: [
+        {
+          name: '属于课程',
+          id: 0
+        },
+        {
+          name: '单独文章',
+          id: 1
+        }
+      ],
       LoadingOptions: {
         lock: true,
         text: 'Loading',

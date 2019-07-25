@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card class="operate-container" shadow="never">
       <i class="el-icon-tickets" style="margin-top: 5px" />
-      <span style="margin-top: 5px">课程:{{ courseTitle }}</span>
+      <span style="margin-top: 5px">课程: {{ courseTitle }}</span>
       <el-button
         class="btn-add"
         size="mini"
@@ -94,7 +94,7 @@
           label-width="200px"
         >
           <el-form-item label="文章类型：" prop="course_category">
-            <el-select v-model="courseArticle.course_category" style="width: 400px" filterable size="small" placeholder="可继续请选择分类" @change="changeCate">
+            <el-select v-model="courseArticle.course_category" style="width: 400px" filterable size="small" placeholder="请选择分类" @change="changeCate">
               <el-option
                 v-for="item in categories"
                 :key="item.id"
@@ -103,8 +103,8 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="文章：" prop="article">
-            <el-select v-model="courseArticle.article" v-loadmore="loadmoreOption" style="width: 400px" size="small" filterable placeholder="请选择文章">
+          <el-form-item label="课程文章：" prop="article">
+            <el-select v-model="courseArticle.article" v-loadmore="loadmoreOption" style="width: 400px" size="small" filterable placeholder="请选择课程文章">
               <el-option
                 v-for="item in articleList"
                 :key="item.id"
@@ -253,7 +253,8 @@ export default {
       cateQuery: {
         id: '',
         page: 1,
-        limit: 8
+        limit: 8,
+        is_only: 0 // 0 不是单独的文章
       },
       cateArticleTotal: null,
       parentId: 0
@@ -266,7 +267,6 @@ export default {
     }
   },
   created() {
-    debugger
     this.listQuery.id = this.$route.query.id
     // this.courseTitle = this.$route.params.courseName
     // this.courseArticle.course_category = this.$route.params.courseCategory
@@ -279,7 +279,6 @@ export default {
   },
   methods: {
     loadmoreOption() {
-      console.log('获取更多院线名称')
       this.cateQuery.page = this.cateQuery.page + 1
       if (this.cateArticleTotal > this.articleList.length) {
         fetchCateArticleList(this.cateQuery).then(response => {
