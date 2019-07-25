@@ -436,7 +436,6 @@ export default {
   }
 }
 </script>
-
 <style lang="less" scoped>
   .icon-img {
     width: 60px;
