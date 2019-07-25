@@ -12,7 +12,7 @@
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
         class="editor-slide-upload"
-        action="https://httpbin.org/post"
+        :action="uploadAction"
         list-type="picture-card"
       >
         <el-button size="small" type="primary">
@@ -43,6 +43,8 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      // uploadAction: process.env.VUE_APP_BASE_API + '/common/upload',  // https://httpbin.org/post
+      uploadAction: 'https://httpbin.org/post', // https://httpbin.org/post  // 只有blob类型的图片才能编辑
       listObj: {},
       fileList: []
     }
@@ -68,6 +70,7 @@ export default {
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
         if (this.listObj[objKeyArr[i]].uid === uid) {
           this.listObj[objKeyArr[i]].url = response.files.file
+          // this.listObj[objKeyArr[i]].url = response.data.file_url
           this.listObj[objKeyArr[i]].hasSuccess = true
           return
         }
