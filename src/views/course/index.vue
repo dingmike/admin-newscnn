@@ -11,6 +11,24 @@
         添 加
       </el-button>
     </el-card>
+    <el-card class="operate-container" shadow="never">
+      <el-input v-model="listQuery.name" :placeholder="$t('table.course_name')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-select v-model="listQuery.status" placeholder="选择课程状态" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option v-for="item in courseStatus" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-select v-model="listQuery.course_category" placeholder="选择课程类型" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option
+          v-for="item in categories"
+          :key="item.id"
+          :label="item.category_name"
+          :value="item.id"
+        />
+      </el-select>
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" size="small" @click="handleFilterNow">
+        {{ $t('table.search') }}
+      </el-button>
+      <el-button v-waves class="filter-item" size="small" plain @click="clearFilter">重 置</el-button>
+    </el-card>
     <div class="table-container">
       <el-table
         ref="productCateTable"
@@ -29,6 +47,11 @@
             <div class="icon-img">
               <img :src="scope.row.icon" alt="tu">
             </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="类型" width="120" align="center">
+          <template slot-scope="scope">
+            <span class="font-extra-small">{{ scope.row.course_category.category_name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="名称" width="120" align="center">
@@ -136,8 +159,12 @@
 <script>
 // import {fetchList,deleteProductCate,updateShowStatus,updateNavStatus} from '@/api/articleCate'
 import { fetchList, deleteCourse, updateCourseStatus } from '@/api/course'
+import { fetchAllList as fetchCategory } from '@/api/articleCate'
+import waves from '@/directive/waves' // Waves directive
+
 export default {
   name: 'ProductCateList',
+  directives: { waves },
   filters: {
     statusTypeFilter(status) {
       const statusArr = ['danger', 'success', 'info']
@@ -215,20 +242,35 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 10,
+        name: '',
+        status: 1,
+        course_category: ''
       },
+      courseStatus: [
+        {
+          label: '已发布',
+          value: 1
+        },
+        {
+          label: '未发布',
+          value: 0
+        }
+      ],
+      categories: [],
       parentId: 0
     }
   },
   watch: {
     $route(route) {
-      this.resetParentId()
+      // this.resetParentId()
       this.getList()
     }
   },
   created() {
-    this.resetParentId()
+    // this.resetParentId()
     this.getList()
+    this.fetchCategory()
   },
   methods: {
     // 添加文章到课程
@@ -245,6 +287,11 @@ export default {
       } else {
         this.parentId = 0
       }
+    },
+    fetchCategory() {
+      fetchCategory().then(response => {
+        this.categories = response.data
+      })
     },
     handleAddProductCate() {
       this.$router.push('/articleCate/addCourse')
@@ -283,6 +330,19 @@ export default {
     },
     handleUpdate(index, row) {
       this.$router.push({ path: '/articleCate/updateCourse', query: { id: row.id }})
+    },
+    handleFilterNow() {
+      this.getList()
+    },
+    clearFilter() {
+      this.listQuery = {
+        page: 1,
+        limit: 10,
+        name: '',
+        status: 1,
+        course_category: ''
+      }
+      this.getList()
     },
     handleDelete(index, row) {
       this.$confirm('是否要删除该分类？', '提示', {

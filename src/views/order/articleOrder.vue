@@ -1,9 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.article_name" :placeholder="$t('table.title')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-input v-model="listQuery.article_name" :placeholder="$t('table.article_name')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-input v-model="listQuery.course_name" :placeholder="$t('table.course_name')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
       <el-input v-model="listQuery.openid" placeholder="Openid" style="width: 200px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
-      <el-select v-model="listQuery.status" placeholder="选择订单状态" style="width: 130px" class="filter-item" size="small" clearable>
+      <el-select v-model="listQuery.status" :placeholder="$t('table.chooseOrderStatus')" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option v-for="item in orderStatus" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <el-select v-model="listQuery.orderType" placeholder="选择订单类型" style="width: 130px" class="filter-item" size="small" clearable>
@@ -195,6 +196,7 @@ export default {
         status: '',
         orderType: '0',
         article_name: '',
+        course_name: '',
         openid: ''
       },
       orderType: [
@@ -256,7 +258,9 @@ export default {
         page: 1,
         limit: 10,
         status: '',
+        orderType: '0',
         article_name: '',
+        course_name: '',
         openid: ''
       }
       this.getList()
