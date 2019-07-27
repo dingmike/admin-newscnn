@@ -14,14 +14,14 @@
     <!--文件列表-->
     <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style=" margin-top:20px; width: 100%" @selection-change="handleSelectionChange">
 
-      <el-table-column width="320" align="center" label="图片">
+      <el-table-column width="180" align="center" label="图片">
         <template slot-scope="scope">
           <div style="width: 100px;">
             <img :src="scope.row.img_url" style="width: 100%;" :alt="scope.row.name">
           </div>
         </template>
       </el-table-column>
-      <el-table-column width="180" align="center" label="名称">
+      <el-table-column width="120" align="center" label="名称">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
@@ -41,7 +41,7 @@
           <span>{{ scope.row.status ? '启用' : '禁用' }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="left" label="操作" width="300">
+      <el-table-column align="left" label="操作" width="200">
         <template slot-scope="scope">
           <el-tooltip class="item" effect="dark" content="编辑" placement="top-start">
             <el-button
