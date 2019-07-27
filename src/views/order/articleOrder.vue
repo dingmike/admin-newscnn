@@ -14,6 +14,17 @@
         {{ $t('table.search') }}
       </el-button>
       <el-button v-waves class="filter-item" size="small" plain @click="clearFilter">重 置</el-button>
+      <el-tooltip effect="dark" :content="$t('table.refresh')" placement="top">
+        <el-button
+          v-waves
+          class="filter-item"
+          type="default"
+          size="small"
+          icon="el-icon-refresh"
+          plain
+          @click="getList"
+        />
+      </el-tooltip>
     </div>
 
     <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style="width: 100%">

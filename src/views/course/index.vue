@@ -28,6 +28,17 @@
         {{ $t('table.search') }}
       </el-button>
       <el-button v-waves class="filter-item" size="small" plain @click="clearFilter">重 置</el-button>
+      <el-tooltip effect="dark" :content="$t('table.refresh')" placement="top">
+        <el-button
+          v-waves
+          class="filter-item"
+          type="default"
+          size="small"
+          icon="el-icon-refresh"
+          plain
+          @click="getList"
+        />
+      </el-tooltip>
     </el-card>
     <div class="table-container">
       <el-table
