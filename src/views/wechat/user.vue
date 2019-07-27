@@ -24,143 +24,215 @@
             {{ $t('table.reviewer') }}
         </el-checkbox>
     </div>-->
-
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      size="small"
-      highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange"
-    >
-      <el-table-column label="微信头像" align="center">
-        <template slot-scope="scope">
-          <img :src="scope.row.headimgurl" width="50" height="50" alt="">
-        </template>
-      </el-table-column>
-      <el-table-column label="微信名称" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.nickname }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="用户名称" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.user_name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="性别" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.sex === 0 ? '未知' : scope.row.sex === 1 ? '男': '女' }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="是否关注" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.subscribe === 1 ? '关注' : '未关注' }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="语言" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.language }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="国家" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.country }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="省份" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.province }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="城市" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.city }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="最近关注时间" align="center" width="120">
-        <template slot-scope="scope">
-          <span>{{ scope.row.subscribe_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('table.actions')"
-        align="center"
-        width="230"
-        class-name="small-padding fixed-width"
+    <el-card class="operate-container" shadow="never">
+      <!--
+       page: 1,
+        limit: 20,
+        article_author: '',
+        chinese_title: '',
+        article_grade: '',
+        category: '',
+        is_only: 0, // 1： 是课程文章，0单独文章
+        status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿-->
+      <el-input v-model="listQuery.nickname" :placeholder="$t('table.wechat_nickname')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.user_name" :placeholder="$t('table.username')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.sex" :placeholder="$t('table.gender')" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option v-for="item in sexOptions" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-select v-model="listQuery.subscribe_scene" :placeholder="$t('table.subscribe_scene')" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option v-for="item in subscribeSceneOps" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-select v-model="listQuery.subscribe" :placeholder="$t('table.subscribe')" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option v-for="item in subscribeOptions" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" size="small" @click="handleFilter">
+        {{ $t('table.search') }}
+      </el-button>
+      <el-button v-waves class="filter-item" size="small" plain @click="clearFilter">重 置</el-button>
+      <el-tooltip effect="dark" :content="$t('table.refresh')" placement="top">
+        <el-button
+          v-waves
+          class="filter-item"
+          type="default"
+          size="small"
+          icon="el-icon-refresh"
+          plain
+          @click="getList"
+        />
+      </el-tooltip>
+      <el-tooltip effect="dark" :content="$t('table.export')" placement="top">
+        <el-button
+          v-waves
+          type="default"
+          size="small"
+          icon="el-icon-download"
+          plain
+          @click="handleDownload"
+        />
+      </el-tooltip>
+    </el-card>
+    <div class="table-container">
+      <el-table
+        :key="tableKey"
+        v-loading="listLoading"
+        :data="list"
+        border
+        fit
+        size="small"
+        highlight-current-row
+        style="width: 100%;"
+        @sort-change="sortChange"
       >
-        <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            {{ $t('table.edit') }}
-          </el-button>
-        </template>
-      </el-table-column>
-      <!--          <el-table-column :label="$t('table.title')" min-width="150px">
-                    <template slot-scope="{row}">
-                        <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
-                        <el-tag>{{ row.type | typeFilter }}</el-tag>
-                    </template>
-                </el-table-column>
-                <el-table-column :label="$t('table.author')" width="110px" align="center">
-                    <template slot-scope="scope">
-                        <span>{{ scope.row.author }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column v-if="showReviewer" :label="$t('table.reviewer')" width="110px" align="center">
-                    <template slot-scope="scope">
-                        <span style="color:red;">{{ scope.row.reviewer }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column :label="$t('table.importance')" width="80px">
-                    <template slot-scope="scope">
-                        <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon"/>
-                    </template>
-                </el-table-column>
-                <el-table-column :label="$t('table.readings')" align="center" width="95">
-                    <template slot-scope="{row}">
-                        <span v-if="row.pageviews" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.pageviews }}</span>
-                        <span v-else>0</span>
-                    </template>
-                </el-table-column>
-                <el-table-column :label="$t('table.status')" class-name="status-col" width="100">
-                    <template slot-scope="{row}">
-                        <el-tag :type="row.status | statusFilter">
-                            {{ row.status }}
-                        </el-tag>
-                    </template>
-                </el-table-column>
-                <el-table-column :label="$t('table.actions')" align="center" width="230"
-                                 class-name="small-padding fixed-width">
-                    <template slot-scope="{row}">
-                        <el-button type="primary" size="mini" @click="handleUpdate(row)">
-                            {{ $t('table.edit') }}
-                        </el-button>
-                        <el-button v-if="row.status!='published'" size="mini" type="success"
-                                   @click="handleModifyStatus(row,'published')">
-                            {{ $t('table.publish') }}
-                        </el-button>
-                        <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
-                            {{ $t('table.draft') }}
-                        </el-button>
-                        <el-button v-if="row.status!='deleted'" size="mini" type="danger"
-                                   @click="handleModifyStatus(row,'deleted')">
-                            {{ $t('table.delete') }}
-                        </el-button>
-                    </template>
-                </el-table-column>-->
-    </el-table>
+        <el-table-column label="微信头像" align="center">
+          <template slot-scope="scope">
+            <img :src="scope.row.headimgurl" width="50" height="50" alt="">
+          </template>
+        </el-table-column>
+        <el-table-column label="微信名称" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.nickname }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="用户名称" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.user_name ? scope.row.user_name : '暂无' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="性别" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.sex === 0 ? '未知' : scope.row.sex === 1 ? '男': '女' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="积分" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.credits }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="阅读总时长" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.read_time }} 分钟</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="被赞次数" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.favour }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="是否订阅" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.subscribe === 1 ? '订阅' : '未订阅' }}</span>
+          </template>
+        </el-table-column>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      @pagination="getList"
-    />
+        <el-table-column label="订阅来源" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.subscribe_scene | subscribeType }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="语言" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.language }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="国家" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.country ? scope.row.country : '未知区域' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="省份" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.province ? scope.row.province : '未知区域' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="城市" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.city ? scope.row.city : '未知区域' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="最近关注时间" align="center" width="120">
+          <template slot-scope="scope">
+            <span>{{ scope.row.subscribe_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :label="$t('table.actions')"
+          align="center"
+          width="220"
+          class-name="small-padding fixed-width"
+        >
+          <template slot-scope="{row}">
+            <el-button type="primary" size="mini" @click="handleUpdate(row)">
+              {{ $t('table.edit') }}
+            </el-button>
+          </template>
+        </el-table-column>
+        <!--          <el-table-column :label="$t('table.title')" min-width="150px">
+                      <template slot-scope="{row}">
+                          <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
+                          <el-tag>{{ row.type | typeFilter }}</el-tag>
+                      </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('table.author')" width="110px" align="center">
+                      <template slot-scope="scope">
+                          <span>{{ scope.row.author }}</span>
+                      </template>
+                  </el-table-column>
+                  <el-table-column v-if="showReviewer" :label="$t('table.reviewer')" width="110px" align="center">
+                      <template slot-scope="scope">
+                          <span style="color:red;">{{ scope.row.reviewer }}</span>
+                      </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('table.importance')" width="80px">
+                      <template slot-scope="scope">
+                          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon"/>
+                      </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('table.readings')" align="center" width="95">
+                      <template slot-scope="{row}">
+                          <span v-if="row.pageviews" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.pageviews }}</span>
+                          <span v-else>0</span>
+                      </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('table.status')" class-name="status-col" width="100">
+                      <template slot-scope="{row}">
+                          <el-tag :type="row.status | statusFilter">
+                              {{ row.status }}
+                          </el-tag>
+                      </template>
+                  </el-table-column>
+                  <el-table-column :label="$t('table.actions')" align="center" width="230"
+                                   class-name="small-padding fixed-width">
+                      <template slot-scope="{row}">
+                          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+                              {{ $t('table.edit') }}
+                          </el-button>
+                          <el-button v-if="row.status!='published'" size="mini" type="success"
+                                     @click="handleModifyStatus(row,'published')">
+                              {{ $t('table.publish') }}
+                          </el-button>
+                          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
+                              {{ $t('table.draft') }}
+                          </el-button>
+                          <el-button v-if="row.status!='deleted'" size="mini" type="danger"
+                                     @click="handleModifyStatus(row,'deleted')">
+                              {{ $t('table.delete') }}
+                          </el-button>
+                      </template>
+                  </el-table-column>-->
+      </el-table>
+    </div>
+
+    <div class="pagination-container">
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.limit"
+        @pagination="getList"
+      />
+
+    </div>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form
@@ -254,6 +326,28 @@ export default {
   components: { Pagination },
   directives: { waves },
   filters: {
+    subscribeType(val) {
+      switch (val) {
+        case 'ADD_SCENE_SEARCH' :
+          return '公众号搜索'
+        case 'ADD_SCENE_ACCOUNT_MIGRATION' :
+          return '公众号迁移'
+        case 'ADD_SCENE_PROFILE_CARD' :
+          return '名片分享'
+        case 'ADD_SCENE_QR_CODE' :
+          return '扫描二维码'
+        case 'ADD_SCENEPROFILE_LINK' :
+          return '图文页内名称点击'
+        case 'ADD_SCENE_PROFILE_ITEM' :
+          return '图文页右上角菜单'
+        case 'ADD_SCENE_PAID' :
+          return '支付后关注'
+        case 'ADD_SCENE_OTHERS' :
+          return '其他'
+        default:
+          break
+      }
+    },
     statusFilter(status) {
       const statusMap = {
         published: 'success',
@@ -285,13 +379,72 @@ export default {
       list: null,
       total: 0,
       listLoading: true,
+      subscribeOptions: [
+        {
+          label: '已订阅',
+          value: 1
+        },
+        {
+          label: '未订阅',
+          value: 0
+        }
+      ],
+      subscribeSceneOps: [
+        {
+          label: '公众号搜索',
+          value: 'ADD_SCENE_SEARCH'
+        },
+        {
+          label: '公众号迁移',
+          value: 'ADD_SCENE_ACCOUNT_MIGRATION'
+        },
+        {
+          label: '名片分享',
+          value: 'ADD_SCENE_PROFILE_CARD'
+        },
+        {
+          label: '扫描二维码',
+          value: 'ADD_SCENE_QR_CODE'
+        },
+        {
+          label: '图文页内名称点击',
+          value: 'ADD_SCENEPROFILE_LINK'
+        },
+        {
+          label: '图文页右上角菜单',
+          value: 'ADD_SCENE_PROFILE_ITEM'
+        },
+        {
+          label: '支付后关注',
+          value: 'ADD_SCENE_PAID'
+        },
+        {
+          label: '其他',
+          value: 'ADD_SCENE_OTHERS'
+        }
+      ],
+      sexOptions: [
+        {
+          label: '男',
+          value: 1
+        },
+        {
+          label: '女',
+          value: 2
+        },
+        {
+          label: '未知',
+          value: 0
+        }
+      ],
       listQuery: {
         page: 1,
         limit: 20,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        nickname: '',
+        user_name: '',
+        sex: '',
+        subscribe: '',
+        subscribe_scene: ''
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
@@ -335,7 +488,6 @@ export default {
     getList() {
       this.listLoading = true
       getUserList(this.listQuery).then(response => {
-        debugger
         this.list = response.data.docs
         this.total = response.data.total
         this.listLoading = false
@@ -385,6 +537,18 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    clearFilter() {
+      this.listQuery = {
+        page: 1,
+        limit: 20,
+        nickname: '',
+        user_name: '',
+        sex: '',
+        subscribe: '',
+        subscribe_scene: ''
+      }
+      this.getList()
+    },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -404,7 +568,6 @@ export default {
       })
     },
     handleUpdate(row) {
-      debugger
       this.temp = Object.assign({}, row) // copy obj
       // this.temp.timestamp = new Date(this.temp.timestamp)
       console.log(this.temp)
@@ -477,13 +640,13 @@ export default {
     handleDownload() {
       this.downloadLoading = true
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-          const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+          const tHeader = ['nickname', 'openid', 'headimgurl', 'sex', 'credits', 'subscribe', 'user_phone', 'user_name', 'read_pages', 'read_time']
+          const filterVal = ['nickname', 'openid', 'headimgurl', 'sex', 'credits', 'subscribe', 'user_phone', 'user_name', 'read_pages', 'read_time']
           const data = this.formatJson(filterVal, this.list)
           excel.export_json_to_excel({
             header: tHeader,
             data,
-            filename: 'table-list'
+            filename: '用户列表'
           })
           this.downloadLoading = false
         })

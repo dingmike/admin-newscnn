@@ -133,10 +133,18 @@ export default {
     dragTips1: '默认顺序',
     dragTips2: '拖拽后顺序',
     title: '标题',
+    username: '用户名称',
+    wechat_nickname: '微信名称',
+    gender: '性别',
+    subscribe_scene: '订阅场景',
+    subscribe: '订阅状态',
     article_name: '文章标题',
+    chinese_title: '文章中文标题',
+    article_author: '作者',
     course_name: '课程名称',
     chooseOrderStatus: '选择订单状态',
     chooseCourseStatus: '选择课程状态',
+    chooseArticleStatus: '选择文章状态',
     importance: '重要性',
     type: '类型',
     remark: '点评',
@@ -155,7 +163,8 @@ export default {
     draft: '草稿',
     delete: '删除',
     cancel: '取 消',
-    confirm: '确 定'
+    confirm: '确 定',
+    refresh: '刷新'
   },
   errorLog: {
     tips: '请点击右上角bug小图标',

@@ -12,6 +12,55 @@
         @click="addNewArticle"
       >添 加</el-button>
     </el-card>
+    <el-card class="operate-container" shadow="never">
+      <!--
+       page: 1,
+        limit: 20,
+        article_author: '',
+        chinese_title: '',
+        article_grade: '',
+        category: '',
+        is_only: 0, // 1： 是课程文章，0单独文章
+        status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿-->
+      <el-input v-model="listQuery.chinese_title" :placeholder="$t('table.chinese_title')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-input v-model="listQuery.article_author" :placeholder="$t('table.article_author')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-select v-model="listQuery.status" :placeholder="$t('table.chooseArticleStatus')" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option v-for="item in articleStatus" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-select v-model="listQuery.category" :placeholder="$t('table.chooseCourseStatus')" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option
+          v-for="item in categories"
+          :key="item.id"
+          :label="item.category_name"
+          :value="item.id"
+        />
+      </el-select>
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" size="small" @click="handleFilterNow">
+        {{ $t('table.search') }}
+      </el-button>
+      <el-button v-waves class="filter-item" size="small" plain @click="clearFilter">重 置</el-button>
+      <el-tooltip effect="dark" :content="$t('table.refresh')" placement="top">
+        <el-button
+          v-waves
+          class="filter-item"
+          type="default"
+          size="small"
+          icon="el-icon-refresh"
+          plain
+          @click="getList"
+        />
+      </el-tooltip>
+      <el-tooltip effect="dark" :content="$t('table.export')" placement="top">
+        <el-button
+          v-waves
+          type="default"
+          size="small"
+          icon="el-icon-download"
+          plain
+          @click="handleDownload"
+        />
+      </el-tooltip>
+    </el-card>
     <div class="table-container">
       <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" style="width: 100%" stripe highlight-current-row>
         <el-table-column align="center" label="类型" width="140">
@@ -99,6 +148,8 @@
 import { fetchList } from '@/api/article'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // Waves directive
+import { fetchAllList as fetchCategory } from '@/api/articleCate'
+import { parseUTCtime } from '@/utils'
 
 export default {
   name: 'ArticleList',
@@ -166,16 +217,41 @@ export default {
       fitWidth: true,
       total: 0,
       listLoading: true,
+      articleStatus: [
+        {
+          label: '已发布',
+          value: 1
+        },
+        {
+          label: '未发布',
+          value: 0
+        },
+        {
+          label: '未发布',
+          value: 2
+        }
+      ],
       listQuery: {
         page: 1,
-        limit: 20
-      }
+        limit: 20,
+        article_author: '',
+        chinese_title: '',
+        article_grade: '',
+        category: '',
+        is_only: 0, // 1： 是课程文章，0单独文章
+        status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿
+      },
+      categories: []
     }
   },
   created() {
     this.getList()
+    this.fetchCategory()
   },
   methods: {
+    handleFilterNow() {
+      this.getList()
+    },
     addNewArticle() {
       this.$router.push({ path: '/article/create' })
     },
@@ -186,6 +262,47 @@ export default {
         this.total = response.data.total
         this.listLoading = false
       })
+    },
+    fetchCategory() {
+      fetchCategory().then(response => {
+        this.categories = response.data
+      })
+    },
+    clearFilter() {
+      this.listQuery = {
+        page: 1,
+        limit: 20,
+        article_author: '',
+        chinese_title: '',
+        article_grade: '',
+        category: '',
+        is_only: 0, // 1： 是课程文章，0单独文章
+        status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿
+      }
+      this.getList()
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['id', 'chinese_title', 'article_grade', 'article_content', 'article_brief', 'article_author', 'article_audio', 'article_analysis', 'favour', 'id', 'status', 'category']
+        const filterVal = ['id', 'chinese_title', 'article_grade', 'article_content', 'article_brief', 'article_author', 'article_audio', 'article_analysis', 'favour', 'id', 'status', 'category']
+        const data = this.formatJson(filterVal, this.list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: '文章列表'
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseUTCtime(v[j].createAt)
+        } else {
+          return v[j]
+        }
+      }))
     }
   }
 }

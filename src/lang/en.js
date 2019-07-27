@@ -121,10 +121,18 @@ export default {
     dragTips1: 'The default order',
     dragTips2: 'The after dragging order',
     title: 'Title',
+    username: 'User name',
+    wechat_nickname: 'Wechat name',
+    gender: 'Gender',
+    subscribe_scene: 'Subscribe scence',
+    subscribe: 'Subscribe status',
     article_name: 'Article title',
+    chinese_title: 'Article chinese title',
+    article_author: 'Author',
     course_name: 'Course name',
     chooseOrderStatus: 'Choose order status',
     chooseCourseStatus: 'Choose course status',
+    chooseArticleStatus: 'Choose article status',
     importance: 'Imp',
     type: 'Type',
     remark: 'Remark',
@@ -143,7 +151,8 @@ export default {
     draft: 'Draft',
     delete: 'Delete',
     cancel: 'Cancel',
-    confirm: 'Confirm'
+    confirm: 'Confirm',
+    refresh: 'Refresh'
   },
   errorLog: {
     tips: 'Please click the bug icon in the upper right corner',
