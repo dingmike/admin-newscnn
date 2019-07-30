@@ -78,10 +78,33 @@ export default {
         this.__resizeHandler()
       }
     },
-    setOptions({ expectedData, actualData } = {}) {
+    setOptions({ data, title, days } = {}) {
+      // 动态生成配置文件
+      const series = []
+      data.map(item => {
+        series.push({
+          name: item.title,
+          itemStyle: {
+            normal: {
+              color: item.color,
+              lineStyle: {
+                color: item.lineColor,
+                width: 2
+              }
+            }
+          },
+          smooth: true,
+          type: 'line',
+          data: item.data,
+          animationDuration: 2800,
+          animationEasing: 'cubicInOut'
+        })
+      })
+
       this.chart.setOption({
         xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: days.length ? days : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
           boundaryGap: false,
           axisTick: {
             show: false
@@ -107,45 +130,11 @@ export default {
           }
         },
         legend: {
-          data: ['expected', 'actual']
+          // data: ['expected', 'actual']
+          data: title
         },
-        series: [{
-          name: 'expected', itemStyle: {
-            normal: {
-              color: '#FF005A',
-              lineStyle: {
-                color: '#FF005A',
-                width: 2
-              }
-            }
-          },
-          smooth: true,
-          type: 'line',
-          data: expectedData,
-          animationDuration: 2800,
-          animationEasing: 'cubicInOut'
-        },
-        {
-          name: 'actual',
-          smooth: true,
-          type: 'line',
-          itemStyle: {
-            normal: {
-              color: '#3888fa',
-              lineStyle: {
-                color: '#3888fa',
-                width: 2
-              },
-              areaStyle: {
-                color: '#f3f8ff'
-              }
-            }
-          },
-          data: actualData,
-          animationDuration: 2800,
-          animationEasing: 'quadraticOut'
-        }]
-      })
+        series: series
+      }, true)
     },
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
