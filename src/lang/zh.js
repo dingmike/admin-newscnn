@@ -144,6 +144,7 @@ export default {
     course_name: '课程名称',
     chooseOrderStatus: '选择订单状态',
     chooseCourseStatus: '选择课程状态',
+    chooseIsOnly: '选择文章属性',
     chooseArticleStatus: '选择文章状态',
     importance: '重要性',
     type: '类型',

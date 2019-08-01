@@ -2,9 +2,9 @@
   <div class="dashboard-editor-container">
     <github-corner class="github-corner" />
     <!--VUE_APP_BASE_API = 'http://cnnapi.ngrok.tecfcs.com'-->
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
+    <panel-group :total-data="totalData" @handleSetLineChartData="handleSetLineChartData" />
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart v-if="allChartData.userNums.days.length" :chart-data="lineChartData" />
+      <line-chart v-if="allChartData.userNums.days.length" :height="lineHeight" :chart-data="lineChartData" />
     </el-row>
 
     <!--    <el-row :gutter="32">
@@ -42,6 +42,7 @@
 import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
+import { getNowFormatDate } from '@/utils'
 // import RaddarChart from './components/RaddarChart'
 // import PieChart from './components/PieChart'
 // import BarChart from './components/BarChart'
@@ -197,7 +198,13 @@ export default {
   },
   data() {
     return {
+      lineHeight: '400px',
       lineChartData: '',
+      totalData: {
+        totalUserNums: 0,
+        totalOrderNums: 0,
+        totalMoney: 0
+      },
       allChartData: {
         userNums: {
           data: [
@@ -553,9 +560,10 @@ export default {
       }*/
 
       this.lineChartData = this.allChartData.userNums
-
+      // const now = new Date()
+      // const nowDate = [now.getFullYear(), (now.getMonth() + 1), now.getDate()].join('-')
       getDaysStatistics(this.params).then(res => {
-        if (res.code === 0) {
+        if (res.code === 200) {
           res.data.map(item => {
             this.allChartData.userNums.days.push(item.recordDate)
             this.allChartData.userNums.data[0].data.push(item.userNums)
@@ -575,9 +583,18 @@ export default {
             this.allChartData.money.data[2].data.push(item.totalCourseMoney)
             this.allChartData.money.data[3].data.push(item.totalArticleMoney)
             this.allChartData.money.data[4].data.push(item.totalMoney)
+            // 当天的数据中取出总量
+            if (getNowFormatDate() === item.recordDate) {
+              this.totalData = {
+                totalUserNums: item.totalUserNums,
+                totalOrderNums: item.totalOrderNums,
+                totalMoney: item.totalMoney
+              }
+            }
           })
-
           this.lineChartData = this.allChartData.userNums
+          console.log(this.allChartData)
+          console.log(this.totalData)
         }
       })
     }
@@ -593,7 +610,7 @@ export default {
 
   .github-corner {
     position: absolute;
-    top: 0px;
+    top: 0;
     border: 0;
     right: 0;
   }

@@ -27,6 +27,14 @@
       <el-select v-model="listQuery.status" :placeholder="$t('table.chooseArticleStatus')" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option v-for="item in articleStatus" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
+      <el-select v-model="listQuery.is_only" :placeholder="$t('table.chooseIsOnly')" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option
+          v-for="item in isOnlyOptions"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        />
+      </el-select>
       <el-select v-model="listQuery.category" :placeholder="$t('table.chooseCourseStatus')" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option
           v-for="item in categories"
@@ -96,6 +104,12 @@
         <el-table-column align="center" label="难度">
           <template slot-scope="scope">
             <span>{{ scope.row.article_grade | gradeFilter }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="文章属性">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.is_only == 1? 'success' : 'info'">{{ scope.row.is_only == 1? '属于课程' : '阅读文章' }}</el-tag>
+            <!--<span>{{ scope.row.is_only == 1? '属于课程' : '阅读文章' }}</span>-->
           </template>
         </el-table-column>
         <el-table-column align="center" label="状态" width="100">
@@ -213,6 +227,16 @@ export default {
   },
   data() {
     return {
+      isOnlyOptions: [
+        {
+          name: '属于课程',
+          id: 1
+        },
+        {
+          name: '阅读文章',
+          id: 0
+        }
+      ],
       list: null,
       fitWidth: true,
       total: 0,
@@ -238,7 +262,7 @@ export default {
         chinese_title: '',
         article_grade: '',
         category: '',
-        is_only: 0, // 1： 是课程文章，0单独文章
+        is_only: '', // 1： 是课程文章，0单独文章
         status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿
       },
       categories: []

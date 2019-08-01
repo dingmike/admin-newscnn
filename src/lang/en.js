@@ -132,6 +132,7 @@ export default {
     course_name: 'Course name',
     chooseOrderStatus: 'Choose order status',
     chooseCourseStatus: 'Choose course status',
+    chooseIsOnly: 'Choose article attribute',
     chooseArticleStatus: 'Choose article status',
     importance: 'Imp',
     type: 'Type',

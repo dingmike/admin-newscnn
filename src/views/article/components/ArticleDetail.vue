@@ -89,7 +89,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="10">
-            <el-form-item label="是否是单独文章：" prop="is_only">
+            <el-form-item label="文章属性：" prop="is_only">
               <el-select v-model="postForm.is_only" filterable size="mini" placeholder="请选择分类">
                 <el-option
                   v-for="item in isOnlyOptions"
@@ -409,11 +409,11 @@ export default {
       isOnlyOptions: [
         {
           name: '属于课程',
-          id: 0
+          id: 1
         },
         {
-          name: '单独文章',
-          id: 1
+          name: '阅读文章',
+          id: 0
         }
       ],
       LoadingOptions: {
