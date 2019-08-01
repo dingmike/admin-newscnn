@@ -70,7 +70,7 @@
           <el-input v-model="bannerDetail.name" />
         </el-form-item>
         <el-form-item label="广告图类型：" prop="category">
-          <el-select v-model="bannerDetail.category" size="mini" placeholder="请选广告图类型">
+          <el-select v-model="bannerDetail.category" size="mini" placeholder="请选广告图类型" @visible-change="showSelectOption" @change="changeCategory">
             <el-option
               v-for="item in categories"
               :key="item.id"
@@ -82,6 +82,7 @@
         <el-form-item label="图片：" prop="img_url">
           <el-input v-model="bannerDetail.img_url" />
           <upload-corp
+            v-if="showCrop"
             v-model="bannerDetail"
             :cropper-option="cropperOption"
             :image-url="bannerDetail.img_url"
@@ -148,6 +149,7 @@ export default {
   },
   data() {
     return {
+      showCrop: false,
       cropperOption: {
         img: '',
         outputType: 'jpg', // 裁剪生成图片的格式
@@ -173,6 +175,10 @@ export default {
         {
           name: '我的课程顶部Banner',
           id: 3
+        },
+        {
+          name: '分享页面背景图',
+          id: 4
         }
       ],
       uploadAction: process.env.VUE_APP_BASE_API + '/common/upload',
@@ -215,20 +221,11 @@ export default {
       }
     }
   },
-  computed: {
-    /*    cropperOption:{
-      get() {
-        if(this.bannerDetail.img_url){
-          this.cropperOptionInit.img = this.bannerDetail.img_url
-          return this.cropperOptionInit
-        }else {
-          this.cropperOptionInit.img = ''
-          return this.cropperOptionInit
-        }
-
-      },
-      set() {
-
+  watch: {
+    /*    cropperOption: {
+      deep: true,
+      handler(val) {
+        this.setOptions(val)
       }
     }*/
   },
@@ -236,6 +233,41 @@ export default {
     this.getList()
   },
   methods: {
+    showSelectOption(val) {
+      if (val) {
+        this.showCrop = false
+      }
+    },
+    changeCategory(val) {
+      this.showCrop = true
+      // 如果是分享页面背景图
+      if (val === 4) {
+        this.cropperOption = {
+          img: '',
+          outputType: 'png', // 裁剪生成图片的格式
+          canScale: true, // 图片是否允许滚轮缩放
+          autoCrop: true, // 是否默认生成截图框
+          autoCropWidth: 1242, // 默认生成截图框宽度
+          autoCropHeight: 2208, // 默认生成截图框高度
+          fixed: false, // 是否开启截图框宽高固定比例
+          fixedNumber: [311, 552], // 截图框的宽高比例
+          infoTrue: true, // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
+          full: true, // 是否输出原图比例的截图
+          enlarge: 10 // 图片根据截图框输出比例倍数
+        }
+      } else {
+        this.cropperOption = {
+          img: '',
+          outputType: 'jpg', // 裁剪生成图片的格式
+          canScale: true, // 图片是否允许滚轮缩放
+          autoCrop: true, // 是否默认生成截图框
+          autoCropWidth: 570, // 默认生成截图框宽度
+          autoCropHeight: 242, // 默认生成截图框高度
+          fixed: false, // 是否开启截图框宽高固定比例
+          fixedNumber: [570, 242] // 截图框的宽高比例
+        }
+      }
+    },
     openAddFiles() {
       this.uploadVisible = true
     },

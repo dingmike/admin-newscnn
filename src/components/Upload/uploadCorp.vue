@@ -95,7 +95,10 @@ export default {
         autoCropHeight: 320, // 默认生成截图框高度
         fixed: true, // 是否开启截图框宽高固定比例
         fixedNumber: [1, 1], // 截图框的宽高比例
-        centerBox: true // 截图框是否被限制在图片里面
+        centerBox: true, // 截图框是否被限制在图片里面
+        infoTrue: true, // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
+        full: true, // 是否输出原图比例的截图
+        enlarge: 1 // 图片根据截图框输出比例倍数
       },
       isShowCropper: false // 是否显示截图框
     }
