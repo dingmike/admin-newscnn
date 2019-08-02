@@ -16,7 +16,7 @@
       </div>
     </div>
     <!--图片简介弹出-->
-    <el-dialog :visible.sync="isShowCropper" append-to-body>
+    <el-dialog :visible.sync="isShowCropper" fullscreen append-to-body>
       <div v-show="isShowCropper" class="vue-cropper-box">
         <div class="vue-cropper-content">
           <vueCropper
@@ -195,7 +195,7 @@ export default {
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       ctx.drawImage(img, 0, 0, width, height)
       // 进行压缩到80%
-      const ndata = canvas.toDataURL('image/jpeg', 0.8)
+      const ndata = canvas.toDataURL('image/jpeg', 0.3) // 压缩30%
       // console.log("压缩后的图片大小：" + ndata.length)
       return ndata
     },
@@ -266,10 +266,10 @@ export default {
 
   .vue-cropper-box {
     width: 100%;
-    height: 320px;
+    height: 640px;
     margin: 15px 0px;
     .vue-cropper-content {
-      height 320px
+      height 640px
     }
   }
 </style>

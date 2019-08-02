@@ -249,8 +249,8 @@ export default {
           autoCrop: true, // 是否默认生成截图框
           autoCropWidth: 1242, // 默认生成截图框宽度
           autoCropHeight: 2208, // 默认生成截图框高度
-          fixed: false, // 是否开启截图框宽高固定比例
-          fixedNumber: [311, 552], // 截图框的宽高比例
+          fixed: true, // 是否开启截图框宽高固定比例
+          fixedNumber: [1242, 2208], // 截图框的宽高比例
           infoTrue: true, // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
           full: true, // 是否输出原图比例的截图
           enlarge: 10 // 图片根据截图框输出比例倍数
@@ -263,7 +263,7 @@ export default {
           autoCrop: true, // 是否默认生成截图框
           autoCropWidth: 570, // 默认生成截图框宽度
           autoCropHeight: 242, // 默认生成截图框高度
-          fixed: false, // 是否开启截图框宽高固定比例
+          fixed: true, // 是否开启截图框宽高固定比例
           fixedNumber: [570, 242] // 截图框的宽高比例
         }
       }
