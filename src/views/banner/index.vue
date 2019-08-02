@@ -179,6 +179,14 @@ export default {
         {
           name: '分享页面背景图',
           id: 4
+        },
+        {
+          name: '打卡页面顶部banner',
+          id: 5
+        },
+        {
+          name: '打卡分享banner',
+          id: 6
         }
       ],
       uploadAction: process.env.VUE_APP_BASE_API + '/common/upload',
@@ -254,6 +262,17 @@ export default {
           infoTrue: true, // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
           full: true, // 是否输出原图比例的截图
           enlarge: 10 // 图片根据截图框输出比例倍数
+        }
+      } else if (val === 6) {
+        this.cropperOption = {
+          img: '',
+          outputType: 'jpg', // 裁剪生成图片的格式
+          canScale: true, // 图片是否允许滚轮缩放
+          autoCrop: true, // 是否默认生成截图框
+          autoCropWidth: 435, // 默认生成截图框宽度
+          autoCropHeight: 245, // 默认生成截图框高度
+          fixed: true, // 是否开启截图框宽高固定比例
+          fixedNumber: [435, 245] // 截图框的宽高比例
         }
       } else {
         this.cropperOption = {
