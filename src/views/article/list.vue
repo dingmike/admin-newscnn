@@ -81,7 +81,7 @@
             <span>{{ scope.row.article_title }}</span>
           </template>
         </el-table-column>-->
-        <el-table-column align="center" label="中文标题" width="240">
+        <el-table-column align="center" label="中文标题" width="220">
           <template slot-scope="scope">
             <span>{{ scope.row.chinese_title }}</span>
           </template>
@@ -112,9 +112,22 @@
             <!--<span>{{ scope.row.is_only == 1? '属于课程' : '阅读文章' }}</span>-->
           </template>
         </el-table-column>
-        <el-table-column align="center" label="状态" width="100">
-          <template slot-scope="{row}">
+        <el-table-column align="center" label="状态" width="180">
+          <!-- <template slot-scope="{row}">
             <el-tag :type="row.status | statusTypeFilter">
+              {{ row.status | statusFilter }}
+            </el-tag>
+          </template>-->
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.status"
+              :active-value="1"
+              :inactive-value="2"
+              active-text="已发布"
+              inactive-text="草稿"
+              @change="handleShowStatusChange(scope.$index, scope.row)"
+            />
+            <el-tag v-if="scope.row.status === 3" :type="row.status | statusTypeFilter">
               {{ row.status | statusFilter }}
             </el-tag>
           </template>
@@ -146,7 +159,7 @@
               <router-link style="display: inline-block" :to="'/article/edit/'+scope.row.id">
                 <el-button type="primary" size="small" icon="el-icon-edit" circle />
               </router-link>
-              <el-button v-show="scope.row.status!==1" type="danger" size="small" icon="el-icon-delete" circle @click="handleModifyStatus(scope.row)" />
+              <el-button v-show="scope.row.status!==1" type="danger" size="small" icon="el-icon-delete" circle @click="deleteArticle(scope.row.id)" />
             </div>
           </template>
         </el-table-column>
@@ -159,7 +172,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
+import { fetchList, deleteArticle, updateArticle } from '@/api/article'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // Waves directive
 import { fetchAllList as fetchCategory } from '@/api/articleCate'
@@ -251,7 +264,7 @@ export default {
           value: 0
         },
         {
-          label: '未发布',
+          label: '草稿',
           value: 2
         }
       ],
@@ -275,6 +288,30 @@ export default {
   methods: {
     handleFilterNow() {
       this.getList()
+    },
+    handleShowStatusChange(index, row) {
+      // let data = new URLSearchParams();
+      updateArticle({ id: row._id, status: row.status }).then(response => {
+        console.log(response)
+        this.$message({
+          message: '修改成功',
+          type: 'success',
+          duration: 1000
+        })
+      })
+    },
+    deleteArticle(id) {
+      deleteArticle({ id: id }).then(response => {
+        if (response.code === 200) {
+          this.$notify({
+            title: '成功',
+            message: '删除成功!',
+            type: 'success',
+            duration: 2000
+          })
+        }
+        this.getList()
+      })
     },
     addNewArticle() {
       this.$router.push({ path: '/article/create' })
