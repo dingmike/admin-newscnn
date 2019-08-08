@@ -95,19 +95,19 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length < 12) {
+        callback(new Error('The password can not be less than 12 digits'))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        username: 'admin',
+        username: '',
         password: '' // 123456
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        username: [{ required: true, trigger: 'blur', validator: validateUsername }, { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
