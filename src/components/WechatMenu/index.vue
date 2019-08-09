@@ -235,7 +235,13 @@ export default {
         type: 'warning'
       }).then(() => {
         addMenu(this.menu).then(res => {
-          console.log(res)
+          if (res.code === 200) {
+            this.$message({
+              message: '修改成功',
+              type: 'success',
+              duration: 1500
+            })
+          }
         })
       }).catch(() => {
 
