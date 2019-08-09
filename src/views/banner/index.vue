@@ -142,6 +142,14 @@ export default {
           return '首页card背景'
         case 3 :
           return '我的课程顶部Banner'
+        case 4 :
+          return '分享页面背景图'
+        case 5 :
+          return '打卡页面顶部banner'
+        case 6 :
+          return '打卡分享banner'
+        case 7 :
+          return '学习群二维码'
         default:
           break
       }
@@ -187,6 +195,10 @@ export default {
         {
           name: '打卡分享banner',
           id: 6
+        },
+        {
+          name: '学习群二维码',
+          id: 7
         }
       ],
       uploadAction: process.env.VUE_APP_BASE_API + '/common/upload',
