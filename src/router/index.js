@@ -8,9 +8,9 @@ import Layout from '@/layout'
 
 /* Router Modules */
 import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
+// import chartsRouter from './modules/charts'
+// import tableRouter from './modules/table'
+// import nestedRouter from './modules/nested'
 import wechatRouter from './modules/wechat'
 import articleOrderRouter from './modules/articleOrder'
 import articleRouter from './modules/article'
@@ -88,8 +88,8 @@ export const constantRoutes = [
         meta: { title: 'dashboard', icon: 'dashboard', noCache: true, affix: true }
       }
     ]
-  },
-  {
+  }
+/*  {
     path: '/documentation',
     component: Layout,
     children: [
@@ -113,7 +113,7 @@ export const constantRoutes = [
         meta: { title: 'guide', icon: 'guide', noCache: true }
       }
     ]
-  }
+  }*/
 ]
 
 /**
@@ -121,7 +121,7 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  {
+/*  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/index',
@@ -173,20 +173,20 @@ export const asyncRoutes = [
         meta: { title: 'icons', icon: 'icon', noCache: true }
       }
     ]
-  },
+  },*/
 
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
-  chartsRouter,
-  nestedRouter,
-  tableRouter,
+  // chartsRouter,
+  // nestedRouter,
+  // tableRouter,
   bannerCateRouter,
   wechatRouter,
   articleCateRouter,
   articleRouter,
   articleOrderRouter,
   systemRouter,
-  {
+  /*  {
     path: '/tab',
     component: Layout,
     children: [
@@ -221,7 +221,7 @@ export const asyncRoutes = [
         meta: { title: 'page404', noCache: true }
       }
     ]
-  },
+  },*/
   /*  {
     path: '/sys-log',
     component: Layout,
@@ -243,7 +243,7 @@ export const asyncRoutes = [
     ]
   },*/
 
-  {
+  /*  {
     path: '/excel',
     component: Layout,
     redirect: '/excel/export-excel',
@@ -365,7 +365,7 @@ export const asyncRoutes = [
         meta: { title: 'externalLink', icon: 'link' }
       }
     ]
-  },
+  },*/
 
   { path: '*', redirect: '/404', hidden: true }
 ]
