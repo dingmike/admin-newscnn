@@ -137,10 +137,11 @@
               style="width: 100%;margin-top: 20px"
               :data="postForm.exam_words"
               border
+              fit
             >
               <el-table-column
                 label="单词"
-                width="100"
+                width="100px"
                 align="center"
               >
                 <template slot-scope="scope">
@@ -704,8 +705,8 @@ export default {
       fetchArticle(id).then(response => {
         // 转换为对象进行渲染数据
         response.data.article_analysis = JSON.parse(response.data.article_analysis)
-        response.data.exam_words = response.data.exam_words.join('*')
-        response.data.exam_sentences = response.data.exam_sentences.join('*')
+        // response.data.exam_words = response.data.exam_words.join('*')
+        // response.data.exam_sentences = response.data.exam_sentences.join('*')
         this.postForm = response.data
         // this.analysisForm = JSON.parse(JSON.stringify(this.postForm.article_analysis));
         // this.postForm.article_analysis = JSON.stringify(this.analysisForm)
