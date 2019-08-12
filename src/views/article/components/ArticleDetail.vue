@@ -30,7 +30,7 @@
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label-width="45px" label="作者:" class="postInfo-container-item" prop="article_author">
+                  <el-form-item label-width="60px" label="作者:" class="postInfo-container-item" prop="article_author">
                     <el-input v-model="postForm.article_author" size="mini" placeholder="" />
                     <!--<el-select v-model="postForm.article_author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="搜索用户">
                       <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
@@ -102,25 +102,108 @@
           </el-col>
         </el-row>
 
-        <el-form-item style="margin-bottom: 40px;" label-width="45px" label="简介:" prop="article_brief">
+        <el-form-item style="margin-bottom: 40px;" label-width="80px" label="简介:" prop="article_brief">
           <el-input v-model="postForm.article_brief" :rows="1" type="textarea" class="article-textarea" autosize placeholder="请输入内容" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}字</span>
         </el-form-item>
 
-        <el-form-item prop="article_content" label-width="45px" label="原文:" style="margin-bottom: 30px;">
+        <el-form-item prop="article_content" label-width="80px" label="原文:" style="margin-bottom: 30px;">
           <Tinymce ref="editor" v-model="postForm.article_content" :height="400" />
         </el-form-item>
 
-        <el-form-item prop="article_translate" label-width="45px" label="翻译:" style="margin-bottom: 30px;">
+        <el-form-item prop="article_translate" label-width="80px" label="翻译:" style="margin-bottom: 30px;">
           <Tinymce ref="editor" v-model="postForm.article_translate" :height="400" />
         </el-form-item>
 
-        <el-form-item prop="article_analysis" label-width="45px" label="解析:" style="margin-bottom: 30px;">
-          <el-button v-if="postForm.is_only === 0" type="success" @click="goSetAnalysis">
+        <el-form-item prop="article_analysis" label-width="80px" label="解析:" style="margin-bottom: 30px;">
+          <el-button v-if="postForm.is_only === 1" type="success" @click="goSetAnalysis">
             去创建课程详细的讲解内容
           </el-button>
           <Tinymce v-else ref="editor" v-model="postForm.article_analysis" :height="400" />
         </el-form-item>
+
+        <!-- <el-form-item label-width="100px" label="考试单词:" prop="exam_words">
+          <el-input v-model="postForm.exam_words" :rows="2" type="textarea" class="article-textarea" autosize placeholder="请输入内容" />
+          <span v-show="wordsShortLength" class="word-counter">{{ wordsShortLength }}字</span>
+        </el-form-item>-->
+
+        <el-form-item label-width="100px" label="考试单词:" prop="exam_words">
+          <el-card shadow="never" class="cardBg">
+            <div>
+              <el-button class="littleMarginLeft" @click="handleAddExamWord">增加</el-button>
+            </div>
+            <!--resultExamWords postForm.exam_words-->
+            <el-table
+              style="width: 100%;margin-top: 20px"
+              :data="postForm.exam_words"
+              border
+            >
+              <el-table-column
+                label="单词"
+                width="100"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.word }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="解释"
+                width="100"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.wrodTranslate }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="发音"
+                width="140"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <audio :src="scope.row.audio" controls="controls">
+                    您的浏览器不支持 audio 标签。
+                  </audio>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="例句"
+                width="140"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.exampleSentence }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="操作"
+                width="100"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <el-button
+                    type="text"
+                    @click="handleEditExamWord(scope.$index, scope.row)"
+                  >编辑
+                  </el-button>
+                  <el-button
+                    type="text"
+                    @click="handleRemoveExamWord(scope.$index, scope.row)"
+                  >删除
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-card>
+
+        </el-form-item>
+
+        <!-- <el-form-item style="margin-bottom: 100px;" label-width="100px" label="考试句子:" prop="exam_sentences">
+          <el-input v-model="postForm.exam_sentences" :rows="4" type="textarea" class="article-textarea" autosize placeholder="请输入内容" />
+          <span v-show="sentenceShortLength" class="word-counter">{{ sentenceShortLength }}字</span>
+        </el-form-item>-->
+
         <!-- <el-form-item prop="image_uri" style="margin-bottom: 30px;">
           <Upload v-model="postForm.image_uri" />
         </el-form-item>-->
@@ -245,10 +328,10 @@
 
             <el-form-item prop="ename" label-width="80px" label="句子英文">
               <!--<el-input v-model="analysisSentence.ename" placeholder="请输入内容" />-->
-              <Tinymce v-if="showSentenceBox" ref="editor" v-model="analysisSentence.ename" :height="200" />
+              <Tinymce v-if="showSentenceBox" ref="editor" v-model="analysisSentence.ename" :height="300" />
             </el-form-item>
             <el-form-item prop="cname" label-width="80px" label="句子讲解">
-              <Tinymce v-if="showSentenceBox" ref="editor" v-model="analysisSentence.cname" :height="200" />
+              <Tinymce v-if="showSentenceBox" ref="editor" v-model="analysisSentence.cname" :height="300" />
             </el-form-item>
             <!-- <el-form-item prop="cname" label-width="80px" label="句子中文">
               <el-input v-model="analysisSentence.cname" placeholder="请输入内容" />
@@ -273,6 +356,44 @@
         </div>
       </el-dialog>
     </el-dialog>
+
+    <!--添加考试单词-->
+    <el-dialog
+      width="50%"
+      title="添加考试单词"
+      :visible.sync="showExamWordBox"
+    >
+      <div>
+        <el-form ref="postFormWord" :model="examWordsForm" :rules="rules" size="small">
+
+          <el-form-item prop="ename" label-width="80px" label="单词英文">
+            <el-input v-model="examWordsForm.word" placeholder="请输入内容" />
+          </el-form-item>
+          <el-form-item prop="cname" label-width="80px" label="解释">
+            <el-input v-model="examWordsForm.wrodTranslate" placeholder="请输入内容" />
+          </el-form-item>
+          <el-form-item prop="cname" label-width="80px" label="例句">
+            <el-input v-model="examWordsForm.exampleSentence" placeholder="请输入内容" />
+          </el-form-item>
+          <el-form-item prop="sentenceAudio" label-width="80px" label="发音">
+            <el-input v-model="examWordsForm.wordAudio" placeholder="请输入内容" />
+            <audio :src="examWordsForm.wordAudio" controls="controls" style="padiding: 10px 0">
+              您的浏览器不支持 audio 标签。
+            </audio>
+            <SingleFile v-model="examWordsForm.wordAudio" />
+          </el-form-item>
+          <!--<el-form-item prop="video" label-width="80px" label="视频">
+            <el-input v-model="analysisSentence.video" placeholder="请输入内容" />
+            <SingleFile v-model="analysisSentence.video" />
+          </el-form-item>-->
+        </el-form>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="showExamWordBox = false">关 闭</el-button>
+        <el-button type="primary" size="small" @click="setOneExamWord">提 交</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -290,6 +411,12 @@ import Sticky from '@/components/Sticky' // 粘性header组件
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 import { fetchAllList as fetchCategory } from '@/api/articleCate'
 
+const defaultExamWordsForm = {
+  word: '',
+  wrodTranslate: '',
+  wordAudio: '',
+  exampleSentence: ''
+}
 const defaultForm = {
   status: 0, // 发布状态： 1已发布，0：未发布， 2：草稿
   article_title: '', // 文章题目
@@ -301,12 +428,15 @@ const defaultForm = {
   memo: '', // 文章说明
   article_content: '', // 文章内容
   article_translate: '', // 文章翻译
-  article_analysis: {
+  /* article_analysis: {
     words: [],
     sentence: [],
     analysis_audio: '',
     analysis_video: ''
-  }, // 文章解析
+  }, // 文章解析*/
+  article_analysis: '', // 文章解析
+  exam_words: [], // 需要测试的单词 用* 隔开
+  exam_sentences: [], // 需要测试的句子 用* 隔开
   article_brief: '', // 文章摘要
   source_uri: '', // 文章外链
   image_uri: '', // 文章图片
@@ -381,6 +511,7 @@ export default {
       }
     }
     return {
+      resultExamWords: [],
       analysisSentence: {
         ename: 'Shortcut for saving one or more documents to the database.  ',
         cname: '将一个或多个文档保存到数据库的快捷方式。',
@@ -401,6 +532,8 @@ export default {
       },
       isEditWord: false,
       isEditSentence: false,
+      showExamWordBox: false,
+      showExamSentenceBox: false,
       showWordBox: false,
       showSentenceBox: false,
       showSetAnalysis: false,
@@ -454,15 +587,20 @@ export default {
       ],
       deployMessageData: '发布文章成功',
       updateMessageData: '更新文章成功',
+      examWordsForm: Object.assign({}, defaultExamWordsForm),
       postForm: Object.assign({}, defaultForm),
       analysisForm: Object.assign({}, defaultAnalysisForm),
       loading: false,
       userListOptions: [],
       rules: {
-        article_title: [{ validator: validateRequire }],
-        chinese_title: [{ validator: validateRequire }],
-        article_brief: [{ validator: validateRequire, trigger: 'blur' }],
-        article_author: [{ validator: validateRequire, trigger: 'blur' }]
+        article_title: [{ required: true, message: '请输入标题', trigger: 'blur' }, { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
+        chinese_title: [{ required: true, message: '请输入中文标题', trigger: 'blur' }, { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
+        article_brief: [{ required: false, message: '请输入简介', trigger: 'blur' }, { min: 2, max: 40, message: '长度在 2 到 40 个字符', trigger: 'blur' }],
+        article_author: [{ required: true, message: '请输入作者', trigger: 'blur' }, { min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur' }],
+        // exam_words: [{ required: true, message: '请输入考试单词用*隔开', trigger: 'blur' }, { min: 2, max: 1500, message: '长度在 2 到 1500 个字符', trigger: 'blur' }],
+        // exam_sentences: [{ required: true, message: '请输入考试句子用*隔开', trigger: 'blur' }, { min: 2, max: 1500, message: '长度在 2 到 1500 个字符', trigger: 'blur' }],
+        exam_words: [{ validator: validateRequire, trigger: 'blur' }],
+        exam_sentences: [{ validator: validateRequire, trigger: 'blur' }]
       },
       tempRoute: {}
     }
@@ -470,6 +608,12 @@ export default {
   computed: {
     contentShortLength() {
       return this.postForm.article_brief.length
+    },
+    wordsShortLength() {
+      return this.postForm.exam_words.length
+    },
+    sentenceShortLength() {
+      return this.postForm.exam_sentences.length
     },
     lang() {
       return this.$store.getters.language
@@ -489,6 +633,21 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
+    setOneExamWord() {
+      // this.postForm.exam_words.push(this.examWordsForm)
+      // this.resultExamWords.push(this.examWordsForm)
+      this.postForm.exam_words.push(this.examWordsForm)
+      this.showExamWordBox = false
+    },
+    handleRemoveExamWord(index, row) {
+
+    },
+    handleEditExamWord(index, row) {
+
+    },
+    handleAddExamWord() {
+      this.showExamWordBox = true
+    },
     fetchCategory() {
       fetchCategory().then(response => {
         this.categories = response.data
@@ -545,6 +704,8 @@ export default {
       fetchArticle(id).then(response => {
         // 转换为对象进行渲染数据
         response.data.article_analysis = JSON.parse(response.data.article_analysis)
+        response.data.exam_words = response.data.exam_words.join('*')
+        response.data.exam_sentences = response.data.exam_sentences.join('*')
         this.postForm = response.data
         // this.analysisForm = JSON.parse(JSON.stringify(this.postForm.article_analysis));
         // this.postForm.article_analysis = JSON.stringify(this.analysisForm)
@@ -653,6 +814,9 @@ export default {
     padding-top: 0;
     margin-top: 6px;
     padding-bottom: 0;
+  }
+  .cardBg {
+    background: #F8F9FC;
   }
 }
 </style>

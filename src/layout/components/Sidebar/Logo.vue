@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       title: '英文能力',
-      logo: 'http://mmbiz.qpic.cn/mmbiz_png/HkiaESSvHlRdztvkBUappV7XLNxSUgakszZcg6h4cyPps8JoIlBgBCF7uuFFdia9dTFQAN5AMR6VfjibR84SNh1og/640?wx_fmt=png&wxfrom=200'
+      logo: 'http://bkcdn.fecstec.com/FuhO9VlNhmKrSzqcKj_aa6IWcveu'
     }
   }
 }

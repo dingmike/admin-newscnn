@@ -7,6 +7,13 @@ export function fetchList(query) {
     params: query
   })
 }
+export function fetchCoursesByCatrgory(query) {
+  return request({
+    url: '/backend/category/course/list',
+    method: 'get',
+    params: query
+  })
+}
 
 export function fetchCourseDetail(id) {
   return request({
