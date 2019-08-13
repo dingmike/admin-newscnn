@@ -2,44 +2,36 @@
   <div class="app-container">
     <el-card class="operate-container" shadow="never">
       <i class="el-icon-tickets" style="margin-top: 5px" />
-      <span style="margin-top: 5px">文章列表</span>
+      <span style="margin-top: 5px">课程试卷列表</span>
       <el-button
         v-waves
         class="btn-add"
         size="mini"
         type="primary"
         icon="el-icon-plus"
-        @click="addNewArticle"
+        @click="addNewExam"
       >添 加</el-button>
     </el-card>
     <el-card class="operate-container" shadow="never">
-      <!--
-       page: 1,
-        limit: 20,
-        article_author: '',
-        chinese_title: '',
-        article_grade: '',
-        category: '',
-        is_only: 0, // 1： 是课程文章，0单独文章
-        status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿-->
-      <el-input v-model="listQuery.chinese_title" :placeholder="$t('table.chinese_title')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
-      <el-input v-model="listQuery.article_author" :placeholder="$t('table.article_author')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
-      <el-select v-model="listQuery.status" :placeholder="$t('table.chooseArticleStatus')" style="width: 130px" class="filter-item" size="small" clearable>
-        <el-option v-for="item in articleStatus" :key="item.value" :label="item.label" :value="item.value" />
+
+      <el-input v-model="listQuery.exam_title" :placeholder="$t('table.exam_title')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-input v-model="listQuery.exam_author" :placeholder="$t('table.exam_author')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-select v-model="listQuery.status" :placeholder="$t('table.chooseExamStatus')" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option v-for="item in examStatus" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-select v-model="listQuery.is_only" :placeholder="$t('table.chooseIsOnly')" style="width: 130px" class="filter-item" size="small" clearable>
-        <el-option
-          v-for="item in isOnlyOptions"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        />
-      </el-select>
-      <el-select v-model="listQuery.category" :placeholder="$t('table.chooseCourseStatus')" style="width: 130px" class="filter-item" size="small" clearable>
+      <el-select v-model="listQuery.category" :placeholder="$t('table.chooseCategory')" style="width: 130px" class="filter-item" size="small" clearable @change="getCourseOptions">
         <el-option
           v-for="item in categories"
           :key="item.id"
           :label="item.category_name"
+          :value="item.id"
+        />
+      </el-select>
+      <el-select v-model="listQuery.course" v-loadmore="loadmoreOption" :placeholder="$t('table.chooseCourse')" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option
+          v-for="item in courselists"
+          :key="item.id"
+          :label="item.name"
           :value="item.id"
         />
       </el-select>
@@ -71,53 +63,43 @@
     </el-card>
     <div class="table-container">
       <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" style="width: 100%" stripe highlight-current-row>
-        <el-table-column align="center" label="类型" width="140">
+        <el-table-column align="center" label="试卷标题" width="220">
+          <template slot-scope="scope">
+            <span>{{ scope.row.exam_title }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="类型" width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.category ? scope.row.category.category_name: '无' }}</span>
           </template>
         </el-table-column>
-        <!--    <el-table-column align="center" label="英文标题" width="240">
+        <el-table-column align="center" label="所属课程" width="200">
           <template slot-scope="scope">
-            <span>{{ scope.row.article_title }}</span>
-          </template>
-        </el-table-column>-->
-        <el-table-column align="center" label="中文标题" width="220">
-          <template slot-scope="scope">
-            <span>{{ scope.row.chinese_title }}</span>
+            <span>{{ scope.row.course.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="作者">
+        <el-table-column align="center" label="出题作者">
           <template slot-scope="scope">
-            <span>{{ scope.row.article_author }}</span>
+            <span>{{ scope.row.exam_author }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="价格">
+        <el-table-column align="center" label="单词句子数量" width="140">
           <template slot-scope="scope">
-            <span>{{ scope.row.pay_price }}元</span>
+            <div>单词：{{ scope.row.exam_words.length }} 个</div>
+            <div>句子：{{ scope.row.exam_sentences.length }} 个</div>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="翻译价格">
+        <el-table-column align="center" label="合格分数">
           <template slot-scope="scope">
-            <span>{{ scope.row.translate_price }}元</span>
+            <el-tag type="info">{{ scope.row.exam_pass_score }} 分</el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="难度">
+        <el-table-column align="center" label="总分数">
           <template slot-scope="scope">
-            <span>{{ scope.row.article_grade | gradeFilter }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="文章属性">
-          <template slot-scope="scope">
-            <el-tag :type="scope.row.is_only == 1? 'success' : 'info'">{{ scope.row.is_only == 1? '属于课程' : '阅读文章' }}</el-tag>
-            <!--<span>{{ scope.row.is_only == 1? '属于课程' : '阅读文章' }}</span>-->
+            <el-tag type="success">{{ scope.row.total_score }} 分</el-tag>
           </template>
         </el-table-column>
         <el-table-column align="center" label="状态" width="180">
-          <!-- <template slot-scope="{row}">
-            <el-tag :type="row.status | statusTypeFilter">
-              {{ row.status | statusFilter }}
-            </el-tag>
-          </template>-->
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.status"
@@ -132,34 +114,14 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="发布时间" width="140">
-          <template slot-scope="scope">
-            <span>{{ scope.row.deploy_time | parseUTCtime }}</span>
-            <!--<span>{{ scope.row.deploy_time | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
-          </template>
-        </el-table-column>
-
-        <!-- <el-table-column width="100px" label="Importance">
-          <template slot-scope="scope">
-            <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
-          </template>
-        </el-table-column>-->
-
-        <!--     <el-table-column min-width="300px" label="Title">
-          <template slot-scope="{row}">
-            <router-link :to="'/example/edit/'+row.id" class="link-type">
-              <span>{{ row.title }}</span>
-            </router-link>
-          </template>
-        </el-table-column>-->
 
         <el-table-column align="left" label="Actions" width="140">
           <template slot-scope="scope">
             <div>
-              <router-link style="display: inline-block" :to="'/article/edit/'+scope.row.id">
+              <router-link style="display: inline-block" :to="'/exam/edit/'+scope.row.id">
                 <el-button type="primary" size="small" icon="el-icon-edit" circle />
               </router-link>
-              <el-button v-show="scope.row.status!==1" type="danger" size="small" icon="el-icon-delete" circle @click="deleteArticle(scope.row.id)" />
+              <el-button v-show="scope.row.status!==1" type="danger" size="small" icon="el-icon-delete" circle @click="deleteExam(scope.row.id)" />
             </div>
           </template>
         </el-table-column>
@@ -172,16 +134,18 @@
 </template>
 
 <script>
-import { fetchList, deleteArticle, updateArticle } from '@/api/article'
+import { fetchList, deleteExam, updateExam } from '@/api/exam'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // Waves directive
+import loadmore from '@/directive/loadmore'
 import { fetchAllList as fetchCategory } from '@/api/articleCate'
 import { parseUTCtime } from '@/utils'
+import { fetchCoursesByCatrgory } from '@/api/course'
 
 export default {
   name: 'ArticleList',
   components: { Pagination },
-  directives: { waves },
+  directives: { waves, loadmore },
   filters: {
     statusTypeFilter(status) {
       const statusArr = ['danger', 'success', 'info']
@@ -250,18 +214,21 @@ export default {
           id: 0
         }
       ],
+      courseParams: {
+        id: '', // 分类ID
+        page: 1,
+        limit: 8
+      },
       list: null,
+      courselists: [],
+      cateCourseTotal: null,
       fitWidth: true,
       total: 0,
       listLoading: true,
-      articleStatus: [
+      examStatus: [
         {
           label: '已发布',
           value: 1
-        },
-        {
-          label: '未发布',
-          value: 0
         },
         {
           label: '草稿',
@@ -271,11 +238,10 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        article_author: '',
-        chinese_title: '',
-        article_grade: '',
+        exam_author: '',
+        exam_title: '',
         category: '',
-        is_only: '', // 1： 是课程文章，0单独文章
+        course: '',
         status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿
       },
       categories: []
@@ -286,12 +252,42 @@ export default {
     this.fetchCategory()
   },
   methods: {
+    // 课程分类
+    getCourseOptions(id) {
+      this.courseParams.id = id
+      this.loadmoreOption(1)
+    },
+    // 根据分类加载课程列表
+    loadmoreOption(flag) {
+      if (flag === 1) {
+        this.courseParams.page = 1
+        this.courseParams.limit = 8
+        this.courselists = []
+        this.listQuery.course = ''
+        fetchCoursesByCatrgory(this.courseParams).then(response => {
+          if (response.data.docs.length) {
+            this.courselists = this.courselists.concat(response.data.docs)
+          }
+          this.cateCourseTotal = response.data.total
+        })
+      } else {
+        this.courseParams.page = this.courseParams.page + 1
+        if (this.cateCourseTotal > this.courselists.length) {
+          fetchCoursesByCatrgory(this.courseParams).then(response => {
+            if (response.data.docs.length) {
+              this.courselists = this.courselists.concat(response.data.docs)
+            }
+            this.cateCourseTotal = response.data.total
+          })
+        }
+      }
+    },
     handleFilterNow() {
       this.getList()
     },
     handleShowStatusChange(index, row) {
       // let data = new URLSearchParams();
-      updateArticle({ id: row._id, status: row.status }).then(response => {
+      updateExam({ id: row._id, status: row.status }).then(response => {
         console.log(response)
         this.$message({
           message: '修改成功',
@@ -300,8 +296,8 @@ export default {
         })
       })
     },
-    deleteArticle(id) {
-      deleteArticle({ id: id }).then(response => {
+    deleteExam(id) {
+      deleteExam({ id: id }).then(response => {
         if (response.code === 200) {
           this.$notify({
             title: '成功',
@@ -313,8 +309,8 @@ export default {
         this.getList()
       })
     },
-    addNewArticle() {
-      this.$router.push({ path: '/article/create' })
+    addNewExam() {
+      this.$router.push({ path: '/exam/create' })
     },
     getList() {
       this.listLoading = true
@@ -345,13 +341,13 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['id', 'chinese_title', 'article_grade', 'article_content', 'article_brief', 'article_author', 'article_audio', 'article_analysis', 'favour', 'id', 'status', 'category']
-        const filterVal = ['id', 'chinese_title', 'article_grade', 'article_content', 'article_brief', 'article_author', 'article_audio', 'article_analysis', 'favour', 'id', 'status', 'category']
+        const tHeader = ['id', 'exam_title', 'exam_content', 'exam_brief', 'exam_author', 'exam_audio', 'exam_pass_score', 'favour', 'exam_words', 'status', 'category', 'exam_sentences', 'exam_person_num', 'pass_person_num']
+        const filterVal = ['id', 'chinese_title', 'exam_content', 'exam_brief', 'exam_author', 'exam_audio', 'exam_pass_score', 'favour', 'exam_words', 'status', 'category', 'exam_sentences', 'exam_person_num', 'pass_person_num']
         const data = this.formatJson(filterVal, this.list)
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: '文章列表'
+          filename: '试卷列表'
         })
         this.downloadLoading = false
       })

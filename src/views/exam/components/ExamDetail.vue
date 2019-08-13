@@ -71,7 +71,7 @@
                         :value="item.id"
                       />
                     </el-select>-->
-                    <el-select v-model="postForm.course" v-loadmore="loadmoreOption" style="width: 400px" size="mini" filterable placeholder="请选择所属课程" @change="getAllCourseWordsAndSentences">
+                    <el-select v-model="postForm.course" v-loadmore="loadmoreOption" style="width: 200px" size="mini" filterable placeholder="请选择所属课程" @change="getAllCourseWordsAndSentences">
                       <el-option
                         v-for="item in courselists"
                         :key="item.id"
@@ -479,7 +479,6 @@ export default {
   methods: {
     // 考试单词改变
     handleChangeWords(val) {
-      debugger
       const resultArr = this.exam_words.filter(item => {
         return val.includes(item.key)
       })
@@ -503,7 +502,6 @@ export default {
     },
     // 根据分类加载课程列表
     loadmoreOption(flag) {
-      debugger
       if (flag === 1) {
         this.courseParams.page = 1
         this.courseParams.limit = 8
@@ -528,10 +526,8 @@ export default {
       }
     },
     getAllCourseWordsAndSentences(id) {
-      debugger
       this.examParams.courseId = id
       wordsAndSentences(this.examParams).then(response => {
-        debugger
         if (response.code === 200) {
           if (response.data.examWords.length) {
             this.exam_words = response.data.examWords.map((item, index) => {
