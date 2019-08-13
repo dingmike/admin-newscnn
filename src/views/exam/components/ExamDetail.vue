@@ -93,6 +93,7 @@
 
         <el-form-item prop="words" label-width="100px" label="考试单词:" style="margin-bottom: 30px;">
           <el-card shadow="never" class="cardBg">
+            <el-button class="button-new-tag" size="small" @click="goAddOneWord">+ New Word</el-button>
             <div v-for="(item, index) in postForm.exam_words" :key="index">
               <el-row :gutter="20">
                 <el-col :span="4">
@@ -125,13 +126,13 @@
               </el-row>
 
             </div>
-            <el-button class="button-new-tag" size="small" @click="goAddOneWord">+ New Word</el-button>
           </el-card>
 
         </el-form-item>
 
         <el-form-item prop="sentence" label-width="100px" label="考试句子:" style="margin-bottom: 30px;">
           <el-card shadow="never" class="cardBg">
+            <el-button class="button-new-tag" size="small" @click="goAddOneSentence">+ New Sentence</el-button>
             <div v-for="(item, index) in postForm.exam_sentences" :key="index">
               <el-row :gutter="10">
                 <el-col :span="10">
@@ -163,8 +164,6 @@
                 </el-col>
               </el-row>
             </div>
-
-            <el-button class="button-new-tag" size="small" @click="goAddOneSentence">+ New Sentence</el-button>
           </el-card>
         </el-form-item>
 
@@ -284,48 +283,6 @@ const defaultForm = {
   exam_person_num: '', // 测试人数
   favour: '' // 赞
 }
-const defaultAnalysisForm = {
-  words: [
-    {
-      ename: 'learn',
-      symbol: '美 /lɝn/ ',
-      cname: 'vt. 学习；得知；认识到',
-      sentence: 'we learn a lot language!',
-      csentence: '我学了好多',
-      wordAudio: 'http://www.bejson.com/',
-      sentenceAudio: 'http://www.bejson.com/',
-      teacherAudio: 'http://www.bejson.com/',
-      video: 'http://www.bejson.com/'
-    },
-    {
-      ename: 'learn2',
-      symbol: '美 /lɝn/ ',
-      cname: 'vt. 学习；得知；认识到',
-      sentence: '',
-      csentence: '我学了好多',
-      wordAudio: 'http://www.bejson.com/',
-      sentenceAudio: 'http://www.bejson.com/',
-      teacherAudio: 'http://www.bejson.com/',
-      video: 'http://www.bejson.com/'
-    }
-  ],
-  sentence: [
-    {
-      ename: 'Shortcut for saving one or more documents to the database.Shortcut for saving one or more documents to the database.',
-      cname: '将一个或多个文档保存到数据库的快捷方式。',
-      audio: 'http://www.bejson.com/',
-      video: 'http://www.bejson.com/'
-    },
-    {
-      ename: 'Shortcut for saving one or more documents to the database.  ',
-      cname: '将一个或多个文档保存到数据库的快捷方式。',
-      audio: 'http://www.bejson.com/',
-      video: 'http://www.bejson.com/'
-    }
-  ],
-  analysis_audio: '',
-  analysis_video: ''
-}
 
 export default {
   name: 'ExamDetail',
@@ -441,7 +398,6 @@ export default {
       deployMessageData: '发布文章成功',
       updateMessageData: '更新文章成功',
       postForm: Object.assign({}, defaultForm),
-      analysisForm: Object.assign({}, defaultAnalysisForm),
       loading: false,
       userListOptions: [],
       rules: {
@@ -605,6 +561,7 @@ export default {
       this.showSetAnalysis = true
     },
     fetchData(id) {
+      debugger
       fetchExam(id).then(response => {
         // 转换为对象进行渲染数据
         // response.data.article_analysis = JSON.parse(response.data.article_analysis)
