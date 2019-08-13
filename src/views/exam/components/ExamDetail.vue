@@ -208,7 +208,6 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="showWordBox = false">确 定</el-button>
-        <!--<el-button type="primary" size="small" @click="setOneWord">设 置</el-button>-->
       </div>
     </el-dialog>
     <!--添加句子 2个-->
@@ -324,24 +323,6 @@ export default {
       resultSentences: [], // 选择的句子
       resultwordsKey: [],
       resultSentencesKey: [],
-      analysisSentence: {
-        ename: 'Shortcut for saving one or more documents to the database.  ',
-        cname: '将一个或多个文档保存到数据库的快捷方式。',
-        sentenceAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
-        teacherAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
-        video: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm'
-      },
-      analysisWords: {
-        ename: 'learn',
-        symbol: '美 /lɝn/ ',
-        cname: 'vt. 学习；得知；认识到',
-        sentence: 'we learn a lot language!',
-        csentence: '我学了好多',
-        wordAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
-        sentenceAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
-        teacherAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
-        video: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm'
-      },
       isEditWord: false,
       isEditSentence: false,
       showWordBox: false,
@@ -349,52 +330,12 @@ export default {
       showSetAnalysis: false,
       isFullScreen: false,
       categories: [],
-      isOnlyOptions: [
-        {
-          name: '属于课程',
-          id: 1
-        },
-        {
-          name: '阅读文章',
-          id: 0
-        }
-      ],
       LoadingOptions: {
         lock: true,
         text: 'Loading',
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       },
-      gradeOptions: [
-        {
-          label: '初中',
-          value: 0
-        },
-        {
-          label: '高中',
-          value: 1
-        },
-        {
-          label: 'CET-4',
-          value: 2
-        },
-        {
-          label: 'CET-6',
-          value: 3
-        },
-        {
-          label: '雅思',
-          value: 4
-        },
-        {
-          label: '托福',
-          value: 5
-        },
-        {
-          label: '专6',
-          value: 6
-        }
-      ],
       deployMessageData: '发布文章成功',
       updateMessageData: '更新文章成功',
       postForm: Object.assign({}, defaultForm),
@@ -433,6 +374,19 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
+    async editFetchCategory(cate) {
+      const response = await fetchCategory()
+      this.categories = response.data
+      if (cate) {
+        this.getCourseOptions(cate)
+      }
+    /* fetchCategory().then(response => {
+        this.categories = response.data
+        if(cate){
+          this.getCourseOptions(cate)
+        }
+      })*/
+    },
     // 考试单词改变
     handleChangeWords(val) {
       const resultArr = this.exam_words.filter(item => {
@@ -513,42 +467,6 @@ export default {
         this.categories = response.data
       })
     },
-    editSentence(item) {
-      this.isEditSentence = true
-      this.analysisSentence = item
-      this.showSentenceBox = true
-    },
-    editWord(item) {
-      this.isEditWord = true
-      this.analysisWords = item
-      this.showWordBox = true
-    },
-    // 添加讲解数据
-    setAllAnalysis() {
-      console.log(this.postForm.article_analysis)
-      this.showSetAnalysis = false
-      // this.postForm.article_analysis = JSON.stringify(this.analysisForm)
-    },
-    deleteSentence(item) {
-      // this.postForm.article_analysis.sentence.splice(this.postForm.article_analysis.sentence.indexOf(item), 1)
-      this.postForm.article_analysis.sentence.splice(this.postForm.article_analysis.sentence.indexOf(item), 1)
-    },
-    deleteWord(item) {
-      // this.postForm.article_analysis.words.splice(this.postForm.article_analysis.words.indexOf(item), 1)
-      this.postForm.article_analysis.words.splice(this.postForm.article_analysis.words.indexOf(item), 1)
-    },
-    setOneSentence() {
-      /* if (!this.isEditSentence) {
-        this.postForm.article_analysis.sentence.push(this.analysisSentence)
-      }
-      this.showSentenceBox = false*/
-    },
-    setOneWord() {
-      /* if (!this.isEditWord) {
-        this.postForm.article_analysis.words.push(this.analysisWords)
-      }
-      this.showWordBox = false*/
-    },
     goAddOneSentence() {
       this.showSentenceBox = true
       this.isEditSentence = false
@@ -560,9 +478,33 @@ export default {
     goSetAnalysis() {
       this.showSetAnalysis = true
     },
-    fetchData(id) {
+    async fetchData(id) {
       debugger
-      fetchExam(id).then(response => {
+      const response = await fetchExam(id)
+      response.data.exam_words = response.data.exam_words.map((item, index) => {
+        return {
+          key: index,
+          label: item.word,
+          disabled: false,
+          ...item
+        }
+      })
+      response.data.exam_sentences = response.data.exam_sentences.map((item, index) => {
+        return {
+          key: index,
+          label: item.sentence,
+          disabled: false,
+          ...item
+        }
+      })
+      if (this.isEdit) {
+        await this.editFetchCategory(response.data.category)
+      }
+      this.postForm = response.data
+      console.log(this.postForm)
+      this.setTagsViewTitle()
+
+      /* fetchExam(id).then(response => {
         // 转换为对象进行渲染数据
         // response.data.article_analysis = JSON.parse(response.data.article_analysis)
         // 将exam_words和 exam_sentences 转换为可渲染的对象数组
@@ -582,18 +524,22 @@ export default {
             ...item
           }
         })
+        if(this.isEdit) {
+          this.editFetchCategory(response.data.category)
+        }
         this.postForm = response.data
         console.log(this.postForm)
         // this.analysisForm = JSON.parse(JSON.stringify(this.postForm.article_analysis));
         // this.postForm.article_analysis = JSON.stringify(this.analysisForm)
         this.setTagsViewTitle()
+
       }).catch(err => {
         console.log(err)
-      })
+      })*/
     },
     // 设置tab页签数据
     setTagsViewTitle() {
-      const title = this.lang === 'zh' ? '编辑文章' : 'Edit Article'
+      const title = this.lang === 'zh' ? '编辑试题' : 'Edit Exam'
       const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.postForm.id}` })
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
@@ -679,7 +625,7 @@ export default {
     width: 40px;
     position: absolute;
     right: -10px;
-    top: 0px;
+    top: 0;
   }
   .el-tag + .el-tag {
     margin-left: 10px;
