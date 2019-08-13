@@ -24,7 +24,7 @@
             </el-form-item>
             <div class="postInfo-container">
               <el-row>
-                <el-col :span="8">
+                <el-col :span="6">
                   <el-form-item label-width="100px" label="出题作者:" class="postInfo-container-item" prop="exam_author">
                     <el-input v-model="postForm.exam_author" size="mini" placeholder="" />
                     <!--<el-select v-model="postForm.article_author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="搜索用户">
@@ -32,15 +32,25 @@
                     </el-select>-->
                   </el-form-item>
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="6">
                   <el-form-item label-width="110px" label="参与考试人数:" class="postInfo-container-item" prop="exam_person_num">
                     <el-input-number v-model="postForm.exam_person_num" size="mini" :step="1" :max="1000000" /> 人
                   </el-form-item>
                 </el-col>
+                <el-col :span="6">
+                  <el-form-item label-width="110px" label="总分:" class="postInfo-container-item" prop="exam_person_num">
+                    <el-input-number v-model="postForm.total_score" size="mini" :step="1" :max="150" /> 分
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item label-width="110px" label="通过分数:" class="postInfo-container-item" prop="exam_person_num">
+                    <el-input-number v-model="postForm.exam_pass_score" size="mini" :step="1" :max="150" /> 分
+                  </el-form-item>
+                </el-col>
               </el-row>
               <el-row>
-                <el-col :span="8">
-                  <el-form-item label="试题类型：" prop="name">
+                <el-col :span="6">
+                  <el-form-item label="试题类型：" label-width="110px" prop="name">
                     <el-select v-model="postForm.category" filterable size="mini" placeholder="请选择分类" @change="getCourseOptions">
                       <el-option
                         v-for="item in categories"
@@ -51,8 +61,8 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :span="10">
-                  <el-form-item label="所属课程：" prop="course">
+                <el-col :span="6">
+                  <el-form-item label="所属课程：" label-width="110px" prop="course">
                     <!--    <el-select v-model="postForm.course" filterable size="mini" placeholder="请选择所属课程">
                       <el-option
                         v-for="item in courselists"
@@ -61,7 +71,7 @@
                         :value="item.id"
                       />
                     </el-select>-->
-                    <el-select v-model="postForm.course" v-loadmore="loadmoreOption" style="width: 400px" size="small" filterable placeholder="请选择所属课程" @change="getAllCourseWordsAndSentences">
+                    <el-select v-model="postForm.course" v-loadmore="loadmoreOption" style="width: 400px" size="mini" filterable placeholder="请选择所属课程" @change="getAllCourseWordsAndSentences">
                       <el-option
                         v-for="item in courselists"
                         :key="item.id"
@@ -82,21 +92,80 @@
         </el-form-item>
 
         <el-form-item prop="words" label-width="100px" label="考试单词:" style="margin-bottom: 30px;">
-          <div>
+          <el-card shadow="never" class="cardBg">
             <div v-for="(item, index) in postForm.exam_words" :key="index">
-              {{ item.label }}
+              <el-row :gutter="20">
+                <el-col :span="4">
+                  <div class="grid-content bg-purple-light">
+                    {{ item.label }} / {{ item.wrodTranslate }}
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <div class="grid-content bg-purple-light">
+                    例句：{{ item.exampleSentence }}
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <div class="grid-content bg-purple-light">
+                    <!--<AudioPlayer :audioList='item.wordAudio'></AudioPlayer>-->
+                    <aplayer
+                      autoplay
+                      :music="{
+                        title: item.word,
+                        artist: '英文能力',
+                        src: item.wordAudio,
+                        pic: 'http://bkcdn.fecstec.com/FuhO9VlNhmKrSzqcKj_aa6IWcveu'
+                      }"
+                    />
+                    <!-- <audio :src="item.wordAudio" controls="controls" style="padding: 10px">
+                    您的浏览器不支持 audio 标签。
+                  </audio>-->
+                  </div>
+                </el-col>
+              </el-row>
+
             </div>
             <el-button class="button-new-tag" size="small" @click="goAddOneWord">+ New Word</el-button>
-          </div>
+          </el-card>
+
         </el-form-item>
 
         <el-form-item prop="sentence" label-width="100px" label="考试句子:" style="margin-bottom: 30px;">
-          <div>
+          <el-card shadow="never" class="cardBg">
             <div v-for="(item, index) in postForm.exam_sentences" :key="index">
-              {{ item.label }}
+              <el-row :gutter="10">
+                <el-col :span="10">
+                  <div class="grid-content bg-purple-light">
+                    {{ item.sentence }} / {{ item.sentenceTranslate }}
+                  </div>
+                </el-col>
+                <el-col :span="11">
+                  <div class="grid-content bg-purple-light">
+                    例句：{{ item.exampleSentence }}
+                  </div>
+                </el-col>
+                <el-col :span="3">
+                  <div class="grid-content bg-purple-light">
+                    <aplayer
+                      autoplay
+                      mini
+                      :music="{
+                        title: item.sentence,
+                        artist: '英文能力',
+                        src: item.sentenceAudio,
+                        pic: 'http://bkcdn.fecstec.com/FuhO9VlNhmKrSzqcKj_aa6IWcveu'
+                      }"
+                    />
+                  <!--<audio :src="item.sentenceAudio" controls="controls" style="padding: 10px">
+                    您的浏览器不支持 audio 标签。
+                  </audio>-->
+                  </div>
+                </el-col>
+              </el-row>
             </div>
+
             <el-button class="button-new-tag" size="small" @click="goAddOneSentence">+ New Sentence</el-button>
-          </div>
+          </el-card>
         </el-form-item>
 
         <el-form-item prop="article_content" label-width="100px" label="额外测试:" style="margin-bottom: 30px;">
@@ -137,11 +206,10 @@
           <!--<el-button class="transfer-footer" slot="left-footer" size="small">操作</el-button>-->
           <!--<el-button class="transfer-footer" slot="right-footer" size="small">操作</el-button>-->
         </el-transfer>
-        {{ resultWords }}
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="showWordBox = false">关 闭</el-button>
-        <el-button type="primary" size="small" @click="setOneWord">设 置</el-button>
+        <el-button size="small" @click="showWordBox = false">确 定</el-button>
+        <!--<el-button type="primary" size="small" @click="setOneWord">设 置</el-button>-->
       </div>
     </el-dialog>
     <!--添加句子 2个-->
@@ -174,8 +242,8 @@
         </el-transfer>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="showSentenceBox = false">关 闭</el-button>
-        <el-button type="primary" size="small" @click="setOneSentence">设 置</el-button>
+        <el-button size="small" @click="showSentenceBox = false">确 定</el-button>
+        <!--<el-button type="primary" size="small" @click="setOneSentence">设 置</el-button>-->
       </div>
     </el-dialog>
   </div>
@@ -186,6 +254,7 @@ import Tinymce from '@/components/Tinymce'
 // import SingleFile from '@/components/Upload/singleFile'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
+import Aplayer from 'vue-aplayer'
 import loadmore from '@/directive/loadmore'
 // import waves from '@/directive/waves' // Waves directive
 // import { validURL } from '@/utils/validate'
@@ -262,7 +331,7 @@ export default {
   name: 'ExamDetail',
   directives: { loadmore },
   // components: { Tinymce, MDinput, Sticky, SingleFile },
-  components: { Tinymce, MDinput, Sticky },
+  components: { Tinymce, MDinput, Sticky, Aplayer },
   props: {
     isEdit: {
       type: Boolean,
@@ -459,15 +528,18 @@ export default {
       }
     },
     getAllCourseWordsAndSentences(id) {
+      debugger
       this.examParams.courseId = id
       wordsAndSentences(this.examParams).then(response => {
+        debugger
         if (response.code === 200) {
           if (response.data.examWords.length) {
             this.exam_words = response.data.examWords.map((item, index) => {
               return {
                 key: index,
-                label: item,
-                disabled: false
+                label: item.word,
+                disabled: false,
+                ...item
               }
             })
           }
@@ -475,8 +547,9 @@ export default {
             this.exam_sentences = response.data.examSentences.map((item, index) => {
               return {
                 key: index,
-                label: item,
-                disabled: false
+                label: item.sentence,
+                disabled: false,
+                ...item
               }
             })
           }
@@ -513,16 +586,16 @@ export default {
       this.postForm.article_analysis.words.splice(this.postForm.article_analysis.words.indexOf(item), 1)
     },
     setOneSentence() {
-      if (!this.isEditSentence) {
+      /* if (!this.isEditSentence) {
         this.postForm.article_analysis.sentence.push(this.analysisSentence)
       }
-      this.showSentenceBox = false
+      this.showSentenceBox = false*/
     },
     setOneWord() {
-      if (!this.isEditWord) {
+      /* if (!this.isEditWord) {
         this.postForm.article_analysis.words.push(this.analysisWords)
       }
-      this.showWordBox = false
+      this.showWordBox = false*/
     },
     goAddOneSentence() {
       this.showSentenceBox = true
@@ -543,15 +616,17 @@ export default {
         response.data.exam_words = response.data.exam_words.map((item, index) => {
           return {
             key: index,
-            label: item,
-            disabled: false
+            label: item.word,
+            disabled: false,
+            ...item
           }
         })
         response.data.exam_sentences = response.data.exam_sentences.map((item, index) => {
           return {
             key: index,
-            label: item,
-            disabled: false
+            label: item.sentence,
+            disabled: false,
+            ...item
           }
         })
         this.postForm = response.data
@@ -665,6 +740,19 @@ export default {
   .transfer-footer {
     margin-left: 20px;
     padding: 6px 5px;
+  }
+  .cardBg {
+    background: #F8F9FC;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    height: 80px;
+    font-size: 14px;
+    padding: 0 10px;
+    margin: 8px 0;
   }
 }
 </style>

@@ -90,7 +90,7 @@
           </el-col>
           <el-col :span="10">
             <el-form-item label="文章属性：" prop="is_only">
-              <el-select v-model="postForm.is_only" filterable size="mini" placeholder="请选择分类">
+              <el-select v-model="postForm.is_only" filterable size="mini" placeholder="请选择属性">
                 <el-option
                   v-for="item in isOnlyOptions"
                   :key="item.id"
@@ -119,7 +119,7 @@
           <el-button v-if="postForm.is_only === 1" type="success" @click="goSetAnalysis">
             去创建课程详细的讲解内容
           </el-button>
-          <Tinymce v-else ref="editor" v-model="postForm.article_analysis" :height="400" />
+          <!--<Tinymce v-else ref="editor" v-model="postForm.article_analysis" :height="400" />-->
         </el-form-item>
 
         <!-- <el-form-item label-width="100px" label="考试单词:" prop="exam_words">
@@ -134,14 +134,15 @@
             </div>
             <!--resultExamWords postForm.exam_words-->
             <el-table
-              style="width: 100%;margin-top: 20px"
+              style="width: 100%; margin-top: 10px"
               :data="postForm.exam_words"
               border
               fit
+              size="mini"
             >
               <el-table-column
                 label="单词"
-                width="100px"
+                width="110"
                 align="center"
               >
                 <template slot-scope="scope">
@@ -150,7 +151,7 @@
               </el-table-column>
               <el-table-column
                 label="解释"
-                width="100"
+                width="170"
                 align="center"
               >
                 <template slot-scope="scope">
@@ -159,18 +160,18 @@
               </el-table-column>
               <el-table-column
                 label="发音"
-                width="140"
+                width="320"
                 align="center"
               >
                 <template slot-scope="scope">
-                  <audio :src="scope.row.audio" controls="controls">
+                  <audio :src="scope.row.audio" controls="controls" style="padding: 10px">
                     您的浏览器不支持 audio 标签。
                   </audio>
                 </template>
               </el-table-column>
               <el-table-column
                 label="例句"
-                width="140"
+                width="350"
                 align="center"
               >
                 <template slot-scope="scope">
@@ -179,7 +180,7 @@
               </el-table-column>
               <el-table-column
                 label="操作"
-                width="100"
+                width="120"
                 align="center"
               >
                 <template slot-scope="scope">
@@ -208,6 +209,80 @@
         <!-- <el-form-item prop="image_uri" style="margin-bottom: 30px;">
           <Upload v-model="postForm.image_uri" />
         </el-form-item>-->
+
+        <el-form-item label-width="100px" label="考试句子:" prop="exam_sentences">
+          <el-card shadow="never" class="cardBg">
+            <div>
+              <el-button class="littleMarginLeft" @click="handleAddExamSentence">增加</el-button>
+            </div>
+            <!--resultExamWords postForm.exam_words-->
+            <el-table
+              style="width: 100%; margin-top: 10px"
+              :data="postForm.exam_sentences"
+              border
+              fit
+              size="mini"
+            >
+              <el-table-column
+                label="句子"
+                width="110"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.sentence }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="解释"
+                width="170"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.sentenceTranslate }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="发音"
+                width="320"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <audio :src="scope.row.sentenceAudio" controls="controls" style="padding: 10px">
+                    您的浏览器不支持 audio 标签。
+                  </audio>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="例句"
+                width="350"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.exampleSentence }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="操作"
+                width="120"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <el-button
+                    type="text"
+                    @click="handleEditExamSentence(scope.$index, scope.row)"
+                  >编辑
+                  </el-button>
+                  <el-button
+                    type="text"
+                    @click="handleRemoveExamSentence(scope.$index, scope.row)"
+                  >删除
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-card>
+
+        </el-form-item>
       </div>
     </el-form>
 
@@ -248,11 +323,19 @@
             </div>
           </el-form-item>
           <el-form-item prop="analysis_audio" label-width="45px" label="音频:" style="margin-bottom: 30px;">
-            <el-input v-model="postForm.article_analysis.analysis_audio" placeholder="请输入内容" />
+            <el-input v-model="postForm.article_analysis.analysis_audio" placeholder="请输入音频链接" />
+            <audio :src="postForm.article_analysis.analysis_audio" controls="controls" style="padiding: 10px">
+              您的浏览器不支持 audio 标签。
+            </audio>
             <SingleFile v-model="postForm.article_analysis.analysis_audio" />
           </el-form-item>
           <el-form-item prop="analysis_video" label-width="45px" label="视频:" style="margin-bottom: 30px;">
-            <el-input v-model="postForm.article_analysis.analysis_video" placeholder="请输入内容" />
+            <el-input v-model="postForm.article_analysis.analysis_video" placeholder="请输入视频链接" />
+            <div style="width: 320px; height: 240px; padding: 10px 0 0 0">
+              <video autoplay controls="controls" :src="postForm.article_analysis.analysis_video" width="100%">
+                您的浏览器不支持 video 标签。
+              </video>
+            </div>
             <SingleFile v-model="postForm.article_analysis.analysis_video" />
           </el-form-item>
         </el-form>
@@ -281,7 +364,7 @@
               <el-input v-model="analysisWords.cname" placeholder="请输入内容" />
             </el-form-item>
             <el-form-item prop="sentence" label-width="80px" label="单词讲解">
-              <Tinymce v-if="showWordBox" ref="editor" v-model="analysisWords.sentence" :height="200" />
+              <Tinymce v-if="showWordBox" ref="editor" v-model="analysisWords.sentence" :height="320" />
             </el-form-item>
             <!--<el-form-item prop="sentence" label-width="80px" label="例句英文">
               <el-input v-model="analysisWords.sentence" placeholder="请输入内容" />
@@ -290,19 +373,33 @@
               <el-input v-model="analysisWords.csentence" placeholder="请输入内容" />
             </el-form-item>-->
             <el-form-item prop="wordAudio" label-width="80px" label="单词发音">
-              <el-input v-model="analysisWords.wordAudio" placeholder="请输入内容" />
+              <el-input v-model="analysisWords.wordAudio" placeholder="请输入音频连接" />
+              <audio :src="analysisWords.wordAudio" controls="controls" style="padding: 10px">
+                您的浏览器不支持 audio 标签。
+              </audio>
               <SingleFile v-model="analysisWords.wordAudio" />
             </el-form-item>
             <el-form-item prop="sentenceAudio" label-width="80px" label="例句发音">
               <el-input v-model="analysisWords.sentenceAudio" placeholder="请输入内容" />
+              <audio :src="analysisWords.sentenceAudio" controls="controls" style="padding: 10px">
+                您的浏览器不支持 audio 标签。
+              </audio>
               <SingleFile v-model="analysisWords.sentenceAudio" />
             </el-form-item>
             <el-form-item prop="teacherAudio" label-width="80px" label="老师音频">
               <el-input v-model="analysisWords.teacherAudio" placeholder="请输入内容" />
+              <audio :src="analysisWords.teacherAudio" controls="controls" style="padding: 10px">
+                您的浏览器不支持 audio 标签。
+              </audio>
               <SingleFile v-model="analysisWords.teacherAudio" />
             </el-form-item>
             <el-form-item prop="video" label-width="80px" label="视频">
-              <el-input v-model="analysisWords.video" placeholder="请输入内容" />
+              <el-input v-model="analysisWords.video" placeholder="请输入视频连接" />
+              <div style="width: 320px; height: 240px; padding: 10px 0 0 0">
+                <video autoplay controls="controls" :src="analysisWords.video" width="100%">
+                  您的浏览器不支持 video 标签。
+                </video>
+              </div>
               <SingleFile v-model="analysisWords.video" />
             </el-form-item>
           </el-form>
@@ -338,15 +435,26 @@
               <el-input v-model="analysisSentence.cname" placeholder="请输入内容" />
             </el-form-item>-->
             <el-form-item prop="sentenceAudio" label-width="80px" label="句子音频">
-              <el-input v-model="analysisSentence.sentenceAudio" placeholder="请输入内容" />
+              <el-input v-model="analysisSentence.sentenceAudio" placeholder="请输入音频连接" />
+              <audio :src="analysisSentence.sentenceAudio" controls="controls" style="padiding: 10px">
+                您的浏览器不支持 audio 标签。
+              </audio>
               <SingleFile v-model="analysisSentence.sentenceAudio" />
             </el-form-item>
             <el-form-item prop="teacherAudio" label-width="80px" label="老师音频">
               <el-input v-model="analysisSentence.teacherAudio" placeholder="请输入内容" />
+              <audio :src="analysisSentence.teacherAudio" controls="controls" style="padiding: 10px">
+                您的浏览器不支持 audio 标签。
+              </audio>
               <SingleFile v-model="analysisSentence.teacherAudio" />
             </el-form-item>
             <el-form-item prop="video" label-width="80px" label="视频">
-              <el-input v-model="analysisSentence.video" placeholder="请输入内容" />
+              <el-input v-model="analysisSentence.video" placeholder="请输入视频连接" />
+              <div style="width: 320px; height: 240px; padding: 10px 0 0 0">
+                <video autoplay controls="controls" :src="analysisSentence.video" width="100%">
+                  您的浏览器不支持 video 标签。
+                </video>
+              </div>
               <SingleFile v-model="analysisSentence.video" />
             </el-form-item>
           </el-form>
@@ -361,24 +469,34 @@
     <!--添加考试单词-->
     <el-dialog
       width="50%"
-      title="添加考试单词"
+      :title="addExamWordsTitle"
       :visible.sync="showExamWordBox"
     >
       <div>
-        <el-form ref="postFormWord" :model="examWordsForm" :rules="rules" size="small">
+        <el-form ref="postFormWord" :model="examWordsForm" :rules="examWordRules" size="small">
 
-          <el-form-item prop="ename" label-width="80px" label="单词英文">
-            <el-input v-model="examWordsForm.word" placeholder="请输入内容" />
+          <el-form-item prop="word" label-width="80px" label="单词英文">
+            <el-input v-model="examWordsForm.word" placeholder="请输入内容" :disabled="isEditExamWord" />
           </el-form-item>
-          <el-form-item prop="cname" label-width="80px" label="解释">
-            <el-input v-model="examWordsForm.wrodTranslate" placeholder="请输入内容" />
+          <el-form-item prop="wrodTranslate" label-width="80px" label="解释">
+            <el-input
+              v-model="examWordsForm.wrodTranslate"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入内容"
+            />
           </el-form-item>
-          <el-form-item prop="cname" label-width="80px" label="例句">
-            <el-input v-model="examWordsForm.exampleSentence" placeholder="请输入内容" />
+          <el-form-item prop="exampleSentence" label-width="80px" label="例句">
+            <el-input
+              v-model="examWordsForm.exampleSentence"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入内容"
+            />
           </el-form-item>
-          <el-form-item prop="sentenceAudio" label-width="80px" label="发音">
-            <el-input v-model="examWordsForm.wordAudio" placeholder="请输入内容" />
-            <audio :src="examWordsForm.wordAudio" controls="controls" style="padiding: 10px 0">
+          <el-form-item prop="wordAudio" label-width="80px" label="发音">
+            <el-input v-model="examWordsForm.wordAudio" placeholder="请输入音频链接" />
+            <audio :src="examWordsForm.wordAudio" controls="controls" style="padiding: 10px">
               您的浏览器不支持 audio 标签。
             </audio>
             <SingleFile v-model="examWordsForm.wordAudio" />
@@ -395,6 +513,52 @@
       </div>
     </el-dialog>
 
+    <!--添加考试句子-->
+    <el-dialog
+      width="50%"
+      :title="addExamSentenceTitle"
+      :visible.sync="showExamSentenceBox"
+    >
+      <div>
+        <el-form ref="postFormWord" :model="examSentenceForm" :rules="examSentenceRules" size="small">
+
+          <el-form-item prop="sentence" label-width="80px" label="英文句子">
+            <el-input v-model="examSentenceForm.sentence" placeholder="请输入内容" :disabled="isEditExamSentence" />
+          </el-form-item>
+          <el-form-item prop="sentenceTranslate" label-width="80px" label="解释">
+            <el-input
+              v-model="examSentenceForm.sentenceTranslate"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入内容"
+            />
+          </el-form-item>
+          <el-form-item prop="exampleSentence" label-width="80px" label="例句">
+            <el-input
+              v-model="examSentenceForm.exampleSentence"
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入内容"
+            />
+          </el-form-item>
+          <el-form-item prop="sentenceAudio" label-width="80px" label="发音">
+            <el-input v-model="examSentenceForm.sentenceAudio" placeholder="请输入音频链接" />
+            <audio :src="examSentenceForm.sentenceAudio" controls="controls" style="padiding: 10px">
+              您的浏览器不支持 audio 标签。
+            </audio>
+            <SingleFile v-model="examSentenceForm.sentenceAudio" />
+          </el-form-item>
+          <!--<el-form-item prop="video" label-width="80px" label="视频">
+            <el-input v-model="analysisSentence.video" placeholder="请输入内容" />
+            <SingleFile v-model="analysisSentence.video" />
+          </el-form-item>-->
+        </el-form>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="showExamSentenceBox = false">关 闭</el-button>
+        <el-button type="primary" size="small" @click="setOneExamSentence">提 交</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -418,6 +582,12 @@ const defaultExamWordsForm = {
   wordAudio: '',
   exampleSentence: ''
 }
+const defaultExamSentenceForm = {
+  sentence: '',
+  sentenceTranslate: '',
+  sentenceAudio: '',
+  exampleSentence: ''
+}
 const defaultForm = {
   status: 0, // 发布状态： 1已发布，0：未发布， 2：草稿
   article_title: '', // 文章题目
@@ -429,13 +599,13 @@ const defaultForm = {
   memo: '', // 文章说明
   article_content: '', // 文章内容
   article_translate: '', // 文章翻译
-  /* article_analysis: {
+  article_analysis: {
     words: [],
     sentence: [],
     analysis_audio: '',
     analysis_video: ''
-  }, // 文章解析*/
-  article_analysis: '', // 文章解析
+  }, // 文章解析
+  // article_analysis: '', // 文章解析
   exam_words: [], // 需要测试的单词 用* 隔开
   exam_sentences: [], // 需要测试的句子 用* 隔开
   article_brief: '', // 文章摘要
@@ -534,6 +704,11 @@ export default {
       isEditWord: false,
       isEditSentence: false,
       showExamWordBox: false,
+      isEditExamWord: false,
+      isEditExamSentence: false,
+      addExamWordsTitle: '添加考试单词',
+      addExamSentenceTitle: '添加考试句子',
+      isEditSentenceWord: false,
       showExamSentenceBox: false,
       showWordBox: false,
       showSentenceBox: false,
@@ -589,6 +764,7 @@ export default {
       deployMessageData: '发布文章成功',
       updateMessageData: '更新文章成功',
       examWordsForm: Object.assign({}, defaultExamWordsForm),
+      examSentenceForm: Object.assign({}, defaultExamSentenceForm),
       postForm: Object.assign({}, defaultForm),
       analysisForm: Object.assign({}, defaultAnalysisForm),
       loading: false,
@@ -602,6 +778,18 @@ export default {
         // exam_sentences: [{ required: true, message: '请输入考试句子用*隔开', trigger: 'blur' }, { min: 2, max: 1500, message: '长度在 2 到 1500 个字符', trigger: 'blur' }],
         exam_words: [{ validator: validateRequire, trigger: 'blur' }],
         exam_sentences: [{ validator: validateRequire, trigger: 'blur' }]
+      },
+      examWordRules: {
+        word: [{ required: true, message: '请输入考试单词', trigger: 'blur' }, { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }],
+        wrodTranslate: [{ required: true, message: '请输入单词解释', trigger: 'blur' }, { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }],
+        wordAudio: [{ required: false, message: '请上传音频', trigger: 'blur' }, { min: 1, max: 300, message: '长度在 1 到 300 个字符', trigger: 'blur' }],
+        exampleSentence: [{ required: false, message: '请输入例句', trigger: 'blur' }, { min: 1, max: 200, message: '长度在 2 到 200 个字符', trigger: 'blur' }]
+      },
+      examSentenceRules: {
+        sentence: [{ required: true, message: '请输入考试句子', trigger: 'blur' }, { min: 1, max: 200, message: '长度在 1 到 200 个字符', trigger: 'blur' }],
+        sentenceTranslate: [{ required: true, message: '请输入句子解释', trigger: 'blur' }, { min: 1, max: 200, message: '长度在 1 到 200 个字符', trigger: 'blur' }],
+        sentenceAudio: [{ required: false, message: '请上传音频', trigger: 'blur' }, { min: 1, max: 300, message: '长度在 1 到 300 个字符', trigger: 'blur' }],
+        exampleSentence: [{ required: false, message: '请输入例句', trigger: 'blur' }, { min: 1, max: 200, message: '长度在 2 到 200 个字符', trigger: 'blur' }]
       },
       tempRoute: {}
     }
@@ -634,20 +822,71 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
+    setOneExamSentence() {
+      // this.postForm.exam_words.push(this.examWordsForm)
+      // this.resultExamWords.push(this.examWordsForm)
+      if (this.isEditExamSentence) {
+        this.postForm.exam_sentences = this.postForm.exam_sentences.map(item => {
+          if (item.sentence === this.examSentenceForm.sentence) {
+            item = this.examSentenceForm
+            return item
+          } else {
+            return item
+          }
+        })
+      } else {
+        this.postForm.exam_sentences.push(this.examSentenceForm)
+      }
+      this.showExamSentenceBox = false
+    },
     setOneExamWord() {
       // this.postForm.exam_words.push(this.examWordsForm)
       // this.resultExamWords.push(this.examWordsForm)
-      this.postForm.exam_words.push(this.examWordsForm)
+      if (this.isEditExamWord) {
+        this.postForm.exam_words = this.postForm.exam_words.map(item => {
+          if (item.word === this.examWordsForm.word) {
+            item = this.examWordsForm
+            return item
+          } else {
+            return item
+          }
+        })
+      } else {
+        this.postForm.exam_words.push(this.examWordsForm)
+      }
       this.showExamWordBox = false
     },
-    handleRemoveExamWord(index, row) {
-
+    handleRemoveExamSentence(index, row) {
+      console.log(row)
+      this.postForm.exam_sentences.splice(index, 1)
     },
+    handleRemoveExamWord(index, row) {
+      console.log(row)
+      this.postForm.exam_words.splice(index, 1)
+    },
+    // 编辑考试单词
     handleEditExamWord(index, row) {
-
+      this.addExamWordsTitle = '编辑考试单词：' + row.word
+      this.isEditExamWord = true
+      console.log(index)
+      this.examWordsForm = row
+      this.showExamWordBox = true
+    },
+    // 编辑考试句子
+    handleEditExamSentence(index, row) {
+      this.addExamSentenceTitle = '编辑考试句子：' + row.sentence
+      this.isEditExamSentence = true
+      console.log(index)
+      this.examSentenceForm = row
+      this.showExamSentenceBox = true
     },
     handleAddExamWord() {
       this.showExamWordBox = true
+      this.isEditExamWord = false
+    },
+    handleAddExamSentence() {
+      this.showExamSentenceBox = true
+      this.isEditExamSentence = false
     },
     fetchCategory() {
       fetchCategory().then(response => {
@@ -818,6 +1057,10 @@ export default {
   }
   .cardBg {
     background: #F8F9FC;
+  }
+  .video-box{
+    width: 200px;
+    height: 160px;
   }
 }
 </style>

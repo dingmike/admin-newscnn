@@ -254,7 +254,7 @@ export default {
         id: '',
         page: 1,
         limit: 8,
-        is_only: 0 // 0 不是单独的文章
+        is_only: 1 // 1 课程
       },
       cateArticleTotal: null,
       parentId: 0
