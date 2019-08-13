@@ -116,7 +116,7 @@
         </el-form-item>
 
         <el-form-item prop="article_analysis" label-width="80px" label="解析:" style="margin-bottom: 30px;">
-          <el-button v-if="postForm.is_only === 1" type="success" @click="goSetAnalysis">
+          <el-button v-if="postForm.is_only !== 1" type="success" @click="goSetAnalysis">
             去创建课程详细的讲解内容
           </el-button>
           <!--<Tinymce v-else ref="editor" v-model="postForm.article_analysis" :height="400" />-->
@@ -718,11 +718,11 @@ export default {
       isOnlyOptions: [
         {
           name: '属于课程',
-          id: 1
+          id: 0
         },
         {
           name: '阅读文章',
-          id: 0
+          id: 1
         }
       ],
       LoadingOptions: {
