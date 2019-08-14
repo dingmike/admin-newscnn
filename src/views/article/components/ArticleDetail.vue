@@ -140,6 +140,38 @@
               fit
               size="mini"
             >
+              <el-table-column width="120" align="center" label="图片">
+                <template slot-scope="scope">
+
+                  <el-popover
+                    placement="left"
+                    width="320"
+                    height="260"
+                    trigger="hover"
+                  >
+                    <div style="width: 300px;">
+                      <img :src="scope.row.img_url" style="width: 100%; height: 100%" alt="">
+                    </div>
+                    <img slot="reference" style="cursor: pointer" :src="scope.row.img_url" width="50" height="50" alt="">
+                  </el-popover>
+
+                  <!-- <el-popover
+                    placement="top-start"
+                    width="200"
+                    trigger="click">
+                    <div style="width: 360px; height: 240px">
+                      <img :src="scope.row.img_url" style="width: 100%;">
+                    </div>
+                    <div style="width: 100px;" slot="reference">
+                     &lt;!&ndash; <el-tooltip class="tooltip-item" effect="dark" :content="scope.row.word" placement="top-start">
+                        <img :src="scope.row.img_url" style="width: 100%;" :alt="scope.row.word">
+                      </el-tooltip>&ndash;&gt;
+                      <img :src="scope.row.img_url" style="width: 100%;" :alt="scope.row.word">
+                    </div>
+                  </el-popover>-->
+
+                </template>
+              </el-table-column>
               <el-table-column
                 label="单词"
                 width="110"
@@ -151,7 +183,7 @@
               </el-table-column>
               <el-table-column
                 label="解释"
-                width="170"
+                min-width="120"
                 align="center"
               >
                 <template slot-scope="scope">
@@ -160,18 +192,18 @@
               </el-table-column>
               <el-table-column
                 label="发音"
-                width="320"
+                width="140"
                 align="center"
               >
                 <template slot-scope="scope">
-                  <audio :src="scope.row.audio" controls="controls" style="padding: 10px">
+                  <audio :src="scope.row.audio" controls="controls" style="padding: 10px; width: 100px">
                     您的浏览器不支持 audio 标签。
                   </audio>
                 </template>
               </el-table-column>
               <el-table-column
                 label="例句"
-                width="350"
+                min-width="380"
                 align="center"
               >
                 <template slot-scope="scope">
@@ -234,7 +266,7 @@
               </el-table-column>
               <el-table-column
                 label="解释"
-                width="170"
+                min-width="170"
                 align="center"
               >
                 <template slot-scope="scope">
@@ -243,13 +275,24 @@
               </el-table-column>
               <el-table-column
                 label="发音"
-                width="320"
+                width="120"
                 align="center"
               >
                 <template slot-scope="scope">
-                  <audio :src="scope.row.sentenceAudio" controls="controls" style="padding: 10px">
+                  <audio :src="scope.row.sentenceAudio" controls="controls" style="padding: 10px; width:100px;">
                     您的浏览器不支持 audio 标签。
                   </audio>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="视频"
+                min-width="200"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <video autoplay controls="controls" :src="scope.row.sentenceVideo" width="100%">
+                    您的浏览器不支持 video 标签。
+                  </video>
                 </template>
               </el-table-column>
               <el-table-column
@@ -261,6 +304,7 @@
                   {{ scope.row.exampleSentence }}
                 </template>
               </el-table-column>
+
               <el-table-column
                 label="操作"
                 width="120"
@@ -501,10 +545,15 @@
             </audio>
             <SingleFile v-model="examWordsForm.wordAudio" />
           </el-form-item>
-          <!--<el-form-item prop="video" label-width="80px" label="视频">
-            <el-input v-model="analysisSentence.video" placeholder="请输入内容" />
-            <SingleFile v-model="analysisSentence.video" />
-          </el-form-item>-->
+          <el-form-item prop="video" label-width="80px" label="图片">
+            <el-input v-model="examWordsForm.img_url" placeholder="请输入图片链接" />
+            <!--<SingleFile v-model="examWordsForm.pic" />-->
+            <upload-corp
+              v-model="examWordsForm"
+              :cropper-option="cropperOption"
+              :image-url="examWordsForm.img_url"
+            />
+          </el-form-item>
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -548,10 +597,10 @@
             </audio>
             <SingleFile v-model="examSentenceForm.sentenceAudio" />
           </el-form-item>
-          <!--<el-form-item prop="video" label-width="80px" label="视频">
-            <el-input v-model="analysisSentence.video" placeholder="请输入内容" />
-            <SingleFile v-model="analysisSentence.video" />
-          </el-form-item>-->
+          <el-form-item prop="video" label-width="80px" label="视频">
+            <el-input v-model="examSentenceForm.sentenceVideo" placeholder="请输入内容" />
+            <SingleFile v-model="examSentenceForm.sentenceVideo" />
+          </el-form-item>
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -567,6 +616,7 @@ import Tinymce from '@/components/Tinymce'
 import SingleFile from '@/components/Upload/singleFile'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
+import UploadCorp from '@/components/Upload/uploadCorp'
 // import waves from '@/directive/waves' // Waves directive
 // import { validURL } from '@/utils/validate'
 // import { Loading } from 'element-ui'
@@ -580,13 +630,15 @@ const defaultExamWordsForm = {
   word: '',
   wrodTranslate: '',
   wordAudio: '',
-  exampleSentence: ''
+  exampleSentence: '',
+  img_url: ''
 }
 const defaultExamSentenceForm = {
   sentence: '',
   sentenceTranslate: '',
   sentenceAudio: '',
-  exampleSentence: ''
+  exampleSentence: '',
+  sentenceVideo: ''
 }
 const defaultForm = {
   status: 0, // 发布状态： 1已发布，0：未发布， 2：草稿
@@ -662,7 +714,7 @@ const defaultAnalysisForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Sticky, SingleFile },
+  components: { Tinymce, MDinput, Sticky, SingleFile, UploadCorp },
   props: {
     isEdit: {
       type: Boolean,
@@ -682,6 +734,16 @@ export default {
       }
     }
     return {
+      cropperOption: {
+        img: '',
+        outputType: 'jpg', // 裁剪生成图片的格式
+        canScale: true, // 图片是否允许滚轮缩放
+        autoCrop: true, // 是否默认生成截图框
+        autoCropWidth: 570, // 默认生成截图框宽度
+        autoCropHeight: 242, // 默认生成截图框高度
+        fixed: false, // 是否开启截图框宽高固定比例
+        fixedNumber: [570, 242] // 截图框的宽高比例
+      },
       resultExamWords: [],
       analysisSentence: {
         ename: 'Shortcut for saving one or more documents to the database.  ',
@@ -1061,6 +1123,13 @@ export default {
   .video-box{
     width: 200px;
     height: 160px;
+  }
+  .exam-pic{
+    width: 320px;
+    height: 240px;
+  }
+  .tooltip-item{
+    margin: 4px;
   }
 }
 </style>
