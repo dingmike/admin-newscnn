@@ -140,7 +140,7 @@
               fit
               size="mini"
             >
-              <el-table-column width="120" align="center" label="图片">
+              <el-table-column width="80" align="center" label="图片">
                 <template slot-scope="scope">
 
                   <el-popover
@@ -182,12 +182,21 @@
                 </template>
               </el-table-column>
               <el-table-column
+                label="音标"
+                width="110"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.symbol }}
+                </template>
+              </el-table-column>
+              <el-table-column
                 label="解释"
                 min-width="120"
                 align="center"
               >
                 <template slot-scope="scope">
-                  {{ scope.row.wrodTranslate }}
+                  {{ scope.row.wordTranslate }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -522,9 +531,12 @@
           <el-form-item prop="word" label-width="80px" label="单词英文">
             <el-input v-model="examWordsForm.word" placeholder="请输入内容" :disabled="isEditExamWord" />
           </el-form-item>
-          <el-form-item prop="wrodTranslate" label-width="80px" label="解释">
+          <el-form-item prop="symbol" label-width="80px" label="单词音标">
+            <el-input v-model="examWordsForm.symbol" placeholder="请输入内容" />
+          </el-form-item>
+          <el-form-item prop="wordTranslate" label-width="80px" label="解释">
             <el-input
-              v-model="examWordsForm.wrodTranslate"
+              v-model="examWordsForm.wordTranslate"
               type="textarea"
               :autosize="{ minRows: 2, maxRows: 4}"
               placeholder="请输入内容"
@@ -843,7 +855,8 @@ export default {
       },
       examWordRules: {
         word: [{ required: true, message: '请输入考试单词', trigger: 'blur' }, { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }],
-        wrodTranslate: [{ required: true, message: '请输入单词解释', trigger: 'blur' }, { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }],
+        symbol: [{ required: true, message: '请输入考试单词音标', trigger: 'blur' }, { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }],
+        wordTranslate: [{ required: true, message: '请输入单词解释', trigger: 'blur' }, { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }],
         wordAudio: [{ required: false, message: '请上传音频', trigger: 'blur' }, { min: 1, max: 300, message: '长度在 1 到 300 个字符', trigger: 'blur' }],
         exampleSentence: [{ required: false, message: '请输入例句', trigger: 'blur' }, { min: 1, max: 200, message: '长度在 2 到 200 个字符', trigger: 'blur' }]
       },
