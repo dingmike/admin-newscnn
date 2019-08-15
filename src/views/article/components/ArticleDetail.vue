@@ -640,7 +640,8 @@ import { fetchAllList as fetchCategory } from '@/api/articleCate'
 
 const defaultExamWordsForm = {
   word: '',
-  wrodTranslate: '',
+  symbol: '',
+  wordTranslate: '',
   wordAudio: '',
   exampleSentence: '',
   img_url: ''
