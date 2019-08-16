@@ -33,7 +33,7 @@ const examRouter = {
     },
     {
       path: 'record',
-      component: () => import('@/views/exam/list'),
+      component: () => import('@/views/exam/recordList'),
       name: 'ExamRecord',
       meta: { title: 'examRecord', icon: 'list' }
     }

@@ -85,7 +85,7 @@
       >
         <el-table-column label="微信头像" align="center">
           <template slot-scope="scope">
-            <img :src="scope.row.headimgurl" width="50" height="50" alt="">
+            <img :src="scope.row.headimgurl" width="50" height="50" style="border-radius: 50%" alt="">
           </template>
         </el-table-column>
         <el-table-column label="微信名称" align="center">

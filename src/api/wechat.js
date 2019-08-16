@@ -44,6 +44,13 @@ export function getUserList(params) {
     params
   })
 }
+export function getUserListOnly(params) {
+  return request({
+    url: '/backend/wechat/user/listOnly',
+    method: 'get',
+    params
+  })
+}
 // 更新用户信息
 export function updateUser(data) {
   return request({

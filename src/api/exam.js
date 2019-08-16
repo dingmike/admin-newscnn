@@ -7,6 +7,14 @@ export function fetchList(query) {
     params: query
   })
 }
+// 考试记录
+export function fetchRecordList(query) {
+  return request({
+    url: '/backend/exam/record/list',
+    method: 'get',
+    params: query
+  })
+}
 export function fetchCateExamList(query) {
   return request({
     url: '/backend/exam/category/list',
@@ -20,6 +28,14 @@ export function fetchExam(id) {
     url: '/backend/exam/detail',
     method: 'get',
     params: { id }
+  })
+}
+// 删除记录
+export function deleteExamRecord(data) {
+  return request({
+    url: '/backend/exam/record/delete',
+    method: 'post',
+    data
   })
 }
 export function wordsAndSentences(query) {
