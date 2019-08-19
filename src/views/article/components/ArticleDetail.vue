@@ -102,7 +102,7 @@
           </el-col>
         </el-row>
 
-        <el-form-item style="margin-bottom: 40px;" label-width="80px" label="简介:" prop="article_brief">
+        <el-form-item style="margin-bottom: 40px;" label-width="80px" label="导读:" prop="article_brief">
           <el-input v-model="postForm.article_brief" :rows="1" type="textarea" class="article-textarea" autosize placeholder="请输入内容" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}字</span>
         </el-form-item>
@@ -116,6 +116,8 @@
         </el-form-item>
 
         <el-form-item prop="article_analysis" label-width="80px" label="解析:" style="margin-bottom: 30px;">
+
+          <!-- 解析部分-->
           <el-button v-if="postForm.is_only !== 1" type="success" @click="goSetAnalysis">
             去创建课程详细的讲解内容
           </el-button>
@@ -339,7 +341,7 @@
       </div>
     </el-form>
 
-    <el-dialog title="讲解内容" width="65%" :fullscreen="isFullScreen" :visible.sync="showSetAnalysis">
+    <el-dialog title="讲解内容" :fullscreen="isFullScreen" :visible.sync="showSetAnalysis">
       <div>
         <el-form ref="postForm" :model="postForm.article_analysis" :rules="rules" size="small" class="">
           <el-form-item prop="words" label-width="45px" label="单词:" style="margin-bottom: 30px;">
@@ -399,11 +401,15 @@
       </div>
       <!--添加单词 5个-->
       <el-dialog
-        width="65%"
+        width="70%"
+        :close-on-click-modal="false"
+        :modal-append-to-body="false"
         title="添加重点单词"
         :visible.sync="showWordBox"
         append-to-body
+        lock-scroll
         @close="showWordBox = false"
+        @dragDialog="handleDrag"
       >
         <div>
           <el-form ref="postForm2" :model="analysisWords" :rules="rules" size="small" class="">
@@ -417,7 +423,7 @@
               <el-input v-model="analysisWords.cname" placeholder="请输入内容" />
             </el-form-item>
             <el-form-item prop="sentence" label-width="80px" label="单词讲解">
-              <Tinymce v-if="showWordBox" ref="editor" v-model="analysisWords.sentence" :height="320" />
+              <Tinymce v-if="showWordBox" ref="editor2" v-model="analysisWords.sentence" :height="320" />
             </el-form-item>
             <!--<el-form-item prop="sentence" label-width="80px" label="例句英文">
               <el-input v-model="analysisWords.sentence" placeholder="请输入内容" />
@@ -464,10 +470,13 @@
       </el-dialog>
       <!--添加句子 2个-->
       <el-dialog
+        :close-on-click-modal="false"
+        :modal-append-to-body="false"
         width="70%"
         title="添加重点句子"
         :visible.sync="showSentenceBox"
         append-to-body
+        lock-scroll
         @close="showSentenceBox = false"
       >
         <div>
@@ -479,10 +488,10 @@
 
             <el-form-item prop="ename" label-width="80px" label="句子英文">
               <!--<el-input v-model="analysisSentence.ename" placeholder="请输入内容" />-->
-              <Tinymce v-if="showSentenceBox" ref="editor" v-model="analysisSentence.ename" :height="300" />
+              <Tinymce v-if="showSentenceBox" ref="editor3" v-model="analysisSentence.ename" :height="300" />
             </el-form-item>
             <el-form-item prop="cname" label-width="80px" label="句子讲解">
-              <Tinymce v-if="showSentenceBox" ref="editor" v-model="analysisSentence.cname" :height="300" />
+              <Tinymce v-if="showSentenceBox" ref="editor4" v-model="analysisSentence.cname" :height="300" />
             </el-form-item>
             <!-- <el-form-item prop="cname" label-width="80px" label="句子中文">
               <el-input v-model="analysisSentence.cname" placeholder="请输入内容" />
@@ -521,6 +530,7 @@
 
     <!--添加考试单词-->
     <el-dialog
+      v-el-drag-dialog
       width="50%"
       :title="addExamWordsTitle"
       :visible.sync="showExamWordBox"
@@ -576,6 +586,7 @@
 
     <!--添加考试句子-->
     <el-dialog
+      v-el-drag-dialog
       width="50%"
       :title="addExamSentenceTitle"
       :visible.sync="showExamSentenceBox"
@@ -637,7 +648,7 @@ import UploadCorp from '@/components/Upload/uploadCorp'
 // import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 import { fetchAllList as fetchCategory } from '@/api/articleCate'
-
+import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 const defaultExamWordsForm = {
   word: '',
   symbol: '',
@@ -727,6 +738,7 @@ const defaultAnalysisForm = {
 
 export default {
   name: 'ArticleDetail',
+  directives: { elDragDialog },
   components: { Tinymce, MDinput, Sticky, SingleFile, UploadCorp },
   props: {
     isEdit: {
@@ -788,7 +800,7 @@ export default {
       showWordBox: false,
       showSentenceBox: false,
       showSetAnalysis: false,
-      isFullScreen: false,
+      isFullScreen: true,
       categories: [],
       isOnlyOptions: [
         {
@@ -995,13 +1007,15 @@ export default {
     },
     setOneSentence() {
       if (!this.isEditSentence) {
-        this.postForm.article_analysis.sentence.push(this.analysisSentence)
+        const newSentence = JSON.parse(JSON.stringify(this.analysisSentence))
+        this.postForm.article_analysis.sentence.push(newSentence)
       }
       this.showSentenceBox = false
     },
     setOneWord() {
       if (!this.isEditWord) {
-        this.postForm.article_analysis.words.push(this.analysisWords)
+        const newWord = JSON.parse(JSON.stringify(this.analysisWords))
+        this.postForm.article_analysis.words.push(newWord)
       }
       this.showWordBox = false
     },
@@ -1020,6 +1034,16 @@ export default {
       fetchArticle(id).then(response => {
         // 转换为对象进行渲染数据
         response.data.article_analysis = JSON.parse(response.data.article_analysis)
+        debugger
+        if (!response.data.article_analysis) {
+          response.data.article_analysis =
+            {
+              words: [],
+              sentence: [],
+              analysis_audio: '',
+              analysis_video: ''
+            }
+        }
         // response.data.exam_words = response.data.exam_words.join('*')
         // response.data.exam_sentences = response.data.exam_sentences.join('*')
         this.postForm = response.data
@@ -1094,6 +1118,10 @@ export default {
       }
       this.postForm.status = 2
       this.submitForm()
+    },
+    // v-el-drag-dialog onDrag callback function
+    handleDrag() {
+      this.$refs.select.blur()
     }
   }
 }

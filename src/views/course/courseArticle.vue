@@ -254,7 +254,7 @@ export default {
         id: '',
         page: 1,
         limit: 8,
-        is_only: 1 // 1 课程
+        is_only: 0 // 0 课程
       },
       cateArticleTotal: null,
       parentId: 0
@@ -310,7 +310,7 @@ export default {
     },
     fetchCourseDetail() {
       fetchCourseDetail(this.$route.query.id).then(response => {
-        this.courseTitle = response.data.course_title
+        this.courseTitle = response.data.name
         this.courseArticle.course = response.data.id
         this.courseArticle.course_category = this.cateQuery.id = response.data.course_category
         this.fetchCategory()
