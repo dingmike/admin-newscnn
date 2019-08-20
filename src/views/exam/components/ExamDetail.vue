@@ -96,14 +96,14 @@
             <el-button class="button-new-tag" size="small" @click="goAddOneWord">+ New Word</el-button>
             <div v-for="(item, index) in postForm.exam_words" :key="index">
               <el-row :gutter="20">
-                <el-col :span="4">
+                <el-col :span="6">
                   <div class="grid-content bg-purple-light">
-                    {{ item.label }} / {{ item.wrodTranslate }}
+                    {{ item.label }} / {{ item.wordTranslate }}
                   </div>
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="10">
                   <div class="grid-content bg-purple-light">
-                    例句：{{ item.exampleSentence }}
+                    <p style="line-height: 18px; padding: 4px 0;"> 例句：{{ item.exampleSentence }}</p>
                   </div>
                 </el-col>
                 <el-col :span="8">
@@ -115,7 +115,7 @@
                         title: item.word,
                         artist: '英文能力',
                         src: item.wordAudio,
-                        pic: 'http://bkcdn.fecstec.com/FuhO9VlNhmKrSzqcKj_aa6IWcveu'
+                        pic: 'http://bkcdn.fecstec.com/FkXF_cUF6QlMYwgXg5H0Z90QeTv-'
                       }"
                     />
                     <!-- <audio :src="item.wordAudio" controls="controls" style="padding: 10px">
@@ -137,12 +137,16 @@
               <el-row :gutter="10">
                 <el-col :span="10">
                   <div class="grid-content bg-purple-light">
-                    {{ item.sentence }} / {{ item.sentenceTranslate }}
+                    <p style="line-height: 18px; padding: 4px 0;">
+                      {{ item.sentence }} / {{ item.sentenceTranslate }}
+                    </p>
                   </div>
                 </el-col>
                 <el-col :span="11">
                   <div class="grid-content bg-purple-light">
-                    例句：{{ item.exampleSentence }}
+                    <p style="line-height: 18px; padding: 4px 0;">
+                      例句：{{ item.exampleSentence }}
+                    </p>
                   </div>
                 </el-col>
                 <el-col :span="3">
@@ -154,7 +158,7 @@
                         title: item.sentence,
                         artist: '英文能力',
                         src: item.sentenceAudio,
-                        pic: 'http://bkcdn.fecstec.com/FuhO9VlNhmKrSzqcKj_aa6IWcveu'
+                        pic: 'http://bkcdn.fecstec.com/FkXF_cUF6QlMYwgXg5H0Z90QeTv-'
                       }"
                     />
                   <!--<audio :src="item.sentenceAudio" controls="controls" style="padding: 10px">

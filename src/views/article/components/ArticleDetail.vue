@@ -207,7 +207,7 @@
                 align="center"
               >
                 <template slot-scope="scope">
-                  <audio :src="scope.row.audio" controls="controls" style="padding: 10px; width: 100px">
+                  <audio :src="scope.row.wordAudio" controls="controls" style="padding: 10px;">
                     您的浏览器不支持 audio 标签。
                   </audio>
                 </template>
@@ -290,7 +290,7 @@
                 align="center"
               >
                 <template slot-scope="scope">
-                  <audio :src="scope.row.sentenceAudio" controls="controls" style="padding: 10px; width:100px;">
+                  <audio :src="scope.row.sentenceAudio" controls="controls" style="padding: 10px;">
                     您的浏览器不支持 audio 标签。
                   </audio>
                 </template>
@@ -409,7 +409,6 @@
         append-to-body
         lock-scroll
         @close="showWordBox = false"
-        @dragDialog="handleDrag"
       >
         <div>
           <el-form ref="postForm2" :model="analysisWords" :rules="rules" size="small" class="">
@@ -595,7 +594,7 @@
         <el-form ref="postFormWord" :model="examSentenceForm" :rules="examSentenceRules" size="small">
 
           <el-form-item prop="sentence" label-width="80px" label="英文句子">
-            <el-input v-model="examSentenceForm.sentence" placeholder="请输入内容" :disabled="isEditExamSentence" />
+            <el-input v-model="examSentenceForm.sentence" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容" :disabled="isEditExamSentence" />
           </el-form-item>
           <el-form-item prop="sentenceTranslate" label-width="80px" label="解释">
             <el-input
@@ -868,7 +867,7 @@ export default {
       },
       examWordRules: {
         word: [{ required: true, message: '请输入考试单词', trigger: 'blur' }, { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }],
-        symbol: [{ required: true, message: '请输入考试单词音标', trigger: 'blur' }, { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }],
+        symbol: [{ required: true, message: '请输入考试单词音标', trigger: 'blur' }, { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }],
         wordTranslate: [{ required: true, message: '请输入单词解释', trigger: 'blur' }, { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }],
         wordAudio: [{ required: false, message: '请上传音频', trigger: 'blur' }, { min: 1, max: 300, message: '长度在 1 到 300 个字符', trigger: 'blur' }],
         exampleSentence: [{ required: false, message: '请输入例句', trigger: 'blur' }, { min: 1, max: 200, message: '长度在 2 到 200 个字符', trigger: 'blur' }]
@@ -915,6 +914,7 @@ export default {
       // this.resultExamWords.push(this.examWordsForm)
       if (this.isEditExamSentence) {
         this.postForm.exam_sentences = this.postForm.exam_sentences.map(item => {
+          item.sentence = item.sentence.trim()
           if (item.sentence === this.examSentenceForm.sentence) {
             item = this.examSentenceForm
             return item
@@ -923,7 +923,9 @@ export default {
           }
         })
       } else {
-        this.postForm.exam_sentences.push(this.examSentenceForm)
+        this.examSentenceForm.word = this.examSentenceForm.word.trim()
+        const newExamSentence = JSON.parse(JSON.stringify(this.examSentenceForm))
+        this.postForm.exam_sentences.push(newExamSentence)
       }
       this.showExamSentenceBox = false
     },
@@ -932,6 +934,7 @@ export default {
       // this.resultExamWords.push(this.examWordsForm)
       if (this.isEditExamWord) {
         this.postForm.exam_words = this.postForm.exam_words.map(item => {
+          item.word = item.word.trim()
           if (item.word === this.examWordsForm.word) {
             item = this.examWordsForm
             return item
@@ -940,7 +943,9 @@ export default {
           }
         })
       } else {
-        this.postForm.exam_words.push(this.examWordsForm)
+        this.examWordsForm.word = this.examWordsForm.word.trim()
+        const newExamWord = JSON.parse(JSON.stringify(this.examWordsForm))
+        this.postForm.exam_words.push(newExamWord)
       }
       this.showExamWordBox = false
     },

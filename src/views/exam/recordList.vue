@@ -73,7 +73,7 @@
             <img :src="scope.row.user.headimgurl" width="50" height="50" style="border-radius: 50%" alt="">
           </template>
         </el-table-column>
-        <el-table-column align="center" label="用户昵称" width="220">
+        <el-table-column align="center" label="用户昵称" width="160">
           <template slot-scope="scope">
             <span>{{ scope.row.user.nickname }}</span>
           </template>
@@ -116,7 +116,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column align="left" label="Actions" width="140">
+        <el-table-column align="left" label="操作" width="140">
           <template slot-scope="scope">
             <div>
               <el-button type="danger" size="small" icon="el-icon-delete" circle @click="deleteExamRecord(scope.row.id)" />
