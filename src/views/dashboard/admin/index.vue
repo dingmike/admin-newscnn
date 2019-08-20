@@ -1,8 +1,8 @@
 <template>
   <div class="dashboard-editor-container">
-    <github-corner class="github-corner" />
+    <!--<github-corner class="github-corner" />-->
     <!--VUE_APP_BASE_API = 'http://cnnapi.ngrok.tecfcs.com'-->
-    <panel-group :total-data="totalData" @handleSetLineChartData="handleSetLineChartData" />
+    <panel-group :user-subscribe="userSubscribe" :total-data="totalData" @handleSetLineChartData="handleSetLineChartData" />
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart v-if="allChartData.userNums.days.length" :height="lineHeight" :chart-data="lineChartData" />
     </el-row>
@@ -39,10 +39,10 @@
   </div>
 </template>
 <script>
-import GithubCorner from '@/components/GithubCorner'
+// import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
-import { getNowFormatDate } from '@/utils'
+// import { getNowFormatDate } from '@/utils'
 // import RaddarChart from './components/RaddarChart'
 // import PieChart from './components/PieChart'
 // import BarChart from './components/BarChart'
@@ -50,6 +50,7 @@ import { getNowFormatDate } from '@/utils'
 // import TodoList from './components/TodoList'
 // import BoxCard from './components/BoxCard'
 import { getDaysStatistics } from '@/api/system'
+import { getUserSubscribeNums } from '@/api/wechat'
 
 /* const lineChartData = {
   userNums: {
@@ -186,7 +187,6 @@ import { getDaysStatistics } from '@/api/system'
 export default {
   name: 'DashboardAdmin',
   components: {
-    GithubCorner,
     PanelGroup,
     LineChart
     // RaddarChart,
@@ -198,6 +198,7 @@ export default {
   },
   data() {
     return {
+      userSubscribe: 0,
       lineHeight: '400px',
       lineChartData: '',
       totalData: {
@@ -317,16 +318,24 @@ export default {
         }
       },
       params: {
-        days: 30
+        days: 30 // 取三十天的统计数据
       }
     }
   },
   mounted() {
+    this.getUserSubscribeNums()
     this.getDaysStatistics()
   },
   methods: {
     handleSetLineChartData(type) {
       this.lineChartData = this.allChartData[type]
+    },
+    getUserSubscribeNums() {
+      getUserSubscribeNums().then(res => {
+        if (res.code === 200) {
+          this.userSubscribe = res.data
+        }
+      })
     },
     getDaysStatistics() {
       /* const defaultData = [
@@ -583,8 +592,8 @@ export default {
             this.allChartData.money.data[2].data.push(item.totalCourseMoney)
             this.allChartData.money.data[3].data.push(item.totalArticleMoney)
             this.allChartData.money.data[4].data.push(item.totalMoney)
-            // 当天的数据中取出总量
-            if (getNowFormatDate() === item.recordDate) {
+            // 最后一天也就是最新的一天的数据中取出总量 getNowFormatDate() === item.recordDate
+            if (item.recordDate === res.data[res.data.length - 1].recordDate) {
               this.totalData = {
                 totalUserNums: item.totalUserNums,
                 totalOrderNums: item.totalOrderNums,

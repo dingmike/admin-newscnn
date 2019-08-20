@@ -44,6 +44,13 @@ export function getUserList(params) {
     params
   })
 }
+export function getUserSubscribeNums(params) {
+  return request({
+    url: '/backend/wechat/user/subscribeNums',
+    method: 'get',
+    params
+  })
+}
 export function getUserListOnly(params) {
   return request({
     url: '/backend/wechat/user/listOnly',

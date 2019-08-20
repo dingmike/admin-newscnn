@@ -7,25 +7,25 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            用户数量
+            用户总数
           </div>
           <count-to :start-val="0" :end-val="totalData.totalUserNums" :duration="2000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
-    <!--    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')">
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Messages
+            关注用户数
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="userSubscribe" :duration="2000" class="card-panel-num" />
         </div>
       </div>
-    </el-col>-->
+    </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('money')">
         <div class="card-panel-icon-wrapper icon-money">
@@ -67,6 +67,10 @@ export default {
     totalData: {
       type: Object,
       required: true
+    },
+    userSubscribe: {
+      type: Number,
+      default: 0
     }
   },
   data() {
