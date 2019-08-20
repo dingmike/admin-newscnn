@@ -35,8 +35,8 @@
           <div class="card-panel-text">
             销售金额
           </div>
-          {{ totalData.totalMoney }}
-          <count-to :start-val="0" :end-val="totalData.totalMoney" :duration="3000" class="card-panel-num" />
+          <div class="card-panel-num">{{ totalData.totalMoney }}</div>
+          <!--<count-to :start-val="0" :end-val="totalData.totalMoney" :duration="3000" class="card-panel-num" />-->
         </div>
       </div>
     </el-col>
