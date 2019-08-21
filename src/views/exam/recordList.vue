@@ -93,6 +93,11 @@
             <span>{{ scope.row.course.name }}</span>
           </template>
         </el-table-column>
+        <el-table-column align="center" label="用时">
+          <template slot-scope="scope">
+            {{ scope.row.useTime }} 分钟
+          </template>
+        </el-table-column>
         <el-table-column align="center" label="得分">
           <template slot-scope="scope">
             <el-tag type="success">{{ scope.row.score }} 分</el-tag>
