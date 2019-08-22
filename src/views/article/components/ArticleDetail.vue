@@ -1066,6 +1066,7 @@ export default {
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
     deployArticle() {
+      this.loading = true
       this.updateMessageData = '更新文章成功'
       this.deployMessageData = '发布文章成功'
       this.postForm.status = 1
@@ -1077,7 +1078,6 @@ export default {
       this.postNow.article_analysis = JSON.stringify(this.postNow.article_analysis)
       this.$refs.postForm.validate(valid => {
         if (valid) {
-          this.loading = true
           if (this.isEdit) {
             updateArticle(this.postNow).then((res) => {
               // loadingInstance.close();
@@ -1087,6 +1087,11 @@ export default {
                   message: this.updateMessageData,
                   type: 'success',
                   duration: 2000
+                })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: '更新文章失败'
                 })
               }
               this.loading = false
@@ -1101,17 +1106,24 @@ export default {
                   type: 'success',
                   duration: 2000
                 })
+              } else {
+                this.$notify.error({
+                  title: '失败',
+                  message: '创建文章失败'
+                })
               }
               this.loading = false
             })
           }
         } else {
-          console.log('error submit!!')
+          this.loading = false
+          console.log('System error submit!!')
           return false
         }
       })
     },
     draftForm() {
+      this.loading = true
       this.updateMessageData = '更新草稿成功'
       this.deployMessageData = '发布草稿成功'
       if (this.postForm.article_content.length === 0 || this.postForm.article_title.length === 0) {

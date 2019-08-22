@@ -277,7 +277,7 @@ export default {
         article_grade: '',
         category: '',
         is_only: '', // 1： 是课程文章，0单独文章
-        status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿
+        status: '' // 发布状态： 1已发布，0：未发布， 2：草稿
       },
       categories: []
     }
