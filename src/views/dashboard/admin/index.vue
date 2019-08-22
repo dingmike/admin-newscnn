@@ -297,41 +297,42 @@ export default {
         userNums: {
           data: [
             {
-              title: '当天用户数',
+              title: '新增用户',
               name: 'userNums',
-              color: '#FF005A',
-              lineColor: '#FF005A',
-              data: [0, 0, 0, 0, 0, 0, 0]
+              color: '#fa9b4d',
+              lineColor: '#fa9b4d',
+              data: []
             },
             {
               title: '总用户数',
               name: 'totalUserNums',
-              color: '#3888fa',
-              lineColor: '#3888fa',
+              color: '#00b912',
+              lineColor: '#00b912',
               data: []
             }
           ],
-          title: ['当天用户数', '总用户数'],
-          days: []
+          title: ['新增用户', '总用户数'],
+          days: [],
+          yName: '人'
         },
         orders: {
           data: [
             {
-              title: '当天订单数',
+              title: '新增订单',
               name: 'orderNums',
               color: '#00defa',
               lineColor: '#00defa',
               data: []
             },
             {
-              title: '当天文章订单数',
+              title: '新增文章订单',
               naem: 'articleOrderNums',
-              color: '#FF005A',
-              lineColor: '#FF005A',
+              color: '#a0d7d9',
+              lineColor: '#a0d7d9',
               data: []
             },
             {
-              title: '当天课程订单数',
+              title: '新增课程订单',
               naem: 'courseOrderNums',
               color: '#3888fa',
               lineColor: '#3888fa',
@@ -340,8 +341,8 @@ export default {
             {
               title: '文章订单总数',
               naem: 'totalArticleOrderNums',
-              color: '#10fa17',
-              lineColor: '#10fa17',
+              color: '#00b912',
+              lineColor: '#00b912',
               data: []
             },
             {
@@ -354,28 +355,29 @@ export default {
             {
               title: '订单总数',
               naem: 'totalOrderNums',
-              color: '#42652c',
-              lineColor: '#42652c',
+              color: '#ff1040',
+              lineColor: '#ff1040',
               data: []
             }
           ],
-          title: ['当天订单数', '当天文章订单数', '当天课程订单数', '文章订单总数', '课程订单总数', '订单总数'],
-          days: []
+          title: ['新增订单', '新增文章订单', '新增课程订单', '文章订单总数', '课程订单总数', '订单总数'],
+          days: [],
+          yName: '笔'
         },
         money: {
           data: [
             {
-              title: '当天课程金额',
+              title: '新增课程金额',
               name: 'courseMoney',
-              color: '#00defa',
-              lineColor: '#00defa',
+              color: '#00b912',
+              lineColor: '#00b912',
               data: []
             },
             {
-              title: '当天文章金额',
+              title: '新增文章金额',
               name: 'articleMoney',
-              color: '#ff1040',
-              lineColor: '#ff1040',
+              color: '#fa7718',
+              lineColor: '#fa7718',
               data: []
             },
             {
@@ -395,13 +397,14 @@ export default {
             {
               title: '总金额',
               name: 'totalMoney',
-              color: '#173177',
-              lineColor: '#173177',
+              color: '#ff1040',
+              lineColor: '#ff1040',
               data: []
             }
           ],
-          title: ['当天课程金额', '当天文章金额', '课程总金额', '文章总金额', '总金额'],
-          days: []
+          title: ['新增课程金额', '新增文章金额', '课程总金额', '文章总金额', '总金额'],
+          days: [],
+          yName: '元'
         }
       },
       params: {
@@ -469,7 +472,7 @@ export default {
               name: 'userNums',
               color: '#FF005A',
               lineColor: '#FF005A',
-              data: [0, 0, 0, 0, 0, 0, 0]
+              data: []
             },
             {
               title: '总用户数',
@@ -575,7 +578,7 @@ export default {
       this.getDaysStatistics()
     },
     getDaysStatistics() {
-      this.lineChartData = this.allChartData.userNums
+      // this.lineChartData = this.allChartData.userNums
       // const now = new Date()
       // const nowDate = [now.getFullYear(), (now.getMonth() + 1), now.getDate()].join('-')
       getDaysStatistics(this.params).then(res => {
@@ -608,6 +611,7 @@ export default {
               }
             }*/
           })
+          debugger
           this.lineChartData = this.allChartData.userNums
           console.log(this.allChartData)
           console.log(this.totalData)

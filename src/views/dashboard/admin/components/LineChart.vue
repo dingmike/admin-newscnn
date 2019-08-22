@@ -78,7 +78,7 @@ export default {
         this.__resizeHandler()
       }
     },
-    setOptions({ data, title, days } = {}) {
+    setOptions({ data, title, days, yName } = {}) {
       // 动态生成配置文件
       const series = []
       data.map(item => {
@@ -89,7 +89,7 @@ export default {
               color: item.color,
               lineStyle: {
                 color: item.lineColor,
-                width: 2
+                width: 4
               }
             }
           },
@@ -97,17 +97,32 @@ export default {
           type: 'line',
           data: item.data,
           animationDuration: 2800,
-          animationEasing: 'cubicInOut'
+          animationEasing: 'cubicInOut' // elasticln cubicInOut sinusoidalInOut
         })
       })
 
       this.chart.setOption({
+        toolbox: {
+          left: 'center',
+          itemSize: 18,
+          top: 30,
+          feature: {
+            dataView: { show: true, readOnly: false },
+            magicType: { show: true, type: ['line', 'bar', 'stack', 'tiled'] },
+            restore: { show: true },
+            saveAsImage: { show: true }
+          }
+        },
         xAxis: {
           data: days.length ? days : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
           // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
           boundaryGap: false,
           axisTick: {
-            show: false
+            show: true // 坐标轴刻度
+          },
+          axisLabel: {
+            show: true,
+            rotate: -35
           }
         },
         grid: {
@@ -124,10 +139,18 @@ export default {
           },
           padding: [5, 10]
         },
-        yAxis: {
+        /* yAxis: {
           axisTick: {
             show: false
           }
+        },*/
+        yAxis: {
+          type: 'value',
+          axisTick: {
+            show: true
+          },
+          name: yName
+          // boundaryGap: [0, '100%'] // 边界线
         },
         legend: {
           // data: ['expected', 'actual']
