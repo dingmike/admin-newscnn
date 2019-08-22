@@ -376,11 +376,10 @@ export default {
             })
           }
         })
-      }).then(() => {
-        this.getList()
+      }).catch(() => {
         this.$message({
-          type: 'success',
-          message: '操作成功!'
+          type: 'info',
+          message: '已取消删除'
         })
       })
     },

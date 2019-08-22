@@ -1,8 +1,44 @@
 <template>
   <div class="dashboard-editor-container">
-    <!--<github-corner class="github-corner" />-->
-    <!--VUE_APP_BASE_API = 'http://cnnapi.ngrok.tecfcs.com'-->
+    <el-row :gutter="10">
+      <el-card class="box-card">
+        <el-form :inline="true">
+          <div style="margin-bottom:10px;">
+            <el-col :span="8" class="text-center">
+              <el-form-item label="推送提醒消息">
+                <el-input
+                  v-model="pushParams.title"
+                  :placeholder="$t('table.pushMsg')"
+                  type="textarea"
+                  :rows="2"
+                  style="width: 280px"
+                  class="filter-item"
+                  size="medium"
+                  maxlength="30"
+                  show-word-limit
+                  clearable
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="2">
+              <el-button v-waves type="primary" size="medium" @click="pushMsg">
+                {{ $t('table.confirmPush') }}
+              </el-button>
+            </el-col>
+            <el-col :span="6" :offset="8">
+              <el-form-item label="统计区间">
+                <el-select v-model="params.days" :placeholder="$t('table.statisticDays')" size="medium" @change="changeDays">
+                  <el-option v-for="item in daysOptions" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </div>
+        </el-form>
+
+      </el-card>
+    </el-row>
     <panel-group :user-subscribe="userSubscribe" :total-data="totalData" @handleSetLineChartData="handleSetLineChartData" />
+    <!--给订阅用户发送推送消息 -->
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart v-if="allChartData.userNums.days.length" :height="lineHeight" :chart-data="lineChartData" />
     </el-row>
@@ -49,8 +85,10 @@ import LineChart from './components/LineChart'
 // import TransactionTable from './components/TransactionTable'
 // import TodoList from './components/TodoList'
 // import BoxCard from './components/BoxCard'
-import { getDaysStatistics } from '@/api/system'
+import { getDaysStatistics, pushMsg } from '@/api/system'
 import { getUserSubscribeNums } from '@/api/wechat'
+import waves from '@/directive/waves' // Waves directive
+import { Loading } from 'element-ui'
 
 /* const lineChartData = {
   userNums: {
@@ -196,8 +234,56 @@ export default {
     // TodoList,
     // BoxCard
   },
+  directives: { waves },
   data() {
     return {
+      daysOptions: [
+        {
+          label: '2天',
+          value: 2
+        },
+        {
+          label: '5天',
+          value: 5
+        },
+        {
+          label: '7天',
+          value: 7
+        },
+        {
+          label: '10天',
+          value: 10
+        },
+        {
+          label: '15天',
+          value: 15
+        },
+        {
+          label: '30天',
+          value: 30
+        },
+        {
+          label: '60天',
+          value: 60
+        },
+        {
+          label: '180天',
+          value: 180
+        },
+        {
+          label: '365天',
+          value: 365
+        }
+      ],
+      pushParams: {
+        title: ''
+      },
+      LoadingOptions: {
+        lock: true,
+        text: '正在加载...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      },
       userSubscribe: 0,
       lineHeight: '400px',
       lineChartData: '',
@@ -327,6 +413,41 @@ export default {
     this.getDaysStatistics()
   },
   methods: {
+    pushMsg() {
+      if (this.pushParams.title) {
+        this.$confirm('确定向所有参与课程学习的用户推送提醒消息吗?', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          const loadingInstance6 = Loading.service(this.LoadingOptions)
+          pushMsg(this.pushParams).then(response => {
+            if (response.code === 200) {
+              loadingInstance6.close()
+              this.$notify({
+                message: '推送成功',
+                type: 'success'
+              })
+            } else {
+              this.$notify({
+                message: '推送失败',
+                type: 'success'
+              })
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消推送'
+          })
+        })
+      } else {
+        this.$message({
+          type: 'warning',
+          message: '请填写推送内容'
+        })
+      }
+    },
     handleSetLineChartData(type) {
       this.lineChartData = this.allChartData[type]
     },
@@ -337,237 +458,121 @@ export default {
         }
       })
     },
-    getDaysStatistics() {
-      /* const defaultData = [
-        {
-          recordDate: '2019-07-24',
-          userNums: '6',
-          totalUserNums: '89',
-          orderNums: '121',
-          articleOrderNums: '6',
-          courseOrderNums: '10',
-          totalArticleOrderNums: '100',
-          totalCourseOrderNums: '67',
-          totalOrderNums: '456',
-          courseMoney: '456.78',
-          articleMoney: '416.78',
-          totalCourseMoney: '890.78',
-          totalArticleMoney: '676.78',
-          totalMoney: '1576.78'
+    changeDays() {
+      this.allChartData = {
+        userNums: {
+          data: [
+            {
+              title: '当天用户数',
+              name: 'userNums',
+              color: '#FF005A',
+              lineColor: '#FF005A',
+              data: [0, 0, 0, 0, 0, 0, 0]
+            },
+            {
+              title: '总用户数',
+              name: 'totalUserNums',
+              color: '#3888fa',
+              lineColor: '#3888fa',
+              data: []
+            }
+          ],
+          title: ['当天用户数', '总用户数'],
+          days: []
         },
-        {
-          recordDate: '2019-07-25',
-          userNums: '9',
-          totalUserNums: '99',
-          orderNums: '161',
-          articleOrderNums: '6',
-          courseOrderNums: '10',
-          totalArticleOrderNums: '100',
-          totalCourseOrderNums: '67',
-          totalOrderNums: '456',
-          courseMoney: '456.78',
-          articleMoney: '416.78',
-          totalCourseMoney: '890.78',
-          totalArticleMoney: '676.78',
-          totalMoney: '1576.78'
+        orders: {
+          data: [
+            {
+              title: '当天订单数',
+              name: 'orderNums',
+              color: '#00defa',
+              lineColor: '#00defa',
+              data: []
+            },
+            {
+              title: '当天文章订单数',
+              naem: 'articleOrderNums',
+              color: '#FF005A',
+              lineColor: '#FF005A',
+              data: []
+            },
+            {
+              title: '当天课程订单数',
+              naem: 'courseOrderNums',
+              color: '#3888fa',
+              lineColor: '#3888fa',
+              data: []
+            },
+            {
+              title: '文章订单总数',
+              naem: 'totalArticleOrderNums',
+              color: '#10fa17',
+              lineColor: '#10fa17',
+              data: []
+            },
+            {
+              title: '课程订单总数',
+              naem: 'totalCourseOrderNums',
+              color: '#fac928',
+              lineColor: '#fac928',
+              data: []
+            },
+            {
+              title: '订单总数',
+              naem: 'totalOrderNums',
+              color: '#42652c',
+              lineColor: '#42652c',
+              data: []
+            }
+          ],
+          title: ['当天订单数', '当天文章订单数', '当天课程订单数', '文章订单总数', '课程订单总数', '订单总数'],
+          days: []
         },
-        {
-          recordDate: '2019-07-26',
-          userNums: '12',
-          totalUserNums: '112',
-          orderNums: '136',
-          articleOrderNums: '6',
-          courseOrderNums: '10',
-          totalArticleOrderNums: '100',
-          totalCourseOrderNums: '67',
-          totalOrderNums: '456',
-          courseMoney: '456.78',
-          articleMoney: '416.78',
-          totalCourseMoney: '890.78',
-          totalArticleMoney: '676.78',
-          totalMoney: '1576.78'
-        },
-        {
-          recordDate: '2019-07-27',
-          userNums: '4',
-          totalUserNums: '115',
-          orderNums: '101',
-          articleOrderNums: '16',
-          courseOrderNums: '120',
-          totalArticleOrderNums: '30',
-          totalCourseOrderNums: '47',
-          totalOrderNums: '456',
-          courseMoney: '456.78',
-          articleMoney: '416.78',
-          totalCourseMoney: '890.78',
-          totalArticleMoney: '676.78',
-          totalMoney: '1576.78'
-        },
-        {
-          recordDate: '2019-07-28',
-          userNums: '62',
-          totalUserNums: '129',
-          orderNums: '116',
-          articleOrderNums: '62',
-          courseOrderNums: '101',
-          totalArticleOrderNums: '10',
-          totalCourseOrderNums: '67',
-          totalOrderNums: '45',
-          courseMoney: '456.78',
-          articleMoney: '416.78',
-          totalCourseMoney: '890.78',
-          totalArticleMoney: '676.78',
-          totalMoney: '1576.78'
-        },
-        {
-          recordDate: '2019-07-29',
-          userNums: '45',
-          totalUserNums: '231',
-          orderNums: '16',
-          articleOrderNums: '6',
-          courseOrderNums: '10',
-          totalArticleOrderNums: '100',
-          totalCourseOrderNums: '67',
-          totalOrderNums: '456',
-          courseMoney: '456.78',
-          articleMoney: '416.78',
-          totalCourseMoney: '890.78',
-          totalArticleMoney: '676.78',
-          totalMoney: '1576.78'
-        },
-        {
-          recordDate: '2019-07-30',
-          userNums: '61',
-          totalUserNums: '245',
-          orderNums: '46',
-          articleOrderNums: '16',
-          courseOrderNums: '102',
-          totalArticleOrderNums: '100',
-          totalCourseOrderNums: '67',
-          totalOrderNums: '456',
-          courseMoney: '456.78',
-          articleMoney: '416.78',
-          totalCourseMoney: '890.78',
-          totalArticleMoney: '676.78',
-          totalMoney: '1576.78'
+        money: {
+          data: [
+            {
+              title: '当天课程金额',
+              name: 'courseMoney',
+              color: '#00defa',
+              lineColor: '#00defa',
+              data: []
+            },
+            {
+              title: '当天文章金额',
+              name: 'articleMoney',
+              color: '#ff1040',
+              lineColor: '#ff1040',
+              data: []
+            },
+            {
+              title: '课程总金额',
+              name: 'totalCourseMoney',
+              color: '#fac928',
+              lineColor: '#fac928',
+              data: []
+            },
+            {
+              title: '文章总金额',
+              name: 'totalArticleMoney',
+              color: '#bb17fa',
+              lineColor: '#bb17fa',
+              data: []
+            },
+            {
+              title: '总金额',
+              name: 'totalMoney',
+              color: '#173177',
+              lineColor: '#173177',
+              data: []
+            }
+          ],
+          title: ['当天课程金额', '当天文章金额', '课程总金额', '文章总金额', '总金额'],
+          days: []
         }
-      ]*/
-
-      /*      const userNums = {
-        data: [
-          {
-            title: '当天用户数',
-            name: 'userNums',
-            color: '#FF005A',
-            lineColor: '#FF005A',
-            data: []
-          },
-          {
-            title: '总用户数',
-            name: 'totalUserNums',
-            color: '#3888fa',
-            lineColor: '#3888fa',
-            data: []
-          }
-        ],
-        title: ['当天用户数', '总用户数'],
-        days: ['2019-07-24', '2019-07-25', '2019-07-26', '2019-07-27', '2019-07-28', '2019-07-29', '2019-07-30']
       }
-      const orders = {
-        data: [
-          {
-            title: '当天订单数',
-            name: 'orderNums',
-            color: '#00defa',
-            lineColor: '#00defa',
-            data: []
-          },
-          {
-            title: '当天文章订单数',
-            naem: 'articleOrderNums',
-            color: '#FF005A',
-            lineColor: '#FF005A',
-            data: []
-          },
-          {
-            title: '当天课程订单数',
-            naem: 'courseOrderNums',
-            color: '#3888fa',
-            lineColor: '#3888fa',
-            data: []
-          },
-          {
-            title: '文章订单总数',
-            naem: 'totalArticleOrderNums',
-            color: '#10fa17',
-            lineColor: '#10fa17',
-            data: []
-          },
-          {
-            title: '课程订单总数',
-            naem: 'totalCourseOrderNums',
-            color: '#fac928',
-            lineColor: '#fac928',
-            data: []
-          },
-          {
-            title: '订单总数',
-            naem: 'totalOrderNums',
-            color: '#42652c',
-            lineColor: '#42652c',
-            data: []
-          }
-        ],
-        title: ['当天订单数', '当天文章订单数', '当天课程订单数', '文章订单总数', '课程订单总数', '订单总数'],
-        days: []
-      }
-      const money = {
-        data: [
-          {
-            title: '当天课程金额',
-            name: 'courseMoney',
-            color: '#00defa',
-            lineColor: '#00defa',
-            data: []
-          },
-          {
-            title: '当天文章金额',
-            name: 'articleMoney',
-            color: '#ff1040',
-            lineColor: '#ff1040',
-            data: []
-          },
-          {
-            title: '课程总金额',
-            name: 'totalCourseMoney',
-            color: '#fac928',
-            lineColor: '#fac928',
-            data: []
-          },
-          {
-            title: '文章总金额',
-            name: 'totalArticleMoney',
-            color: '#bb17fa',
-            lineColor: '#bb17fa',
-            data: []
-          },
-          {
-            title: '总金额',
-            name: 'totalMoney',
-            color: '#173177',
-            lineColor: '#173177',
-            data: []
-          }
-        ],
-        // courseMoney: [130, 140, 141, 142, 145, 150, 160],
-        // articleMoney: [120, 82, 91, 154, 162, 140, 130],
-        // totalCourseMoney: [120, 82, 91, 154, 162, 140, 130],
-        // totalArticleMoney: [120, 82, 91, 154, 162, 140, 130],
-        // totalMoney: [120, 82, 91, 154, 162, 140, 130],
-        title: ['当天课程金额', '当天文章金额', '课程总金额', '文章总金额', '总金额'],
-        days: []
-      }*/
-
+      this.getDaysStatistics()
+    },
+    getDaysStatistics() {
       this.lineChartData = this.allChartData.userNums
       // const now = new Date()
       // const nowDate = [now.getFullYear(), (now.getMonth() + 1), now.getDate()].join('-')

@@ -60,11 +60,18 @@ export function deleteFile(data) {
   })
 }
 
-// 首页数据统计30天的统计
+// 首页数据统计30天的數據统计
 export function getDaysStatistics(query) {
   return request({
     url: '/backend/sys/statistics',
     method: 'get',
     params: query
+  })
+}
+export function pushMsg(data) {
+  return request({
+    url: '/backend/sys/pushMsg',
+    method: 'post',
+    data: data
   })
 }

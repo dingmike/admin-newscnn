@@ -1,26 +1,45 @@
 <template>
   <div class="app-container">
-    <div class="filter-container" style="text-align: right">
-      <el-tooltip effect="dark" :content="$t('table.export')" placement="top">
-        <el-button
-          type="default"
-          size="small"
-          style="font-size: 17px"
-          icon="el-icon-download"
-          circle
-          @click="handleDownload"
-        />
-      </el-tooltip>
-      <el-tooltip effect="dark" content="刷新" placement="top">
-        <el-button
-          type="default"
-          size="mini"
-          style="font-size: 18px"
-          icon="el-icon-refresh"
-          circle
-          @click="getList"
-        />
-      </el-tooltip>
+    <div class="filter-container">
+      <el-row :gutter="20">
+        <el-card class="operate-container" shadow="never">
+          <el-col :span="4">
+            <el-select v-model="deleteParams.days" :placeholder="$t('table.deleteRequestLogs')" class="filter-item" size="small" clearable>
+              <el-option v-for="item in deleteOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-col>
+          <el-col :span="2">
+            <el-button v-waves class="filter-item" type="primary" size="small" @click="deleteLogs">
+              {{ $t('table.confirmDelete') }}
+            </el-button>
+          </el-col>
+          <el-col :span="6">
+            <el-tooltip effect="dark" :content="$t('table.export')" placement="top">
+              <el-button
+                type="default"
+                size="small"
+                style="font-size: 16px"
+                icon="el-icon-download"
+                circle
+                @click="handleDownload"
+              />
+            </el-tooltip>
+            <el-tooltip effect="dark" content="刷新" placement="top">
+              <el-button
+                type="default"
+                size="small"
+                style="font-size: 16px"
+                icon="el-icon-refresh"
+                circle
+                @click="getList"
+              />
+            </el-tooltip>
+          </el-col>
+
+        </el-card>
+
+      </el-row>
+
     </div>
     <el-table
       v-loading="listLoading"
@@ -101,7 +120,7 @@
           <span>{{ scope.row.meta.createAt | parseUTCtime }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Actions" width="100px">
+      <!--<el-table-column align="center" label="Actions" width="100px">
         <template slot-scope="scope">
           <div>
             <el-button
@@ -114,7 +133,7 @@
             />
           </div>
         </template>
-      </el-table-column>
+      </el-table-column>-->
     </el-table>
 
     <pagination
@@ -128,23 +147,24 @@
 </template>
 
 <script>
-import { fetchRequestLogList } from '@/api/common'
+import { fetchRequestLogList, deleteRequestLogs } from '@/api/common'
 import { parseUTCtime } from '@/utils'
+import { Loading } from 'element-ui'
+import waves from '@/directive/waves' // Waves directive
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
   name: 'ArticleList',
   components: { Pagination },
+  directives: { waves },
   filters: {
     parseUTCtime(UTCDateString) {
       if (!UTCDateString) {
         return '-'
       }
-
       function formatFunc(str) { // 格式化显示
         return str > 9 ? str : '0' + str
       }
-
       const date2 = new Date(UTCDateString) // 这步是关键
       const year = date2.getFullYear()
       const mon = formatFunc(date2.getMonth() + 1)
@@ -167,13 +187,73 @@ export default {
       listQuery: {
         page: 1,
         limit: 20
-      }
+      },
+      LoadingOptions: {
+        lock: true,
+        text: '正在加载...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      },
+      deleteParams: {
+        days: 5
+      },
+      deleteOptions: [
+        {
+          label: '前5天',
+          value: 5
+        },
+        {
+          label: '前10天',
+          value: 10
+        },
+        {
+          label: '前30天',
+          value: 30
+        },
+        {
+          label: '前60天',
+          value: 60
+        },
+        {
+          label: '前180天',
+          value: 180
+        }
+      ]
     }
   },
   created() {
     this.getList()
   },
   methods: {
+    deleteLogs() {
+      this.$confirm('确定将选择数据删除?', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const loadingInstance6 = Loading.service(this.LoadingOptions)
+        deleteRequestLogs(this.deleteParams).then(response => {
+          if (response.code === 200) {
+            loadingInstance6.close()
+            this.getList()
+            this.$notify({
+              message: '删除成功',
+              type: 'success'
+            })
+          } else {
+            this.$notify({
+              message: '删除失败',
+              type: 'success'
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
     getList() {
       this.listLoading = true
       fetchRequestLogList(this.listQuery).then(response => {
@@ -182,9 +262,9 @@ export default {
         this.listLoading = false
       })
     },
-    handleDelete() {
+    /* handleDelete() {
 
-    },
+    },*/
     handleDownload() {
       this.downloadLoading = true
         import('@/vendor/Export2Excel').then(excel => {

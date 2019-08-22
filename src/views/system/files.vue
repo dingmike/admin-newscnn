@@ -179,19 +179,24 @@ export default {
         .then(() => {
           const loadingInstance6 = Loading.service(this.LoadingOptions)
           deleteFile({ file_key: item.row.file_key }).then(response => {
-            loadingInstance6.close()
-            this.getList()
-            this.$notify({
-              message: '删除成功',
-              type: 'success'
-            })
+            if (response.code === 200) {
+              loadingInstance6.close()
+              this.getList()
+              this.$notify({
+                message: '删除成功',
+                type: 'success'
+              })
+            } else {
+              this.$notify({
+                message: '删除失败',
+                type: 'success'
+              })
+            }
           })
-        })
-        .then(() => {
-          this.getList()
+        }).catch(() => {
           this.$message({
-            type: 'success',
-            message: '操作成功!'
+            type: 'info',
+            message: '已取消删除'
           })
         })
     },

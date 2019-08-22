@@ -121,6 +121,11 @@ export default {
     imageUploadTips: 'Since I was using only the vue@1 version, and it is not compatible with mockjs at the moment, I modified it myself, and if you are going to use it, it is better to use official version.'
   },
   table: {
+    pushMsg: 'Push message',
+    confirmPush: 'Confirm push',
+    statisticDays: 'Statistic days',
+    confirmDelete: 'Confirm delete',
+    deleteRequestLogs: 'Delete request logs',
     dynamicTips1: 'Fixed header, sorted by header order',
     dynamicTips2: 'Not fixed header, sorted by click order',
     dragTips1: 'The default order',

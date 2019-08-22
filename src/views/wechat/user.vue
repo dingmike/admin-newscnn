@@ -582,23 +582,29 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
+      }).then(() => {
+        deleteUser({ id: id }).then((res) => {
+          if (res.data) {
+            this.$notify({
+              title: '成功',
+              message: '删除成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          } else {
+            this.$notify({
+              message: '删除失败',
+              type: 'success'
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
-        .then(() => {
-          deleteUser({ id: id }).then((res) => {
-            if (res.data) {
-              this.$notify({
-                title: '成功',
-                message: '删除成功',
-                type: 'success',
-                duration: 2000
-              })
-              this.getList()
-            }
-          })
-        })
-        .then(() => {
-
-        })
     },
     // 更新用户
     updateUser() {

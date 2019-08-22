@@ -14,4 +14,11 @@ export function fetchRequestLogList(query) {
     params: query
   })
 }
+export function deleteRequestLogs(query) {
+  return request({
+    url: '/backend/log/request/delete',
+    method: 'get',
+    params: query
+  })
+}
 
