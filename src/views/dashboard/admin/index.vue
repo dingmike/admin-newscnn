@@ -290,7 +290,8 @@ export default {
       totalData: {
         totalUserNums: 0,
         totalOrderNums: 0,
-        totalMoney: 0
+        totalMoney: 0,
+        subscribedUserNums: 0
       },
       allChartData: {
         userNums: {
@@ -454,7 +455,8 @@ export default {
     getUserSubscribeNums() {
       getUserSubscribeNums().then(res => {
         if (res.code === 200) {
-          this.userSubscribe = res.data
+          // this.userSubscribe = res.data
+          this.totalData = res.data
         }
       })
     },
@@ -598,13 +600,13 @@ export default {
             this.allChartData.money.data[3].data.push(item.totalArticleMoney)
             this.allChartData.money.data[4].data.push(item.totalMoney)
             // 最后一天也就是最新的一天的数据中取出总量 getNowFormatDate() === item.recordDate
-            if (item.recordDate === res.data[res.data.length - 1].recordDate) {
+            /* if (item.recordDate === res.data[res.data.length - 1].recordDate) {
               this.totalData = {
                 totalUserNums: item.totalUserNums,
                 totalOrderNums: item.totalOrderNums,
                 totalMoney: item.totalMoney
               }
-            }
+            }*/
           })
           this.lineChartData = this.allChartData.userNums
           console.log(this.allChartData)

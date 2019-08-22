@@ -22,7 +22,7 @@
           <div class="card-panel-text">
             关注用户数
           </div>
-          <count-to :start-val="0" :end-val="userSubscribe" :duration="2000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="totalData.subscribedUserNums" :duration="2000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
