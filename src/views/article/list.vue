@@ -103,7 +103,8 @@
         </el-table-column>
         <el-table-column align="center" label="难度">
           <template slot-scope="scope">
-            <span>{{ scope.row.article_grade | gradeFilter }}</span>
+            <span v-if="scope.row.article_grade">{{ scope.row.article_grade | gradeFilter }}</span>
+            <span v-else>无</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="文章属性">
