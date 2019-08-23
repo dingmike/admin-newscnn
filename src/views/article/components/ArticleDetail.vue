@@ -100,6 +100,18 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="6">
+            <el-form-item label="是否付费：" prop="is_only">
+              <el-select v-model="postForm.free_article" filterable size="mini" placeholder="请选择是否付费">
+                <el-option
+                  v-for="item in freeOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
 
         <el-form-item style="margin-bottom: 40px;" label-width="80px" label="导读:" prop="article_brief">
@@ -115,10 +127,10 @@
           <Tinymce ref="editor" v-model="postForm.article_translate" :height="400" />
         </el-form-item>
 
-        <el-form-item prop="article_analysis" label-width="80px" label="解析:" style="margin-bottom: 30px;">
+        <el-form-item v-if="postForm.is_only !== 1" prop="article_analysis" label-width="80px" label="解析:" style="margin-bottom: 30px;">
 
           <!-- 解析部分-->
-          <el-button v-if="postForm.is_only !== 1" type="success" @click="goSetAnalysis">
+          <el-button type="success" @click="goSetAnalysis">
             去创建课程详细的讲解内容
           </el-button>
           <!--<Tinymce v-else ref="editor" v-model="postForm.article_analysis" :height="400" />-->
@@ -669,6 +681,7 @@ const defaultForm = {
   chinese_title: '', // 文章中文题目
   category: '',
   is_only: 0, // 单独的文章 1是 0不是（属于课程）
+  free_article: 0, // 0 付费，1 免费
   article_author: '', // 文章作者
   article_grade: '', // 文章级别
   memo: '', // 文章说明
@@ -809,6 +822,16 @@ export default {
         {
           name: '阅读文章',
           id: 1
+        }
+      ],
+      freeOptions: [
+        {
+          name: '免费',
+          id: 1
+        },
+        {
+          name: '付费',
+          id: 0
         }
       ],
       LoadingOptions: {

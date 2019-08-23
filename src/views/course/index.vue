@@ -5,6 +5,8 @@
       <span style="margin-top: 5px">课程列表</span>
       <el-button
         class="btn-add"
+        type="primary"
+        icon="el-icon-plus"
         size="mini"
         @click="handleAddProductCate()"
       >
@@ -13,14 +15,22 @@
     </el-card>
     <el-card class="operate-container" shadow="never">
       <el-input v-model="listQuery.name" :placeholder="$t('table.course_name')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
-      <el-select v-model="listQuery.status" placeholder="选择课程状态" style="width: 130px" class="filter-item" size="small" clearable>
+      <el-select v-model="listQuery.status" :placeholder="$t('table.chooseCourseStatus')" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option v-for="item in courseStatus" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-select v-model="listQuery.course_category" placeholder="选择课程类型" style="width: 130px" class="filter-item" size="small" clearable>
+      <el-select v-model="listQuery.course_category" :placeholder="$t('table.chooseCategory')" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option
           v-for="item in categories"
           :key="item.id"
           :label="item.category_name"
+          :value="item.id"
+        />
+      </el-select>
+      <el-select v-model="listQuery.free_course" :placeholder="$t('table.isFree')" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option
+          v-for="item in isFreeOptions"
+          :key="item.id"
+          :label="item.name"
           :value="item.id"
         />
       </el-select>
@@ -83,6 +93,11 @@
         <el-table-column align="center" label="折扣">
           <template slot-scope="scope">
             <span>{{ scope.row.discount }}折</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="免费">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.free_course === 1? 'danger' : 'success'">{{ scope.row.free_course === 1? '是' : '否' }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column align="center" label="天数">
@@ -256,8 +271,19 @@ export default {
         limit: 10,
         name: '',
         status: 1,
+        free_course: '', // 0付费，1 免费
         course_category: ''
       },
+      isFreeOptions: [
+        {
+          name: '免费',
+          id: 1
+        },
+        {
+          name: '付费',
+          id: 0
+        }
+      ],
       courseStatus: [
         {
           label: '已发布',

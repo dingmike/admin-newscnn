@@ -145,6 +145,7 @@ export default {
     chooseOrderStatus: 'Choose order status',
     chooseCourseStatus: 'Choose course status',
     chooseIsOnly: 'Choose article attribute',
+    isFree: 'Is free',
     chooseArticleStatus: 'Choose article status',
     chooseExamStatus: 'Choose exam status',
     chooseCategory: 'Choose category',

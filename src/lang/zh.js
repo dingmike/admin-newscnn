@@ -157,6 +157,7 @@ export default {
     chooseOrderStatus: '选择订单状态',
     chooseCourseStatus: '选择课程状态',
     chooseIsOnly: '选择文章属性',
+    isFree: '是否免费',
     chooseArticleStatus: '选择文章状态',
     chooseExamStatus: '选择试卷状态',
     chooseExamRecordStatus: '选择考试通过状态',

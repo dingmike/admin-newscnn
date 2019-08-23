@@ -22,6 +22,12 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="是否免费：" prop="free_course">
+        <el-radio-group v-model="course.free_course">
+          <el-radio :label="0">付费</el-radio>
+          <el-radio :label="1">免费</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item label="课程价格：" class="postInfo-container-item" prop="price">
         <el-input-number v-model="course.price" size="mini" :precision="2" :step="0.1" :max="1000" />&nbsp;&nbsp;元
       </el-form-item>
@@ -37,7 +43,7 @@
           <el-radio :label="0">禁用</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="课程图标：">
+      <el-form-item label="课程图标：" prop="icon">
         <el-input v-model="course.icon" />
         <single-upload v-model="course.icon" />
       </el-form-item>
@@ -72,6 +78,7 @@ const defaultProductCate = {
   price: 0,
   course_title: '',
   status: 1,
+  free_course: 0, // 0 付费， 1免费
   remark: ''
 }
 export default {
@@ -116,8 +123,23 @@ export default {
           { required: true, message: '请输入课程副标题', trigger: 'blur' },
           { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }
         ],
+        learn_days: [
+          { required: true, message: '请输入课程学习课时', trigger: 'blur' }
+        ],
+        status: [
+          { required: true, message: '请选择课程状态', trigger: 'blur' }
+        ],
+        icon: [
+          { required: true, message: '请上传课程图标', trigger: 'blur' }
+        ],
         price: [
           { required: true, message: '请输入课程价格', trigger: 'blur' }
+        ],
+        discount: [
+          { required: true, message: '请输入课程折扣', trigger: 'blur' }
+        ],
+        free_course: [
+          { required: true, message: '必填项', trigger: 'blur' }
         ],
         course_category: [
           { required: true, message: '请选择课程分类', trigger: 'blur' }

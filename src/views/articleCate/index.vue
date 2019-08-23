@@ -6,6 +6,8 @@
       <el-button
         class="btn-add"
         size="mini"
+        type="primary"
+        icon="el-icon-plus"
         @click="handleAddProductCate()"
       >
         添 加

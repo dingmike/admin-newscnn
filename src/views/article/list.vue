@@ -22,14 +22,22 @@
         category: '',
         is_only: 0, // 1： 是课程文章，0单独文章
         status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿-->
-      <el-input v-model="listQuery.chinese_title" :placeholder="$t('table.chinese_title')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
-      <el-input v-model="listQuery.article_author" :placeholder="$t('table.article_author')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-input v-model="listQuery.chinese_title" :placeholder="$t('table.chinese_title')" style="width: 200px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-input v-model="listQuery.article_author" :placeholder="$t('table.article_author')" style="width: 200px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
       <el-select v-model="listQuery.status" :placeholder="$t('table.chooseArticleStatus')" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option v-for="item in articleStatus" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <el-select v-model="listQuery.is_only" :placeholder="$t('table.chooseIsOnly')" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option
           v-for="item in isOnlyOptions"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        />
+      </el-select>
+      <el-select v-model="listQuery.free_article" :placeholder="$t('table.isFree')" style="width: 130px" class="filter-item" size="small" clearable>
+        <el-option
+          v-for="item in isFreeOptions"
           :key="item.id"
           :label="item.name"
           :value="item.id"
@@ -71,7 +79,7 @@
     </el-card>
     <div class="table-container">
       <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" style="width: 100%" stripe highlight-current-row>
-        <el-table-column align="center" label="类型" width="140">
+        <el-table-column align="center" label="类型" width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.category ? scope.row.category.category_name: '无' }}</span>
           </template>
@@ -94,6 +102,11 @@
         <el-table-column align="center" label="价格">
           <template slot-scope="scope">
             <span>{{ scope.row.pay_price }}元</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="免费">
+          <template slot-scope="scope">
+            <el-tag :type="scope.row.free_article === 1? 'danger' : 'success'">{{ scope.row.free_article === 1? '是' : '否' }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column align="center" label="翻译价格">
@@ -126,6 +139,7 @@
               :inactive-value="2"
               active-text="已发布"
               inactive-text="草稿"
+              width="34"
               @change="handleShowStatusChange(scope.$index, scope.row)"
             />
             <el-tag v-if="scope.row.status === 3" :type="row.status | statusTypeFilter">
@@ -154,7 +168,7 @@
           </template>
         </el-table-column>-->
 
-        <el-table-column align="left" label="Actions" width="140">
+        <el-table-column align="left" label="Actions" width="120">
           <template slot-scope="scope">
             <div>
               <router-link style="display: inline-block" :to="'/article/edit/'+scope.row.id">
@@ -241,6 +255,16 @@ export default {
   },
   data() {
     return {
+      isFreeOptions: [
+        {
+          name: '免费',
+          id: 1
+        },
+        {
+          name: '付费',
+          id: 0
+        }
+      ],
       isOnlyOptions: [
         {
           name: '属于课程',
@@ -277,7 +301,8 @@ export default {
         article_grade: '',
         category: '',
         is_only: '', // 1： 是课程文章，0单独文章
-        status: '' // 发布状态： 1已发布，0：未发布， 2：草稿
+        status: '', // 发布状态： 1已发布，0：未发布， 2：草稿
+        free_article: '' // 1免费，0 付费
       },
       categories: []
     }
