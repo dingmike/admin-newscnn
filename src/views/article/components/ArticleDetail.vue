@@ -868,6 +868,10 @@ export default {
         {
           label: '专6',
           value: 6
+        },
+        {
+          label: '专8',
+          value: 7
         }
       ],
       deployMessageData: '发布文章成功',
