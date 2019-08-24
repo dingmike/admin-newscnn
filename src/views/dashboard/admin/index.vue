@@ -417,7 +417,6 @@ export default {
   },
   mounted() {
     this.getUserSubscribeNums()
-    this.getDaysStatistics()
   },
   methods: {
     pushMsg() {
@@ -463,6 +462,7 @@ export default {
         if (res.code === 200) {
           // this.userSubscribe = res.data
           this.totalData = res.data
+          this.getDaysStatistics()
         }
       })
     },
