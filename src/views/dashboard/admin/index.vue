@@ -1,41 +1,44 @@
 <template>
   <div class="dashboard-editor-container">
-    <el-row :gutter="10">
-      <el-card class="box-card">
-        <el-form :inline="true">
-          <div style="margin-bottom:10px;">
-            <el-col :span="8" class="text-center">
-              <el-form-item label="推送提醒消息">
-                <el-input
-                  v-model="pushParams.title"
-                  :placeholder="$t('table.pushMsg')"
-                  type="textarea"
-                  :rows="2"
-                  style="width: 280px"
-                  class="filter-item"
-                  size="medium"
-                  maxlength="30"
-                  show-word-limit
-                  clearable
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="2">
+    <el-row :gutter="40">
+      <el-form :inline="true">
+        <el-col :xs="24" :sm="24" :md="10" :lg="12" class="text-center">
+          <el-card class="box-card">
+            <el-form-item label="推送提醒消息">
+              <el-input
+                v-model="pushParams.title"
+                :placeholder="$t('table.pushMsg')"
+                type="textarea"
+                :rows="1"
+                style="width: 280px"
+                class="filter-item"
+                size="medium"
+                maxlength="30"
+                show-word-limit
+                clearable
+              />
+            </el-form-item>
+            <el-form-item>
               <el-button v-waves type="primary" size="medium" @click="pushMsg">
                 {{ $t('table.confirmPush') }}
               </el-button>
-            </el-col>
-            <el-col :span="6" :offset="8">
-              <el-form-item label="统计区间">
-                <el-select v-model="params.days" :placeholder="$t('table.statisticDays')" size="medium" @change="changeDays">
-                  <el-option v-for="item in daysOptions" :key="item.value" :label="item.label" :value="item.value" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </div>
-        </el-form>
+            </el-form-item>
+          </el-card>
+        </el-col>
+      </el-form>
+      <el-form>
+        <el-col :xs="24" :sm="24" :md="10" :lg="12">
+          <el-card class="box-card">
+            <el-form-item label="统计区间">
+              <el-select v-model="params.days" :placeholder="$t('table.statisticDays')" size="medium" @change="changeDays">
+                <el-option v-for="item in daysOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+            </el-form-item>
+          </el-card>
+        </el-col>
 
-      </el-card>
+      </el-form>
+
     </el-row>
     <panel-group :user-subscribe="userSubscribe" :total-data="totalData" @handleSetLineChartData="handleSetLineChartData" />
     <!--给订阅用户发送推送消息 -->
@@ -611,7 +614,6 @@ export default {
               }
             }*/
           })
-          debugger
           this.lineChartData = this.allChartData.userNums
           console.log(this.allChartData)
           console.log(this.totalData)

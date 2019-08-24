@@ -21,16 +21,18 @@
               <MDinput v-model="postForm.article_title" :maxlength="100" name="name" required>
                 英文标题
               </MDinput>
+              <span v-show="articleTitleShortLength" class="word-counter">{{ articleTitleShortLength }}字</span>
             </el-form-item>
             <el-form-item style="margin-bottom: 20px;" prop="chinese_title">
               <MDinput v-model="postForm.chinese_title" :maxlength="100" name="name" required>
                 中文标题
               </MDinput>
+              <span v-show="chineseTitleShortLength" class="word-counter">{{ chineseTitleShortLength }}字</span>
             </el-form-item>
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label-width="60px" label="作者:" class="postInfo-container-item" prop="article_author">
+                  <el-form-item label-width="84px" label="作者:" class="postInfo-container-item" prop="article_author">
                     <el-input v-model="postForm.article_author" size="mini" placeholder="" />
                     <!--<el-select v-model="postForm.article_author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="搜索用户">
                       <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
@@ -43,7 +45,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
-                  <el-form-item label-width="60px" label="难度:" class="postInfo-container-item" prop="article_grade">
+                  <el-form-item label-width="90px" label="难度:" class="postInfo-container-item" prop="article_grade">
                     <el-select v-model="postForm.article_grade" size="mini" placeholder="请选择难度">
                       <el-option
                         v-for="item in gradeOptions"
@@ -57,12 +59,12 @@
               </el-row>
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label-width="45px" label="价格:" class="postInfo-container-item" prop="pay_price">
+                  <el-form-item label-width="84px" label="价格:" class="postInfo-container-item" prop="pay_price">
                     <el-input-number v-model="postForm.pay_price" size="mini" :precision="2" :step="0.1" :max="1000" /> 元
                   </el-form-item>
                 </el-col>
                 <el-col :span="10">
-                  <el-form-item label-width="90px" label="翻译价格:" class="postInfo-container-item" pro="translate_price">
+                  <el-form-item label-width="80px" label="翻译价格:" class="postInfo-container-item" pro="translate_price">
                     <el-input-number v-model="postForm.translate_price" size="mini" :precision="2" :step="0.1" :max="1000" /> 元
                   </el-form-item>
                 </el-col>
@@ -72,45 +74,45 @@
                   </el-form-item>
                 </el-col>
               </el-row>
+              <el-row>
+                <el-col :span="8">
+                  <el-form-item label-width="84px" label="类型:" class="postInfo-container-item" prop="category">
+                    <el-select v-model="postForm.category" filterable size="mini" placeholder="请选择分类">
+                      <el-option
+                        v-for="item in categories"
+                        :key="item.id"
+                        :label="item.category_name"
+                        :value="item.id"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="10">
+                  <el-form-item label-width="80px" label="属性:" class="postInfo-container-item" prop="is_only">
+                    <el-select v-model="postForm.is_only" filterable size="mini" placeholder="请选择属性">
+                      <el-option
+                        v-for="item in isOnlyOptions"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item label-width="90px" label="是否付费:" class="postInfo-container-item" prop="is_only">
+                    <el-select v-model="postForm.free_article" filterable size="mini" placeholder="请选择是否付费">
+                      <el-option
+                        v-for="item in freeOptions"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
             </div>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="文章类型：" prop="name">
-              <el-select v-model="postForm.category" filterable size="mini" placeholder="请选择分类">
-                <el-option
-                  v-for="item in categories"
-                  :key="item.id"
-                  :label="item.category_name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="文章属性：" prop="is_only">
-              <el-select v-model="postForm.is_only" filterable size="mini" placeholder="请选择属性">
-                <el-option
-                  v-for="item in isOnlyOptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="是否付费：" prop="is_only">
-              <el-select v-model="postForm.free_article" filterable size="mini" placeholder="请选择是否付费">
-                <el-option
-                  v-for="item in freeOptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
           </el-col>
         </el-row>
 
@@ -883,9 +885,14 @@ export default {
       loading: false,
       userListOptions: [],
       rules: {
-        article_title: [{ required: true, message: '请输入标题', trigger: 'blur' }, { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
-        chinese_title: [{ required: true, message: '请输入中文标题', trigger: 'blur' }, { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
-        article_brief: [{ required: false, message: '请输入简介', trigger: 'blur' }, { min: 2, max: 40, message: '长度在 2 到 40 个字符', trigger: 'blur' }],
+        article_title: [{ required: true, message: '请输入标题', trigger: 'blur' }, { min: 2, max: 40, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
+        chinese_title: [{ required: true, message: '请输入中文标题', trigger: 'blur' }, { min: 2, max: 40, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
+        pay_price: [{ required: true, message: '请输入文章价格', trigger: 'blur' }],
+        category: [{ required: true, message: '请选择文章类型', trigger: 'blur' }],
+        article_grade: [{ required: true, message: '请选择文章难度等级', trigger: 'blur' }],
+        article_brief: [{ required: true, message: '请输入简介', trigger: 'blur' }, { min: 2, max: 300, message: '长度在 2 到 40 个字符', trigger: 'blur' }],
+        article_content: [{ required: false, message: '请输入文章内容', trigger: 'blur' }, { min: 1, max: 8000, message: '长度在 1 到 8000 个字符', trigger: 'blur' }],
+        article_translate: [{ required: false, message: '请输入翻译内容', trigger: 'blur' }, { min: 1, max: 8000, message: '长度在 1 到 8000 个字符', trigger: 'blur' }],
         article_author: [{ required: true, message: '请输入作者', trigger: 'blur' }, { min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur' }],
         // exam_words: [{ required: true, message: '请输入考试单词用*隔开', trigger: 'blur' }, { min: 2, max: 1500, message: '长度在 2 到 1500 个字符', trigger: 'blur' }],
         // exam_sentences: [{ required: true, message: '请输入考试句子用*隔开', trigger: 'blur' }, { min: 2, max: 1500, message: '长度在 2 到 1500 个字符', trigger: 'blur' }],
@@ -897,13 +904,13 @@ export default {
         symbol: [{ required: true, message: '请输入考试单词音标', trigger: 'blur' }, { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }],
         wordTranslate: [{ required: true, message: '请输入单词解释', trigger: 'blur' }, { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }],
         wordAudio: [{ required: false, message: '请上传音频', trigger: 'blur' }, { min: 1, max: 300, message: '长度在 1 到 300 个字符', trigger: 'blur' }],
-        exampleSentence: [{ required: false, message: '请输入例句', trigger: 'blur' }, { min: 1, max: 200, message: '长度在 2 到 200 个字符', trigger: 'blur' }]
+        exampleSentence: [{ required: false, message: '请输入例句', trigger: 'blur' }, { min: 1, max: 300, message: '长度在 2 到 300 个字符', trigger: 'blur' }]
       },
       examSentenceRules: {
-        sentence: [{ required: true, message: '请输入考试句子', trigger: 'blur' }, { min: 1, max: 200, message: '长度在 1 到 200 个字符', trigger: 'blur' }],
+        sentence: [{ required: true, message: '请输入考试句子', trigger: 'blur' }, { min: 1, max: 300, message: '长度在 1 到 300 个字符', trigger: 'blur' }],
         sentenceTranslate: [{ required: true, message: '请输入句子解释', trigger: 'blur' }, { min: 1, max: 200, message: '长度在 1 到 200 个字符', trigger: 'blur' }],
         sentenceAudio: [{ required: false, message: '请上传音频', trigger: 'blur' }, { min: 1, max: 300, message: '长度在 1 到 300 个字符', trigger: 'blur' }],
-        exampleSentence: [{ required: false, message: '请输入例句', trigger: 'blur' }, { min: 1, max: 200, message: '长度在 2 到 200 个字符', trigger: 'blur' }]
+        exampleSentence: [{ required: false, message: '请输入例句', trigger: 'blur' }, { min: 1, max: 300, message: '长度在 1 到 300 个字符', trigger: 'blur' }]
       },
       tempRoute: {}
     }
@@ -911,6 +918,12 @@ export default {
   computed: {
     contentShortLength() {
       return this.postForm.article_brief.length
+    },
+    chineseTitleShortLength() {
+      return this.postForm.chinese_title.length
+    },
+    articleTitleShortLength() {
+      return this.postForm.article_title.length
     },
     wordsShortLength() {
       return this.postForm.exam_words.length
