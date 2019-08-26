@@ -81,7 +81,7 @@
             <img :src="scope.row.user.headimgurl" width="40" height="40" style="border-radius: 50%" alt="">
           </template>
         </el-table-column>
-        <el-table-column label="昵称" width="140" align="center">
+        <el-table-column label="微信昵称" width="140" align="center">
           <template slot-scope="scope">
             <span class="font-extra-small">{{ scope.row.user.nickname }}</span>
           </template>
@@ -101,7 +101,7 @@
             <span>{{ scope.row.course.learn_days }} 天</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="免费" width="150">
+        <el-table-column align="center" label="免费课程" width="150">
           <template slot-scope="scope">
             <el-tag :type="scope.row.course.free_course === 1? 'danger' : 'success'">{{ scope.row.course.free_course === 1? '是' : '否' }}</el-tag>
           </template>
