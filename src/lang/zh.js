@@ -46,6 +46,7 @@ export default {
     addCourse: '添加课程',
     updateCourse: '更新课程',
     courseArticle: '课程文章',
+    userCourseArticle: '用户课程课时',
     courseList: '课程列表',
     files: '文件管理',
     schedule: '定时任务',

@@ -28,7 +28,7 @@ const orderRouter = {
       path: 'courseArticle',
       component: () => import('@/views/userCourse/courseArticle'),
       name: 'CourseArticle',
-      meta: { title: 'courseArticle', noCache: true, activeMenu: '/userCourseList/list' },
+      meta: { title: 'userCourseArticle', noCache: true, activeMenu: '/userCourseList/list' },
       hidden: true
     }
   ]
