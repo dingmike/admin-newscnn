@@ -52,6 +52,7 @@ export default {
     system: '系统管理',
     order: '订单管理',
     articleOrder: '文章订单',
+    userCourseList: '用户课程',
     nested: '路由嵌套',
     menu1: '菜单1',
     'menu1-1': '菜单 1-1',

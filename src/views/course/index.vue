@@ -100,7 +100,7 @@
             <el-tag :type="scope.row.free_course === 1? 'danger' : 'success'">{{ scope.row.free_course === 1? '是' : '否' }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="天数">
+        <el-table-column align="center" label="课时">
           <template slot-scope="scope">
             <span>{{ scope.row.learn_days }}天</span>
           </template>
@@ -171,9 +171,9 @@
       <el-pagination
         background
         layout="total, sizes,prev, pager, next,jumper"
-        :page-size="listQuery.pageSize"
+        :page-size="listQuery.limit"
         :page-sizes="[5,10,15]"
-        :current-page.sync="listQuery.pageNum"
+        :current-page.sync="listQuery.page"
         :total="total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -342,12 +342,12 @@ export default {
       })
     },
     handleSizeChange(val) {
-      this.listQuery.pageNum = 1
-      this.listQuery.pageSize = val
+      this.listQuery.page = 1
+      this.listQuery.limit = val
       this.getList()
     },
     handleCurrentChange(val) {
-      this.listQuery.pageNum = val
+      this.listQuery.page = val
       this.getList()
     },
     handleShowStatusChange(index, row) {

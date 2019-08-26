@@ -42,6 +42,7 @@ export default {
     system: 'System',
     order: 'Order',
     articleOrder: 'Article Order',
+    userCourseList: 'User Course',
     nested: 'Nested Routes',
     menu1: 'Menu 1',
     'menu1-1': 'Menu 1-1',

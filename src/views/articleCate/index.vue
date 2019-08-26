@@ -74,9 +74,9 @@
       <el-pagination
         background
         layout="total, sizes,prev, pager, next,jumper"
-        :page-size="listQuery.pageSize"
+        :page-size="listQuery.limit"
         :page-sizes="[5,10,15]"
-        :current-page.sync="listQuery.pageNum"
+        :current-page.sync="listQuery.page"
         :total="total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -148,12 +148,12 @@ export default {
       })
     },
     handleSizeChange(val) {
-      this.listQuery.pageNum = 1
-      this.listQuery.pageSize = val
+      this.listQuery.page = 1
+      this.listQuery.limit = val
       this.getList()
     },
     handleCurrentChange(val) {
-      this.listQuery.pageNum = val
+      this.listQuery.page = val
       this.getList()
     },
     handleShowStatusChange(index, row) {
