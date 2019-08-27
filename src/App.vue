@@ -19,13 +19,20 @@
       :click-effect="true"
       click-mode="push"
     />
+    <!--https://github.com/houzisbw/vue-matrix-raindrop-->
+    <!--<VueMatrixRaindrop class="particles-js" backgroundColor="#454545"></VueMatrixRaindrop>-->
+    <!-- Available click modes: "push", "remove", "repulse", "bubble"-->
     <router-view />
   </div>
 </template>
 
 <script>
+// import VueMatrixRaindrop from 'vue-matrix-digit-rain'
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    // VueMatrixRaindrop
+  }
 }
 </script>
 
