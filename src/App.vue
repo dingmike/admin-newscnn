@@ -38,7 +38,7 @@ export default {
 
 <style lang="less" scoped>
   .particles-js {
-    /*background-image: url(/static/img/sky.871d198.jpg);*/
+    background-image: url('./assets/components_img/appBg.jpg');
     background-size: cover;
     position: absolute;
     top: 0;

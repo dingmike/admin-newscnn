@@ -94,7 +94,7 @@ export default {
     size: 'Global Size'
   },
   login: {
-    title: 'Login Form',
+    title: 'Login System',
     logIn: 'Login',
     username: 'Username',
     password: 'Password',
