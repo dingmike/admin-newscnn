@@ -26,6 +26,7 @@ import * as filters from './filters' // global filters
 // mock api in github pages site build
 // if (process.env.NODE_ENV === 'production') { mockXHR() }
 // if (process.env.NODE_ENV === 'development') { mockXHR() }  // 本地开发使用本地mockXHR
+import VueParticles from 'vue-particles'
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
@@ -38,7 +39,7 @@ Object.keys(filters).forEach(key => {
 })
 
 Vue.config.productionTip = false
-
+Vue.use(VueParticles)
 new Vue({
   el: '#app',
   router,
