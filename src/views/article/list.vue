@@ -122,7 +122,7 @@
         </el-table-column>
         <el-table-column align="center" label="文章属性">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.is_only == 0? 'success' : 'info'">{{ scope.row.is_only == 0? '属于课程' : '阅读文章' }}</el-tag>
+            <el-tag :type="scope.row.is_only == 0? 'success' : 'info'">{{ scope.row.is_only == 0? '课程' : '文章' }}</el-tag>
             <!--<span>{{ scope.row.is_only == 1? '属于课程' : '阅读文章' }}</span>-->
           </template>
         </el-table-column>

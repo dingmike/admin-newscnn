@@ -103,7 +103,7 @@
         </el-table-column>
         <el-table-column align="center" label="免费课程" width="150">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.course.free_course === 1? 'danger' : 'success'">{{ scope.row.course.free_course === 1? '是' : '否' }}</el-tag>
+            <el-tag :type="scope.row.free_course === 1? 'danger' : 'success'">{{ scope.row.free_course === 1? '是' : '否' }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="开始时间" align="center">
