@@ -8,40 +8,40 @@
         type="primary"
         @click="openAddFiles()"
       >
-        添加Banner
+        添加活动
       </el-button>
     </el-card>
     <!--文件列表-->
     <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style=" margin-top:20px; width: 100%" @selection-change="handleSelectionChange">
 
-      <el-table-column width="180" align="center" label="图片">
+      <el-table-column align="center" label="活动名称">
         <template slot-scope="scope">
-          <div style="width: 100px;">
-            <img :src="scope.row.img_url" style="width: 100%;" :alt="scope.row.name">
-          </div>
+          <span>{{ scope.row.activityName }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="120" align="center" label="名称">
+      <el-table-column label="状态" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
+          <el-switch
+            v-model="scope.row.status"
+            :active-value="1"
+            :inactive-value="0"
+            active-text="启用"
+            inactive-text="禁用"
+            @change="handleShowStatusChange(scope.$index, scope.row)"
+          />
         </template>
       </el-table-column>
-      <el-table-column width="280" align="center" label="广告类型（位置）">
+      <el-table-column align="center" label="分享文字">
         <template slot-scope="scope">
-          <span>{{ scope.row.category | typeFilter }}</span>
+          <span>{{ scope.row.shareWords }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="280" align="center" label="文字说明">
+      <el-table-column align="center" label="说明">
         <template slot-scope="scope">
           <span>{{ scope.row.memo }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="200" align="center" label="状态">
-        <template slot-scope="scope">
-          <span>{{ scope.row.status ? '启用' : '禁用' }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="left" label="操作" width="200">
+      <el-table-column align="left" label="操作">
         <template slot-scope="scope">
           <el-tooltip class="item" effect="dark" content="编辑" placement="top-start">
             <el-button
@@ -67,32 +67,12 @@
         label-width="150px"
       >
         <el-form-item label="名称：" prop="name">
-          <el-input v-model="bannerDetail.name" />
+          <el-input v-model="bannerDetail.activityName" />
         </el-form-item>
-        <el-form-item label="广告图类型：" prop="category">
-          <el-select v-model="bannerDetail.category" size="mini" placeholder="请选广告图类型" @visible-change="showSelectOption" @change="changeCategory">
-            <el-option
-              v-for="item in categories"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
+        <el-form-item label="分享文字：" prop="memo">
+          <el-input v-model="bannerDetail.shareWords" type="textarea" :autosize="true" />
         </el-form-item>
-        <el-form-item label="图片：" prop="img_url">
-          <el-input v-model="bannerDetail.img_url" />
-          <upload-corp
-            v-if="showCrop"
-            v-model="bannerDetail"
-            :cropper-option="cropperOption"
-            :image-url="bannerDetail.img_url"
-          />
-          <!--<SingleFile v-model="bannerDetail.img_url" />-->
-        </el-form-item>
-        <el-form-item label="跳转链接：" prop="url">
-          <el-input v-model="bannerDetail.url" />
-        </el-form-item>
-        <el-form-item label="文字说明：" prop="memo">
+        <el-form-item label="说明：" prop="memo">
           <el-input v-model="bannerDetail.memo" type="textarea" :autosize="true" />
         </el-form-item>
         <el-form-item label="状态：" prop="status">
@@ -112,25 +92,23 @@
 </template>
 
 <script>
-import { fetchList, deleteBanner, createBanner, updateBanner } from '@/api/banner' // createBanner
+import { fetchList, updateStatus, createOne, updateOne, deleteOne } from '@/api/activity' // createBanner
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // Waves directive
 import { Loading } from 'element-ui'
 // import SingleFile from '@/components/Upload/singleFile'
-import UploadCorp from '@/components/Upload/uploadCorp'
+// import UploadCorp from '@/components/Upload/uploadCorp'
 
 const defaultDetail = {
-  name: '',
-  category: '',
-  url: '',
-  img_url: '',
+  activityName: '',
+  shareWords: '',
   memo: '',
   status: 1
 }
 
 export default {
   name: 'Banner',
-  components: { Pagination, UploadCorp },
+  components: { Pagination },
   directives: { waves },
   filters: {
     // //0 默认新创建  1 预支付创建 2 已支付  3 申请退款中 4 退款完成
@@ -157,51 +135,9 @@ export default {
   },
   data() {
     return {
-      showCrop: false,
-      cropperOption: {
-        img: '',
-        outputType: 'jpg', // 裁剪生成图片的格式
-        canScale: true, // 图片是否允许滚轮缩放
-        autoCrop: true, // 是否默认生成截图框
-        autoCropWidth: 570, // 默认生成截图框宽度
-        autoCropHeight: 242, // 默认生成截图框高度
-        fixed: false, // 是否开启截图框宽高固定比例
-        fixedNumber: [570, 242] // 截图框的宽高比例
-      },
-      dialogTitle: '添加广告',
+      dialogTitle: '添加活动',
       isEdit: false,
       bannerDetail: Object.assign({}, defaultDetail),
-      categories: [
-        {
-          name: '首页顶部Banner',
-          id: 1
-        },
-        {
-          name: '首页card背景',
-          id: 2
-        },
-        {
-          name: '我的课程顶部Banner',
-          id: 3
-        },
-        {
-          name: '分享页面背景图',
-          id: 4
-        },
-        {
-          name: '打卡页面顶部banner',
-          id: 5
-        },
-        {
-          name: '打卡分享banner',
-          id: 6
-        },
-        {
-          name: '学习群二维码',
-          id: 7
-        }
-      ],
-      uploadAction: process.env.VUE_APP_BASE_API + '/common/upload',
       fullForm: false,
       uploadVisible: false,
       multipleSelection: [],
@@ -211,27 +147,23 @@ export default {
       total: 0,
       listLoading: true,
       rules: {
-        name: [
+        activityName: [
           { required: true, message: '请输入名称', trigger: 'blur' },
           { min: 2, max: 20, message: '长度在 2 到 30 个字符', trigger: 'blur' }
         ],
-        category: [
-          { required: true, message: '请选择广告类型', trigger: 'blur' }
-        ],
-        img_url: [
-          { required: true, message: '请上传图片', trigger: 'blur' }
+        shareWords: [
+          { required: false, message: '请输入分享文字', trigger: 'blur' },
+          { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
         ],
         memo: [
-          { required: false, message: '请输入文字说明', trigger: 'blur' },
+          { required: false, message: '请输入说明', trigger: 'blur' },
           { min: 2, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }
         ]
       },
       listQuery: {
         page: 1,
         limit: 10,
-        status: '',
-        article_name: '',
-        openid: ''
+        status: ''
       },
       LoadingOptions: {
         lock: true,
@@ -258,46 +190,19 @@ export default {
         this.showCrop = false
       }
     },
-    changeCategory(val) {
-      this.showCrop = true
-      // 如果是分享页面背景图
-      if (val === 4) {
-        this.cropperOption = {
-          img: '',
-          outputType: 'png', // 裁剪生成图片的格式
-          canScale: true, // 图片是否允许滚轮缩放
-          autoCrop: true, // 是否默认生成截图框
-          autoCropWidth: 1242, // 默认生成截图框宽度
-          autoCropHeight: 2208, // 默认生成截图框高度
-          fixed: true, // 是否开启截图框宽高固定比例
-          fixedNumber: [1242, 2208], // 截图框的宽高比例
-          infoTrue: true, // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
-          full: true, // 是否输出原图比例的截图
-          enlarge: 10 // 图片根据截图框输出比例倍数
-        }
-      } else if (val === 6) {
-        this.cropperOption = {
-          img: '',
-          outputType: 'jpg', // 裁剪生成图片的格式
-          canScale: true, // 图片是否允许滚轮缩放
-          autoCrop: true, // 是否默认生成截图框
-          autoCropWidth: 435, // 默认生成截图框宽度
-          autoCropHeight: 245, // 默认生成截图框高度
-          fixed: true, // 是否开启截图框宽高固定比例
-          fixedNumber: [435, 245] // 截图框的宽高比例
-        }
-      } else {
-        this.cropperOption = {
-          img: '',
-          outputType: 'jpg', // 裁剪生成图片的格式
-          canScale: true, // 图片是否允许滚轮缩放
-          autoCrop: true, // 是否默认生成截图框
-          autoCropWidth: 570, // 默认生成截图框宽度
-          autoCropHeight: 242, // 默认生成截图框高度
-          fixed: true, // 是否开启截图框宽高固定比例
-          fixedNumber: [570, 242] // 截图框的宽高比例
-        }
-      }
+    handleShowStatusChange(index, row) {
+      // let data = new URLSearchParams();
+      updateStatus({ id: row._id, status: row.status }).then(response => {
+        console.log(response)
+        this.$message({
+          message: '修改成功',
+          type: 'success',
+          duration: 1000
+        })
+      })
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     },
     openAddFiles() {
       this.uploadVisible = true
@@ -317,7 +222,7 @@ export default {
             type: 'warning'
           }).then(() => {
             if (this.isEdit) {
-              updateBanner(this.bannerDetail).then(response => {
+              updateOne(this.bannerDetail).then(response => {
                 this.getList()
                 this.uploadVisible = false
                 this.$message({
@@ -327,7 +232,7 @@ export default {
                 })
               })
             } else {
-              createBanner(this.bannerDetail).then(response => {
+              createOne(this.bannerDetail).then(response => {
                 this.$refs[formName].resetFields()
                 this.resetForm(formName)
                 this.getList()
@@ -361,7 +266,7 @@ export default {
         type: 'warning'
       }).then(() => {
         const loadingInstance6 = Loading.service(this.LoadingOptions)
-        deleteBanner({ id: item.row.id }).then(response => {
+        deleteOne({ id: item.row.id }).then(response => {
           if (response.code === 200) {
             loadingInstance6.close()
             this.getList()
@@ -395,45 +300,12 @@ export default {
       this.listQuery = {
         page: 1,
         limit: 10,
-        status: '',
-        article_name: '',
-        openid: ''
+        status: ''
       }
       this.getList()
     },
     handleFilterNow() {
       this.getList()
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
-    },
-    handlePreview(file) {
-      console.log(file)
-    },
-    handleExceed(files, fileList) {
-      this.$message.warning(`当前限制选择 10 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-    beforeRemove(file) {
-      return this.$confirm(`确定移除 ${file.name}？`)
-    },
-    handleUploadSuccess(res) {
-      if (res.code === 200) {
-        this.getList()
-      }
-    },
-    beforeFileUpload(file) {
-      // const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 20
-      // if (!isJPG) {
-      //   this.$message.error('上传头像图片只能是 JPG 格式!')
-      // }
-      if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 20MB!')
-      }
-      return isLt2M
     }
   }
 }

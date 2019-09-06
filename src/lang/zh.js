@@ -33,6 +33,8 @@ export default {
     user: '微信用户',
     banner: '广告管理',
     bannerlist: '广告管理',
+    activity: '活动管理',
+    activitylist: '活动列表',
     article: '文章管理',
     exam: '考试管理',
     createExam: '创建试卷',

@@ -17,6 +17,7 @@ import articleRouter from './modules/article'
 import systemRouter from './modules/system'
 import articleCateRouter from './modules/articleCate'
 import bannerCateRouter from './modules/banner'
+import activityRouter from './modules/activity'
 import examRouter from './modules/exam'
 
 /**
@@ -181,6 +182,7 @@ export const asyncRoutes = [
   // nestedRouter,
   // tableRouter,
   bannerCateRouter,
+  activityRouter,
   wechatRouter,
   articleCateRouter,
   articleRouter,
