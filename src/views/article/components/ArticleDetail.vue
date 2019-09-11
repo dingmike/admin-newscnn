@@ -122,7 +122,8 @@
         </el-form-item>
 
         <el-form-item prop="article_content" label-width="80px" label="原文:" style="margin-bottom: 30px;">
-          <Tinymce ref="editor" v-model="postForm.article_content" :height="400" />
+          <!--<Tinymce ref="editor" v-model="postForm.article_content" :height="400" />-->
+          <el-input v-model="postForm.article_content" :rows="8" type="textarea" class="article-textarea" autosize placeholder="请输入内容" />
         </el-form-item>
 
         <el-form-item prop="article_translate" label-width="80px" label="翻译:" style="margin-bottom: 30px;">
