@@ -1,37 +1,36 @@
-/*
-/!** When your routing table is too long, you can split it into small modules**!/
+/** When your routing table is too long, you can split it into small modules**/
 
 import Layout from '@/layout'
 
-const articleCateRouter = {
-  path: '/articleCate',
+const courseCateRouter = {
+  path: '/courseCate',
   component: Layout,
-  redirect: '/articleCate/list',
-  name: 'ArticleCate',
+  redirect: '/courseCate/list',
+  name: 'CourseCate',
   meta: {
-    title: 'articleCate',
+    title: 'courseCate',
     icon: 'example'
   },
   children: [
     {
       path: 'add',
-      component: () => import('@/views/articleCate/add'),
-      name: 'AddArticleCate',
-      meta: { title: 'addArticleCate', icon: 'edit' },
+      component: () => import('@/views/courseCate/add'),
+      name: 'AddCourseCate',
+      meta: { title: 'addCourseCate', icon: 'edit' },
       hidden: true
     },
     {
       path: 'update',
-      component: () => import('@/views/articleCate/update'),
-      name: 'UpdateArticleCate',
-      meta: { title: 'updateArticleCate', noCache: true, activeMenu: '/articleCate/list' },
+      component: () => import('@/views/courseCate/update'),
+      name: 'UpdateCourseCate',
+      meta: { title: 'updateCourseCate', noCache: true, activeMenu: '/courseCate/list' },
       hidden: true
     },
     {
       path: 'list',
-      component: () => import('@/views/articleCate/index'),
-      name: 'ArticleCateList',
-      meta: { title: 'articleCateList', icon: 'list' }
+      component: () => import('@/views/courseCate/index'),
+      name: 'CourseCateList',
+      meta: { title: 'courseCateList', icon: 'list' }
     },
     // 课程目录
     {
@@ -63,5 +62,4 @@ const articleCateRouter = {
     }
   ]
 }
-export default articleCateRouter
-*/
+export default courseCateRouter

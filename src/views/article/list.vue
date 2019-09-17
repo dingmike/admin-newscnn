@@ -22,12 +22,12 @@
         category: '',
         is_only: 0, // 1： 是课程文章，0单独文章
         status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿-->
-      <el-input v-model="listQuery.chinese_title" :placeholder="$t('table.chinese_title')" style="width: 200px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
-      <el-input v-model="listQuery.article_author" :placeholder="$t('table.article_author')" style="width: 200px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-input v-model="listQuery.chinese_title" :placeholder="$t('table.chinese_title')" style="width: 160px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-input v-model="listQuery.article_author" :placeholder="$t('table.article_author')" style="width: 160px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
       <el-select v-model="listQuery.status" :placeholder="$t('table.chooseArticleStatus')" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option v-for="item in articleStatus" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-select v-model="listQuery.is_only" :placeholder="$t('table.chooseIsOnly')" style="width: 130px" class="filter-item" size="small" clearable>
+      <el-select v-model="listQuery.is_only" :placeholder="$t('table.chooseIsOnly')" style="width: 100px" class="filter-item" size="small" clearable>
         <el-option
           v-for="item in isOnlyOptions"
           :key="item.id"
@@ -35,7 +35,7 @@
           :value="item.id"
         />
       </el-select>
-      <el-select v-model="listQuery.free_article" :placeholder="$t('table.isFree')" style="width: 130px" class="filter-item" size="small" clearable>
+      <el-select v-model="listQuery.free_article" :placeholder="$t('table.isFree')" style="width: 100px" class="filter-item" size="small" clearable>
         <el-option
           v-for="item in isFreeOptions"
           :key="item.id"
@@ -43,9 +43,17 @@
           :value="item.id"
         />
       </el-select>
-      <el-select v-model="listQuery.category" :placeholder="$t('table.chooseCourseStatus')" style="width: 130px" class="filter-item" size="small" clearable>
+      <el-select v-model="listQuery.category" :placeholder="$t('table.chooseCourseCategory')" style="width: 160px" class="filter-item" size="small" clearable>
         <el-option
           v-for="item in categories"
+          :key="item.id"
+          :label="item.category_name"
+          :value="item.id"
+        />
+      </el-select>
+      <el-select v-model="listQuery.articleCategory" :placeholder="$t('table.chooseArticleCategory')" style="width: 160px" class="filter-item" size="small" clearable>
+        <el-option
+          v-for="item in articleCategories"
           :key="item.id"
           :label="item.category_name"
           :value="item.id"
@@ -79,7 +87,12 @@
     </el-card>
     <div class="table-container">
       <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" style="width: 100%" stripe highlight-current-row>
-        <el-table-column align="center" label="类型" width="120">
+        <el-table-column align="center" label="文章类型" width="">
+          <template slot-scope="scope">
+            <span>{{ scope.row.articleCate ? scope.row.articleCate.category_name: '无' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="课程类型" width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.category ? scope.row.category.category_name: '无' }}</span>
           </template>
@@ -139,7 +152,6 @@
               :inactive-value="2"
               active-text="已发布"
               inactive-text="草稿"
-              width="34"
               @change="handleShowStatusChange(scope.$index, scope.row)"
             />
             <el-tag v-if="scope.row.status === 3" :type="row.status | statusTypeFilter">
@@ -190,7 +202,8 @@
 import { fetchList, deleteArticle, updateArticle } from '@/api/article'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // Waves directive
-import { fetchAllList as fetchCategory } from '@/api/articleCate'
+import { fetchAllList as fetchCategory } from '@/api/courseCate'
+import { fetchAllList as fetchArticleCategory } from '@/api/articleCate'
 import { parseUTCtime } from '@/utils'
 
 export default {
@@ -300,16 +313,19 @@ export default {
         chinese_title: '',
         article_grade: '',
         category: '',
+        articleCategory: '',
         is_only: '', // 1： 是课程文章，0单独文章
         status: '', // 发布状态： 1已发布，0：未发布， 2：草稿
         free_article: '' // 1免费，0 付费
       },
-      categories: []
+      categories: [],
+      articleCategories: [] // 文章类型
     }
   },
   created() {
     this.getList()
     this.fetchCategory()
+    this.fetchArticleCategory()
   },
   methods: {
     handleFilterNow() {
@@ -355,6 +371,12 @@ export default {
         this.categories = response.data
       })
     },
+    fetchArticleCategory() {
+      debugger
+      fetchArticleCategory().then(response => {
+        this.articleCategories = response.data
+      })
+    },
     clearFilter() {
       this.listQuery = {
         page: 1,
@@ -363,6 +385,7 @@ export default {
         chinese_title: '',
         article_grade: '',
         category: '',
+        articleCategory: '',
         is_only: 0, // 1： 是课程文章，0单独文章
         status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿
       }

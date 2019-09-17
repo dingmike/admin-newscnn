@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/backend/article/category/list',
+    url: '/backend/category/list',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function fetchList(query) {
 // 所有已发布的分类
 export function fetchAllList(query) {
   return request({
-    url: '/backend/article/category/allList',
+    url: '/backend/category/allList',
     method: 'get',
     params: query
   })
@@ -18,7 +18,7 @@ export function fetchAllList(query) {
 
 export function fetchCategoryDetail(id) {
   return request({
-    url: '/backend/article/category/detail',
+    url: '/backend/category/detail',
     method: 'get',
     params: { id }
   })
@@ -26,7 +26,7 @@ export function fetchCategoryDetail(id) {
 
 export function createCategory(data) {
   return request({
-    url: '/backend/article/category/add',
+    url: '/backend/category/add',
     method: 'post',
     data
   })
@@ -34,7 +34,7 @@ export function createCategory(data) {
 
 export function updateCategory(data) {
   return request({
-    url: '/backend/article/category/update',
+    url: '/backend/category/update',
     method: 'post',
     data
   })
@@ -42,7 +42,7 @@ export function updateCategory(data) {
 
 export function updateCategoryStatus(data) {
   return request({
-    url: '/backend/article/category/status',
+    url: '/backend/category/status',
     method: 'post',
     data
   })
@@ -50,7 +50,7 @@ export function updateCategoryStatus(data) {
 
 export function deleteCategory(data) {
   return request({
-    url: '/backend/article/category/delete',
+    url: '/backend/category/delete',
     method: 'post',
     data
   })

@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card class="operate-container" shadow="never">
       <i class="el-icon-tickets" style="margin-top: 5px" />
-      <span style="margin-top: 5px">文章分类列表</span>
+      <span style="margin-top: 5px">课程分类列表</span>
       <el-button
         class="btn-add"
         size="mini"
@@ -87,7 +87,7 @@
 
 <script>
 // import {fetchList,deleteProductCate,updateShowStatus,updateNavStatus} from '@/api/articleCate'
-import { fetchList, deleteCategory, updateCategoryStatus } from '@/api/articleCate'
+import { fetchList, deleteCategory, updateCategoryStatus } from '@/api/courseCate'
 export default {
   name: 'ProductCateList',
   filters: {
@@ -137,7 +137,7 @@ export default {
       }
     },
     handleAddProductCate() {
-      this.$router.push('/article/add')
+      this.$router.push('/courseCate/add')
     },
     getList() {
       this.listLoading = true

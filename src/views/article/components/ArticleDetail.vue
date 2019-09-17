@@ -76,8 +76,8 @@
               </el-row>
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label-width="84px" label="类型:" class="postInfo-container-item" prop="category">
-                    <el-select v-model="postForm.category" filterable size="mini" placeholder="请选择分类">
+                  <el-form-item label-width="84px" label="课程类型:" class="postInfo-container-item" prop="category">
+                    <el-select v-model="postForm.category" filterable size="mini" placeholder="请选择课程分类">
                       <el-option
                         v-for="item in categories"
                         :key="item.id"
@@ -106,6 +106,20 @@
                         v-for="item in freeOptions"
                         :key="item.id"
                         :label="item.name"
+                        :value="item.id"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="8">
+                  <el-form-item label-width="84px" label="文章类型:" class="postInfo-container-item" prop="articleCate">
+                    <el-select v-model="postForm.articleCate" filterable size="mini" placeholder="请选择文章分类">
+                      <el-option
+                        v-for="item in articleCategories"
+                        :key="item.id"
+                        :label="item.category_name"
                         :value="item.id"
                       />
                     </el-select>
@@ -661,7 +675,8 @@ import UploadCorp from '@/components/Upload/uploadCorp'
 // import Warning from './Warning'
 // import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'
-import { fetchAllList as fetchCategory } from '@/api/articleCate'
+import { fetchAllList as fetchCategory } from '@/api/courseCate'
+import { fetchAllList as fetchArticleCategory } from '@/api/articleCate'
 import elDragDialog from '@/directive/el-dragDialog' // base on element-ui
 const defaultExamWordsForm = {
   word: '',
@@ -683,6 +698,7 @@ const defaultForm = {
   article_title: '', // 文章题目
   chinese_title: '', // 文章中文题目
   category: '',
+  articleCate: '', // 文章类型
   is_only: 0, // 单独的文章 1是 0不是（属于课程）
   free_article: 0, // 0 付费，1 免费
   article_author: '', // 文章作者
@@ -817,6 +833,7 @@ export default {
       showSetAnalysis: false,
       isFullScreen: true,
       categories: [],
+      articleCategories: [], // 文章类型
       isOnlyOptions: [
         {
           name: '属于课程',
@@ -889,7 +906,8 @@ export default {
         article_title: [{ required: true, message: '请输入标题', trigger: 'blur' }, { min: 2, max: 40, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
         chinese_title: [{ required: true, message: '请输入中文标题', trigger: 'blur' }, { min: 2, max: 40, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
         pay_price: [{ required: true, message: '请输入文章价格', trigger: 'blur' }],
-        category: [{ required: true, message: '请选择文章类型', trigger: 'blur' }],
+        category: [{ required: false, message: '请选择课程类型', trigger: 'blur' }],
+        articleCate: [{ required: true, message: '请选择文章类型', trigger: 'blur' }],
         article_grade: [{ required: true, message: '请选择文章难度等级', trigger: 'blur' }],
         article_brief: [{ required: true, message: '请输入简介', trigger: 'blur' }, { min: 2, max: 300, message: '长度在 2 到 40 个字符', trigger: 'blur' }],
         article_content: [{ required: false, message: '请输入文章内容', trigger: 'blur' }, { min: 1, max: 8000, message: '长度在 1 到 8000 个字符', trigger: 'blur' }],
@@ -944,6 +962,7 @@ export default {
       this.postForm = Object.assign({}, defaultForm)
     }
     this.fetchCategory()
+    this.fetchArticleCategory()
     // Why need to make a copy of this.$route here?
     // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewTitle function, this.$route is no longer pointing to the current page
     // https://github.com/PanJiaChen/vue-element-admin/issues/1221
@@ -1025,6 +1044,11 @@ export default {
     fetchCategory() {
       fetchCategory().then(response => {
         this.categories = response.data
+      })
+    },
+    fetchArticleCategory() {
+      fetchArticleCategory().then(response => {
+        this.articleCategories = response.data
       })
     },
     editSentence(item) {

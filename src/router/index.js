@@ -15,7 +15,7 @@ import wechatRouter from './modules/wechat'
 import articleOrderRouter from './modules/articleOrder'
 import articleRouter from './modules/article'
 import systemRouter from './modules/system'
-import articleCateRouter from './modules/articleCate'
+import courseCateRouter from './modules/courseCate'
 import bannerCateRouter from './modules/banner'
 import activityRouter from './modules/activity'
 import examRouter from './modules/exam'
@@ -184,7 +184,7 @@ export const asyncRoutes = [
   bannerCateRouter,
   activityRouter,
   wechatRouter,
-  articleCateRouter,
+  courseCateRouter,
   articleRouter,
   examRouter,
   articleOrderRouter,
