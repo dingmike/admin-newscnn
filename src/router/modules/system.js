@@ -13,6 +13,12 @@ const systemRouter = {
   },
   children: [
     {
+      path: 'controlPanel',
+      component: () => import('@/views/system/controlPanel'),
+      name: 'controlPanel',
+      meta: { title: 'controlPanel' }
+    },
+    {
       path: 'schedule',
       component: () => import('@/views/system/schedule'),
       name: 'schedule',

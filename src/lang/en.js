@@ -55,6 +55,7 @@ export default {
     userCourseArticle: 'User Course Article',
     courseList: 'Course List',
     system: 'System',
+    controlPanel: 'Control Panel',
     order: 'Order',
     articleOrder: 'All Order',
     userCourseList: 'User Course',

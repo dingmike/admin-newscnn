@@ -1158,6 +1158,7 @@ export default {
                   title: '失败',
                   message: '更新文章失败'
                 })
+                this.loading = false
               }
               this.loading = false
             })
@@ -1176,6 +1177,7 @@ export default {
                   title: '失败',
                   message: '创建文章失败'
                 })
+                this.loading = false
               }
               this.loading = false
             })

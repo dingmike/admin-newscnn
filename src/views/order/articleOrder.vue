@@ -27,7 +27,7 @@
       </el-tooltip>
     </div>
 
-    <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style="width: 100%">
+    <el-table v-loading="listLoading" :data="list" :fit="fitWidth" size="small" height="520" stripe highlight-current-row style="width: 100%" border>
 
       <el-table-column type="expand">
         <template slot-scope="props">

@@ -8,8 +8,13 @@
 
       <el-table-column width="320px" align="center" label="文件">
         <template slot-scope="scope">
-          <div style="width: 100px;">
-            <img v-if="scope.row.file_type === 1" :src="scope.row.file_url" style="width: 100%;" :alt="scope.row.file_name">
+          <div style="width: 65px;">
+            <!--<img v-if="scope.row.file_type === 1" :src="scope.row.file_url" style="width: 100%;" :alt="scope.row.file_name">-->
+            <el-image v-if="scope.row.file_type === 1" :src="scope.row.file_url" style="width: 100%;">
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline" />
+              </div>
+            </el-image>
             <audio v-else-if="scope.row.file_type === 2" :src="scope.row.file_url" controls="controls">
               您的浏览器不支持 audio 标签。
             </audio>

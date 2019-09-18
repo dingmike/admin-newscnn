@@ -43,7 +43,7 @@
           :value="item.id"
         />
       </el-select>
-      <el-select v-model="listQuery.category" :placeholder="$t('table.chooseCourseCategory')" style="width: 150px" class="filter-item" size="small" clearable>
+      <el-select v-model="listQuery.category" :placeholder="$t('table.chooseCourseCategory')" style="width: 140px" class="filter-item" size="small" clearable>
         <el-option
           v-for="item in categories"
           :key="item.id"
@@ -51,7 +51,7 @@
           :value="item.id"
         />
       </el-select>
-      <el-select v-model="listQuery.articleCate" :placeholder="$t('table.chooseArticleCategory')" style="width: 150px" class="filter-item" size="small" clearable>
+      <el-select v-model="listQuery.articleCate" :placeholder="$t('table.chooseArticleCategory')" style="width: 140px" class="filter-item" size="small" clearable>
         <el-option
           v-for="item in articleCategories"
           :key="item.id"
@@ -86,7 +86,7 @@
       </el-tooltip>
     </el-card>
     <div class="table-container">
-      <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" style="width: 100%" stripe highlight-current-row>
+      <el-table v-loading="listLoading" :data="list" height="520" :fit="fitWidth" size="small" style="width: 100%" stripe highlight-current-row border>
         <el-table-column align="center" label="文章类型" width="">
           <template slot-scope="scope">
             <span>{{ scope.row.articleCate ? scope.row.articleCate.category_name: '无' }}</span>

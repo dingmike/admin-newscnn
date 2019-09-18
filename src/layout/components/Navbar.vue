@@ -17,7 +17,6 @@
         </el-tooltip>
 
         <lang-select class="right-menu-item hover-effect" />
-
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
@@ -42,6 +41,7 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+
   </div>
 </template>
 
@@ -72,6 +72,10 @@ export default {
       'avatar',
       'device'
     ])
+  },
+  data() {
+    return {
+    }
   },
   methods: {
     toggleSideBar() {

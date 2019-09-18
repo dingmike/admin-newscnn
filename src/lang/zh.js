@@ -56,6 +56,7 @@ export default {
     files: '文件管理',
     schedule: '定时任务',
     system: '系统管理',
+    controlPanel: '控制面板',
     order: '订单管理',
     articleOrder: '全部订单',
     userCourseList: '用户课程',
