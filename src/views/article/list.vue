@@ -22,8 +22,8 @@
         category: '',
         is_only: 0, // 1： 是课程文章，0单独文章
         status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿-->
-      <el-input v-model="listQuery.chinese_title" :placeholder="$t('table.chinese_title')" style="width: 160px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
-      <el-input v-model="listQuery.article_author" :placeholder="$t('table.article_author')" style="width: 160px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-input v-model="listQuery.chinese_title" :placeholder="$t('table.chinese_title')" style="width: 150px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <el-input v-model="listQuery.article_author" :placeholder="$t('table.article_author')" style="width: 150px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
       <el-select v-model="listQuery.status" :placeholder="$t('table.chooseArticleStatus')" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option v-for="item in articleStatus" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
@@ -43,7 +43,7 @@
           :value="item.id"
         />
       </el-select>
-      <el-select v-model="listQuery.category" :placeholder="$t('table.chooseCourseCategory')" style="width: 160px" class="filter-item" size="small" clearable>
+      <el-select v-model="listQuery.category" :placeholder="$t('table.chooseCourseCategory')" style="width: 150px" class="filter-item" size="small" clearable>
         <el-option
           v-for="item in categories"
           :key="item.id"
@@ -51,7 +51,7 @@
           :value="item.id"
         />
       </el-select>
-      <el-select v-model="listQuery.articleCategory" :placeholder="$t('table.chooseArticleCategory')" style="width: 160px" class="filter-item" size="small" clearable>
+      <el-select v-model="listQuery.articleCate" :placeholder="$t('table.chooseArticleCategory')" style="width: 150px" class="filter-item" size="small" clearable>
         <el-option
           v-for="item in articleCategories"
           :key="item.id"
@@ -92,7 +92,7 @@
             <span>{{ scope.row.articleCate ? scope.row.articleCate.category_name: '无' }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="课程类型" width="120">
+        <el-table-column align="center" label="课程类型" width="">
           <template slot-scope="scope">
             <span>{{ scope.row.category ? scope.row.category.category_name: '无' }}</span>
           </template>
@@ -102,7 +102,7 @@
             <span>{{ scope.row.article_title }}</span>
           </template>
         </el-table-column>-->
-        <el-table-column align="center" label="中文标题" width="220">
+        <el-table-column align="center" label="中文标题" width="200">
           <template slot-scope="scope">
             <span>{{ scope.row.chinese_title }}</span>
           </template>
@@ -180,7 +180,7 @@
           </template>
         </el-table-column>-->
 
-        <el-table-column align="left" label="Actions" width="120">
+        <el-table-column align="left" label="Actions">
           <template slot-scope="scope">
             <div>
               <router-link style="display: inline-block" :to="'/article/edit/'+scope.row.id">
@@ -313,7 +313,7 @@ export default {
         chinese_title: '',
         article_grade: '',
         category: '',
-        articleCategory: '',
+        articleCate: '',
         is_only: '', // 1： 是课程文章，0单独文章
         status: '', // 发布状态： 1已发布，0：未发布， 2：草稿
         free_article: '' // 1免费，0 付费
@@ -372,7 +372,6 @@ export default {
       })
     },
     fetchArticleCategory() {
-      debugger
       fetchArticleCategory().then(response => {
         this.articleCategories = response.data
       })
@@ -385,7 +384,7 @@ export default {
         chinese_title: '',
         article_grade: '',
         category: '',
-        articleCategory: '',
+        articleCate: '',
         is_only: 0, // 1： 是课程文章，0单独文章
         status: 1 // 发布状态： 1已发布，0：未发布， 2：草稿
       }
