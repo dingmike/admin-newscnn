@@ -125,6 +125,11 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
+                <el-col :span="8">
+                  <el-form-item label-width="90px" label="英文字数:" class="postInfo-container-item" prop="wordNum">
+                    <el-input-number v-model="postForm.wordNum" size="mini" :step="1" :max="1000000" /> 个
+                  </el-form-item>
+                </el-col>
               </el-row>
             </div>
           </el-col>
@@ -138,6 +143,7 @@
         <el-form-item prop="article_content" label-width="80px" label="原文:" style="margin-bottom: 30px;">
           <!--<Tinymce ref="editor" v-model="postForm.article_content" :height="400" />-->
           <el-input v-model="postForm.article_content" :rows="8" type="textarea" class="article-textarea" autosize placeholder="请输入内容" />
+          <span v-show="articleCotentLength" class="word-counter">{{ articleCotentLength }}字</span>
         </el-form-item>
 
         <el-form-item prop="article_translate" label-width="80px" label="翻译:" style="margin-bottom: 30px;">
@@ -722,7 +728,8 @@ const defaultForm = {
   article_audio: '', // 音频
   translate_price: '', // 翻译价值
   pay_price: '', // 支付价格
-  pay_person_num: '' // 购买人数
+  pay_person_num: '', // 购买人数
+  wordNum: '' // 英文字数
 }
 const defaultAnalysisForm = {
   words: [
@@ -908,10 +915,11 @@ export default {
         pay_price: [{ required: true, message: '请输入文章价格', trigger: 'blur' }],
         category: [{ required: false, message: '请选择课程类型', trigger: 'blur' }],
         articleCate: [{ required: true, message: '请选择文章类型', trigger: 'blur' }],
+        wordNum: [{ required: true, message: '请输入英文文章字数', trigger: 'blur' }],
         article_grade: [{ required: true, message: '请选择文章难度等级', trigger: 'blur' }],
         article_brief: [{ required: true, message: '请输入简介', trigger: 'blur' }, { min: 2, max: 300, message: '长度在 2 到 40 个字符', trigger: 'blur' }],
-        article_content: [{ required: false, message: '请输入文章内容', trigger: 'blur' }, { min: 1, max: 8000, message: '长度在 1 到 8000 个字符', trigger: 'blur' }],
-        article_translate: [{ required: false, message: '请输入翻译内容', trigger: 'blur' }, { min: 1, max: 8000, message: '长度在 1 到 8000 个字符', trigger: 'blur' }],
+        article_content: [{ required: false, message: '请输入文章内容', trigger: 'blur' }, { min: 1, max: 15000, message: '长度在 1 到 8000 个字符', trigger: 'blur' }],
+        article_translate: [{ required: false, message: '请输入翻译内容', trigger: 'blur' }, { min: 1, max: 15000, message: '长度在 1 到 8000 个字符', trigger: 'blur' }],
         article_author: [{ required: true, message: '请输入作者', trigger: 'blur' }, { min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur' }],
         // exam_words: [{ required: true, message: '请输入考试单词用*隔开', trigger: 'blur' }, { min: 2, max: 1500, message: '长度在 2 到 1500 个字符', trigger: 'blur' }],
         // exam_sentences: [{ required: true, message: '请输入考试句子用*隔开', trigger: 'blur' }, { min: 2, max: 1500, message: '长度在 2 到 1500 个字符', trigger: 'blur' }],
@@ -937,6 +945,10 @@ export default {
   computed: {
     contentShortLength() {
       return this.postForm.article_brief.length
+    },
+    articleCotentLength() {
+      //
+      return this.postForm.article_content.split(' ').length - 1
     },
     chineseTitleShortLength() {
       return this.postForm.chinese_title.length
@@ -1229,8 +1241,8 @@ export default {
   .word-counter {
     width: 40px;
     position: absolute;
-    right: -10px;
-    top: 0px;
+    right: -46px;
+    top: 0;
   }
   .el-tag + .el-tag {
     margin-left: 10px;
