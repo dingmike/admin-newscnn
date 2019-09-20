@@ -77,7 +77,7 @@
               <el-row>
                 <el-col :span="8">
                   <el-form-item label-width="84px" label="课程类型:" class="postInfo-container-item" prop="category">
-                    <el-select v-model="postForm.category" filterable size="mini" placeholder="请选择课程分类">
+                    <el-select v-model="postForm.category" filterable size="mini" placeholder="请选择课程分类" clearable>
                       <el-option
                         v-for="item in categories"
                         :key="item.id"
@@ -918,8 +918,8 @@ export default {
         wordNum: [{ required: true, message: '请输入英文文章字数', trigger: 'blur' }],
         article_grade: [{ required: true, message: '请选择文章难度等级', trigger: 'blur' }],
         article_brief: [{ required: true, message: '请输入简介', trigger: 'blur' }, { min: 2, max: 600, message: '长度在 2 到 600 个字符', trigger: 'blur' }],
-        article_content: [{ required: false, message: '请输入文章内容', trigger: 'blur' }, { min: 1, max: 15000, message: '长度在 1 到 8000 个字符', trigger: 'blur' }],
-        article_translate: [{ required: false, message: '请输入翻译内容', trigger: 'blur' }, { min: 1, max: 15000, message: '长度在 1 到 8000 个字符', trigger: 'blur' }],
+        article_content: [{ required: false, message: '请输入文章内容', trigger: 'blur' }, { min: 2, max: 50000, message: '长度在 2 到 50000 个字符', trigger: 'blur' }],
+        // article_translate: [{ required: false, message: '请输入翻译内容', trigger: 'blur' }, { min: 2, max: 100000, message: '长度在 2 到 50000 个字符', trigger: 'blur' }],
         article_author: [{ required: true, message: '请输入作者', trigger: 'blur' }, { min: 2, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }],
         // exam_words: [{ required: true, message: '请输入考试单词用*隔开', trigger: 'blur' }, { min: 2, max: 1500, message: '长度在 2 到 1500 个字符', trigger: 'blur' }],
         // exam_sentences: [{ required: true, message: '请输入考试句子用*隔开', trigger: 'blur' }, { min: 2, max: 1500, message: '长度在 2 到 1500 个字符', trigger: 'blur' }],
