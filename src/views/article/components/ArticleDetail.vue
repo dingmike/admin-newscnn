@@ -18,7 +18,7 @@
           <!--<Warning />-->
           <el-col :span="24">
             <el-form-item style="margin-bottom: 20px;" prop="article_title">
-              <MDinput v-model="postForm.article_title" :maxlength="100" name="name" required>
+              <MDinput v-model="postForm.article_title" :maxlength="500" name="name" required>
                 英文标题
               </MDinput>
               <span v-show="articleTitleShortLength" class="word-counter">{{ articleTitleShortLength }}字</span>
@@ -910,17 +910,17 @@ export default {
       loading: false,
       userListOptions: [],
       rules: {
-        article_title: [{ required: true, message: '请输入标题', trigger: 'blur' }, { min: 2, max: 40, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
-        chinese_title: [{ required: true, message: '请输入中文标题', trigger: 'blur' }, { min: 2, max: 40, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
+        article_title: [{ required: true, message: '请输入标题', trigger: 'blur' }, { min: 2, max: 500, message: '长度在 2 到 500 个字符', trigger: 'blur' }],
+        chinese_title: [{ required: true, message: '请输入中文标题', trigger: 'blur' }, { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }],
         pay_price: [{ required: true, message: '请输入文章价格', trigger: 'blur' }],
         category: [{ required: false, message: '请选择课程类型', trigger: 'blur' }],
         articleCate: [{ required: true, message: '请选择文章类型', trigger: 'blur' }],
         wordNum: [{ required: true, message: '请输入英文文章字数', trigger: 'blur' }],
         article_grade: [{ required: true, message: '请选择文章难度等级', trigger: 'blur' }],
-        article_brief: [{ required: true, message: '请输入简介', trigger: 'blur' }, { min: 2, max: 300, message: '长度在 2 到 40 个字符', trigger: 'blur' }],
+        article_brief: [{ required: true, message: '请输入简介', trigger: 'blur' }, { min: 2, max: 600, message: '长度在 2 到 600 个字符', trigger: 'blur' }],
         article_content: [{ required: false, message: '请输入文章内容', trigger: 'blur' }, { min: 1, max: 15000, message: '长度在 1 到 8000 个字符', trigger: 'blur' }],
         article_translate: [{ required: false, message: '请输入翻译内容', trigger: 'blur' }, { min: 1, max: 15000, message: '长度在 1 到 8000 个字符', trigger: 'blur' }],
-        article_author: [{ required: true, message: '请输入作者', trigger: 'blur' }, { min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur' }],
+        article_author: [{ required: true, message: '请输入作者', trigger: 'blur' }, { min: 2, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }],
         // exam_words: [{ required: true, message: '请输入考试单词用*隔开', trigger: 'blur' }, { min: 2, max: 1500, message: '长度在 2 到 1500 个字符', trigger: 'blur' }],
         // exam_sentences: [{ required: true, message: '请输入考试句子用*隔开', trigger: 'blur' }, { min: 2, max: 1500, message: '长度在 2 到 1500 个字符', trigger: 'blur' }],
         exam_words: [{ validator: validateRequire, trigger: 'blur' }],
