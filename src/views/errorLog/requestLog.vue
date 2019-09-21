@@ -37,9 +37,7 @@
           </el-col>
 
         </el-card>
-
       </el-row>
-
     </div>
     <el-table
       v-loading="listLoading"
@@ -195,9 +193,22 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       },
       deleteParams: {
-        days: 5
+        days: 1,
+        type: 'request'
       },
       deleteOptions: [
+        {
+          label: '当天',
+          value: 0
+        },
+        {
+          label: '前1天',
+          value: 1
+        },
+        {
+          label: '前2天',
+          value: 2
+        },
         {
           label: '前5天',
           value: 5
@@ -226,7 +237,7 @@ export default {
   },
   methods: {
     deleteLogs() {
-      this.$confirm('确定将选择数据删除?', {
+      this.$confirm('确定将选择的数据删除?', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

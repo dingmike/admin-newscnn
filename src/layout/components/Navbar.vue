@@ -65,6 +65,10 @@ export default {
     LangSelect,
     Search
   },
+  data() {
+    return {
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
@@ -72,10 +76,6 @@ export default {
       'avatar',
       'device'
     ])
-  },
-  data() {
-    return {
-    }
   },
   methods: {
     toggleSideBar() {

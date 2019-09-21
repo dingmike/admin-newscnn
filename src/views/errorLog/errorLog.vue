@@ -1,26 +1,42 @@
 <template>
   <div class="app-container">
     <div class="filter-container" style="text-align: right">
-      <el-tooltip effect="dark" :content="$t('table.export')" placement="top">
-        <el-button
-          type="default"
-          size="small"
-          style="font-size: 17px"
-          icon="el-icon-download"
-          circle
-          @click="handleDownload"
-        />
-      </el-tooltip>
-      <el-tooltip effect="dark" content="刷新" placement="top">
-        <el-button
-          type="default"
-          size="mini"
-          style="font-size: 18px"
-          icon="el-icon-refresh"
-          circle
-          @click="getList"
-        />
-      </el-tooltip>
+      <el-row :gutter="20">
+        <el-card class="operate-container" shadow="never">
+          <el-col :span="4">
+            <el-select v-model="deleteParams.days" :placeholder="$t('table.deleteRequestLogs')" class="filter-item" size="small" clearable>
+              <el-option v-for="item in deleteOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-col>
+          <el-col :span="2">
+            <el-button v-waves class="filter-item" type="primary" size="small" @click="deleteLogs">
+              {{ $t('table.confirmDelete') }}
+            </el-button>
+          </el-col>
+          <el-col :span="6">
+            <el-tooltip effect="dark" :content="$t('table.export')" placement="top">
+              <el-button
+                type="default"
+                size="small"
+                style="font-size: 16px"
+                icon="el-icon-download"
+                circle
+                @click="handleDownload"
+              />
+            </el-tooltip>
+            <el-tooltip effect="dark" content="刷新" placement="top">
+              <el-button
+                type="default"
+                size="small"
+                style="font-size: 16px"
+                icon="el-icon-refresh"
+                circle
+                @click="getList"
+              />
+            </el-tooltip>
+          </el-col>
+        </el-card>
+      </el-row>
     </div>
     <el-table v-loading="listLoading" :data="list" border :fit="fitWidth" size="small" stripe highlight-current-row style="width: 100%">
       <el-table-column type="expand">
@@ -106,9 +122,10 @@
 </template>
 
 <script>
-import { fetchErrorLogList } from '@/api/common'
+import { fetchErrorLogList, deleteRequestLogs } from '@/api/common'
 import { parseUTCtime } from '@/utils'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import { Loading } from 'element-ui'
 
 export default {
   name: 'ArticleList',
@@ -143,13 +160,86 @@ export default {
       listQuery: {
         page: 1,
         limit: 20
-      }
+      },
+      LoadingOptions: {
+        lock: true,
+        text: '正在加载...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      },
+      deleteParams: {
+        days: 1,
+        type: 'error'
+      },
+      deleteOptions: [
+        {
+          label: '当天',
+          value: 0
+        },
+        {
+          label: '前1天',
+          value: 1
+        },
+        {
+          label: '前2天',
+          value: 2
+        },
+        {
+          label: '前5天',
+          value: 5
+        },
+        {
+          label: '前10天',
+          value: 10
+        },
+        {
+          label: '前30天',
+          value: 30
+        },
+        {
+          label: '前60天',
+          value: 60
+        },
+        {
+          label: '前180天',
+          value: 180
+        }
+      ]
     }
   },
   created() {
     this.getList()
   },
   methods: {
+    deleteLogs() {
+      this.$confirm('确定将选择的数据删除?', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const loadingInstance6 = Loading.service(this.LoadingOptions)
+        deleteRequestLogs(this.deleteParams).then(response => {
+          if (response.code === 200) {
+            loadingInstance6.close()
+            this.getList()
+            this.$notify({
+              message: '删除成功',
+              type: 'success'
+            })
+          } else {
+            this.$notify({
+              message: '删除失败',
+              type: 'success'
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
     getList() {
       this.listLoading = true
       fetchErrorLogList(this.listQuery).then(response => {
