@@ -22,6 +22,20 @@ export function fetchArticleOrderList(query) {
     params: query
   })
 }
+export function deleteOrderById(query) {
+  return request({
+    url: '/backend/article/order/delete',
+    method: 'get',
+    params: query
+  })
+}
+export function changeOrderStatusById(query) {
+  return request({
+    url: '/backend/article/order/change',
+    method: 'get',
+    params: query
+  })
+}
 // 暂时不支持
 export function reactRefundArticleOrder(data) {
   return request({

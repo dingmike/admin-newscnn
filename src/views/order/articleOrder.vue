@@ -3,7 +3,25 @@
     <div class="filter-container">
       <el-input v-model="listQuery.article_name" :placeholder="$t('table.article_name')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
       <el-input v-model="listQuery.course_name" :placeholder="$t('table.course_name')" style="width: 220px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
-      <el-input v-model="listQuery.openid" placeholder="Openid" style="width: 200px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />
+      <!--<el-input v-model="listQuery.openid" placeholder="Openid" style="width: 200px;" class="filter-item" size="small" clearable @keyup.enter.native="handleFilterNow" />-->
+      <el-select v-model="listQuery.user" v-loadmore="loadmoreUserOption" :placeholder="$t('table.chooseUser')" style="width: 200px" class="filter-item" size="small" filterable clearable>
+        <el-option
+          v-for="item in userlists"
+          :key="item.id"
+          :label="item.nickname"
+          :value="item.id"
+        >
+          <div>
+            <div style="width: 40px; height: 40px; float: left">
+              <img :src="item.headimgurl" width="30" height="30" style="border-radius: 50%" alt="">
+            </div>
+            <div style="float: right;">
+              <span style="color: #8492a6; font-size: 13px">{{ item.nickname }}</span>
+            </div>
+          </div>
+
+        </el-option>
+      </el-select>
       <el-select v-model="listQuery.status" :placeholder="$t('table.chooseOrderStatus')" style="width: 130px" class="filter-item" size="small" clearable>
         <el-option v-for="item in orderStatus" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
@@ -32,6 +50,12 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="orderId">
+              <span>{{ props.row.id }}</span>
+            </el-form-item>
+            <el-form-item label="uuid">
+              <span>{{ props.row.uuid }}</span>
+            </el-form-item>
             <el-form-item label="OPENID">
               <span>{{ props.row.openid }}</span>
             </el-form-item>
@@ -116,11 +140,17 @@
         </template>
       </el-table-column>-->
 
-      <el-table-column align="left" label="订单操作" width="100px">
+      <el-table-column align="left" label="订单操作" width="140">
         <template slot-scope="scope">
           <!--退款-->
           <el-tooltip class="item" effect="dark" content="退款" placement="top-start">
-            <el-button v-show="scope.row.status === 2" type="success" icon="el-icon-check" size="small" circle @click="handleDeleteOrder(scope.row)" />
+            <el-button v-show="scope.row.status === 2" type="success" icon="el-icon-check" size="mini" circle />
+          </el-tooltip>
+          <el-tooltip v-show="scope.row.status !== 5" class="item" effect="dark" content="作废" placement="top-start">
+            <el-button type="warning" icon="el-icon-scissors" size="mini" circle @click="handleChangeOrder(scope.row.id)" />
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
+            <el-button v-show="scope.row.status === 5" type="danger" icon="el-icon-delete" size="mini" circle @click="handleDeleteOrder(scope.row.id)" />
           </el-tooltip>
         </template>
       </el-table-column>
@@ -130,16 +160,19 @@
 </template>
 
 <script>
-import { fetchArticleOrderList } from '@/api/article'
+import { fetchArticleOrderList, deleteOrderById, changeOrderStatusById } from '@/api/article'
+import { getUserListOnly as getUserList } from '@/api/wechat'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // Waves directive
+import loadmore from '@/directive/loadmore'
+import { Loading } from 'element-ui'
 
 export default {
   name: 'ArticleList',
   components: { Pagination },
-  directives: { waves },
+  directives: { waves, loadmore },
   filters: {
-    // //0 默认新创建  1 预支付创建 2 已支付  3 申请退款中 4 退款完成
+    // //0 默认新创建  1 预支付创建 2 已支付  3 申请退款中 4 退款完成 5作废
     statusFilter(status) {
       switch (status) {
         case 1 :
@@ -152,6 +185,8 @@ export default {
           return '申请退款中'
         case 4 :
           return '退款完成'
+        case 5 :
+          return '已作废'
         default:
           break
       }
@@ -198,7 +233,7 @@ export default {
   data() {
     return {
       list: null,
-      fitWidth: false,
+      fitWidth: true,
       total: 0,
       listLoading: true,
       listQuery: {
@@ -208,8 +243,14 @@ export default {
         orderType: '0',
         article_name: '',
         course_name: '',
-        openid: ''
+        user: ''
       },
+      userParams: {
+        page: 1,
+        limit: 20
+      },
+      userlists: [],
+      userTotal: null,
       orderType: [
         {
           label: '全部',
@@ -224,6 +265,12 @@ export default {
           value: '2'
         }
       ],
+      LoadingOptions: {
+        lock: true,
+        text: '正在加载...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      },
       orderStatus: [
         {
           label: '新创建',
@@ -244,23 +291,102 @@ export default {
         {
           label: '退款完成',
           value: 4
+        },
+        {
+          label: '订单作废',
+          value: 5
         }
       ]
     }
   },
   created() {
     this.getList()
+    this.loadUserList()
   },
   methods: {
-    handleDeleteOrder() {
-
+    loadmoreUserOption() {
+      // 加载用户选项
+      this.userParams.page = this.userParams.page + 1
+      if (this.userTotal > this.userlists.length) {
+        getUserList(this.userParams).then(response => {
+          if (response.data.docs.length) {
+            this.userlists = this.userlists.concat(response.data.docs)
+          }
+          this.userTotal = response.data.total
+        })
+      }
+    },
+    loadUserList() {
+      getUserList(this.userParams).then(response => {
+        if (response.data.docs.length) {
+          this.userlists = this.userlists.concat(response.data.docs)
+        }
+        this.userTotal = response.data.total
+      })
+    },
+    handleDeleteOrder(id) {
+      this.$confirm('确定删除该订单?', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const loadingInstance6 = Loading.service(this.LoadingOptions)
+        deleteOrderById({ id: id }).then(response => {
+          if (response.code === 200) {
+            loadingInstance6.close()
+            this.getList()
+            this.$notify({
+              message: '删除成功',
+              type: 'success'
+            })
+          } else {
+            this.$notify({
+              message: '删除失败',
+              type: 'success'
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    handleChangeOrder(id) {
+      this.$confirm('确定作废该订单?', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const loadingInstance6 = Loading.service(this.LoadingOptions)
+        changeOrderStatusById({ id: id }).then(response => {
+          if (response.code === 200) {
+            loadingInstance6.close()
+            this.getList()
+            this.$notify({
+              message: '作废成功',
+              type: 'success'
+            })
+          } else {
+            this.$notify({
+              message: '作废失败',
+              type: 'success'
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
     },
     getList() {
       this.listLoading = true
       fetchArticleOrderList(this.listQuery).then(response => {
         this.list = response.data.data.docs
         this.total = response.data.data.total
-
         this.listLoading = false
       })
     },
@@ -272,7 +398,7 @@ export default {
         orderType: '0',
         article_name: '',
         course_name: '',
-        openid: ''
+        user: ''
       }
       this.getList()
     },

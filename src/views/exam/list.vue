@@ -138,6 +138,7 @@ import { fetchList, deleteExam, updateExam } from '@/api/exam'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // Waves directive
 import loadmore from '@/directive/loadmore'
+import { Loading } from 'element-ui'
 import { fetchAllList as fetchCategory } from '@/api/articleCate'
 import { parseUTCtime } from '@/utils'
 import { fetchCoursesByCatrgory } from '@/api/course'
@@ -216,6 +217,12 @@ export default {
           id: 0
         }
       ],
+      LoadingOptions: {
+        lock: true,
+        text: '正在加载...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      },
       courseParams: {
         id: '', // 分类ID
         page: 1,
@@ -299,16 +306,32 @@ export default {
       })
     },
     deleteExam(id) {
-      deleteExam({ id: id }).then(response => {
-        if (response.code === 200) {
-          this.$notify({
-            title: '成功',
-            message: '删除成功!',
-            type: 'success',
-            duration: 2000
-          })
-        }
-        this.getList()
+      this.$confirm('确定删除选中数据?', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const loadingInstance6 = Loading.service(this.LoadingOptions)
+        deleteExam({ id: id }).then(response => {
+          if (response.code === 200) {
+            loadingInstance6.close()
+            this.getList()
+            this.$notify({
+              message: '删除成功',
+              type: 'success'
+            })
+          } else {
+            this.$notify({
+              message: '删除失败',
+              type: 'success'
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
       })
     },
     addNewExam() {

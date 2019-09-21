@@ -58,6 +58,7 @@ export default {
     controlPanel: 'Control Panel',
     order: 'Order',
     articleOrder: 'All Order',
+    userPayedArticle: 'Payed Article',
     userCourseList: 'User Course',
     nested: 'Nested Routes',
     menu1: 'Menu 1',

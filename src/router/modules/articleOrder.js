@@ -19,6 +19,12 @@ const orderRouter = {
       meta: { title: 'articleOrder', icon: 'list' }
     },
     {
+      path: 'userPayedArticle',
+      component: () => import('@/views/order/userPayedArticle'),
+      name: 'UserPayedArticle',
+      meta: { title: 'userPayedArticle', icon: 'list' }
+    },
+    {
       path: 'userCourseList',
       component: () => import('@/views/userCourse/index'),
       name: 'UserCourseList',

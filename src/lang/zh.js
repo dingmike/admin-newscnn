@@ -59,6 +59,7 @@ export default {
     controlPanel: '控制面板',
     order: '订单管理',
     articleOrder: '全部订单',
+    userPayedArticle: '用户文章',
     userCourseList: '用户课程',
     nested: '路由嵌套',
     menu1: '菜单1',
