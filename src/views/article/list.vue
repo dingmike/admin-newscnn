@@ -180,7 +180,7 @@
           </template>
         </el-table-column>-->
 
-        <el-table-column align="left" label="Actions">
+        <el-table-column align="left" label="操作" width="140">
           <template slot-scope="scope">
             <div>
               <router-link style="display: inline-block" :to="'/article/edit/'+scope.row.id">
