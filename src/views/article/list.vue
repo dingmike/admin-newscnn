@@ -133,6 +133,11 @@
             <span v-else>无</span>
           </template>
         </el-table-column>
+        <el-table-column align="center" label="点赞">
+          <template slot-scope="scope">
+            <span>{{ scope.row.favour }}</span>
+          </template>
+        </el-table-column>
         <el-table-column align="center" label="文章属性">
           <template slot-scope="scope">
             <el-tag :type="scope.row.is_only == 0? 'success' : 'info'">{{ scope.row.is_only == 0? '课程' : '文章' }}</el-tag>
@@ -230,18 +235,20 @@ export default {
     gradeFilter(grade) {
       switch (grade) {
         case 0 :
-          return '高中'
+          return '初中'
         case 1 :
-          return 'CET-4'
+          return '高中'
         case 2 :
-          return 'CET-6'
+          return 'CET-4'
         case 3 :
-          return '雅思'
+          return 'CET-6'
         case 4 :
-          return '托福'
+          return '雅思'
         case 5 :
-          return '专6'
+          return '托福'
         case 6 :
+          return '专6'
+        case 7 :
           return '专8'
         default:
           break

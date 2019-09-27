@@ -130,6 +130,11 @@
                     <el-input-number v-model="postForm.wordNum" size="mini" :step="1" :max="1000000" /> 个
                   </el-form-item>
                 </el-col>
+                <el-col :span="8">
+                  <el-form-item label-width="90px" label="点赞数量:" class="postInfo-container-item" prop="favour">
+                    <el-input-number v-model="postForm.favour" size="mini" :step="1" :max="1000000" /> 个
+                  </el-form-item>
+                </el-col>
               </el-row>
             </div>
           </el-col>
@@ -674,6 +679,7 @@ import SingleFile from '@/components/Upload/singleFile'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import UploadCorp from '@/components/Upload/uploadCorp'
+import { Loading } from 'element-ui'
 // import waves from '@/directive/waves' // Waves directive
 // import { validURL } from '@/utils/validate'
 // import { Loading } from 'element-ui'
@@ -729,7 +735,8 @@ const defaultForm = {
   translate_price: '', // 翻译价值
   pay_price: '', // 支付价格
   pay_person_num: '', // 购买人数
-  wordNum: '' // 英文字数
+  wordNum: '', // 英文字数
+  favour: '' // 点赞数
 }
 const defaultAnalysisForm = {
   words: [
@@ -916,6 +923,7 @@ export default {
         category: [{ required: false, message: '请选择课程类型', trigger: 'blur' }],
         articleCate: [{ required: true, message: '请选择文章类型', trigger: 'blur' }],
         wordNum: [{ required: true, message: '请输入英文文章字数', trigger: 'blur' }],
+        favour: [{ required: false, message: '请输入点赞数量', trigger: 'blur' }],
         article_grade: [{ required: true, message: '请选择文章难度等级', trigger: 'blur' }],
         article_brief: [{ required: true, message: '请输入简介', trigger: 'blur' }, { min: 2, max: 600, message: '长度在 2 到 600 个字符', trigger: 'blur' }],
         article_content: [{ required: false, message: '请输入文章内容', trigger: 'blur' }, { min: 2, max: 50000, message: '长度在 2 到 50000 个字符', trigger: 'blur' }],
@@ -1113,10 +1121,10 @@ export default {
       this.showSetAnalysis = true
     },
     fetchData(id) {
+      const loadingInstance12 = Loading.service(this.LoadingOptions)
       fetchArticle(id).then(response => {
         // 转换为对象进行渲染数据
         response.data.article_analysis = JSON.parse(response.data.article_analysis)
-        debugger
         if (!response.data.article_analysis) {
           response.data.article_analysis =
             {
@@ -1132,8 +1140,10 @@ export default {
         // this.analysisForm = JSON.parse(JSON.stringify(this.postForm.article_analysis));
         // this.postForm.article_analysis = JSON.stringify(this.analysisForm)
         this.setTagsViewTitle()
+        loadingInstance12.close()
       }).catch(err => {
         console.log(err)
+        loadingInstance12.close()
       })
     },
     // 设置tab页签数据
@@ -1162,8 +1172,7 @@ export default {
                 this.$notify({
                   title: '成功',
                   message: this.updateMessageData,
-                  type: 'success',
-                  duration: 2000
+                  type: 'success'
                 })
               } else {
                 this.$notify.error({
@@ -1179,11 +1188,11 @@ export default {
               // loadingInstance.close();
               if (res.code === 200) {
                 this.$notify({
-                  title: '成功',
+                  title: '创建新文章成功',
                   message: this.deployMessageData,
-                  type: 'success',
-                  duration: 2000
+                  type: 'success'
                 })
+                this.$router.push({ path: '/article/list' })
               } else {
                 this.$notify.error({
                   title: '失败',
