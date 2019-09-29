@@ -38,7 +38,6 @@
             auto-complete="on"
             @keyup.native="checkCapslock"
             @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
           />
           <span class="show-pwd" @click="showPwd">
             <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
@@ -46,10 +45,44 @@
         </el-form-item>
       </el-tooltip>
 
+      <el-form-item prop="code">
+        <el-row :span="24">
+          <el-col :span="16">
+            <span class="svg-container">
+              <svg-icon icon-class="yacode" />
+            </span>
+            <el-input
+              ref="code"
+              v-model="loginForm.code"
+              :maxlength="code.len"
+              size="small"
+              auto-complete="off"
+              :placeholder="$t('login.code')"
+              @keyup.enter.native="handleLogin"
+            >
+              <!-- <i
+                slot="prefix"
+                class="icon-yanzhengma"/>-->
+            </el-input>
+          </el-col>
+          <el-col :span="8">
+            <div class="login-code">
+              <span
+                v-if="code.type == 'text'"
+                class="login-code-img"
+                @click="refreshCode"
+              >{{ code.value }}</span>
+              <img v-else class="login-code-img" :src="codeUrl" alt="captcha" @click="refreshCode">
+              <!--<i class="icon-shuaxin login-code-icon" @click="refreshCode"></i> -->
+            </div>
+          </el-col>
+        </el-row>
+
+      </el-form-item>
+
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">
         {{ $t('login.logIn') }}
       </el-button>
-
     <!--  <div style="position:relative">
       <div class="tips">
         <span>{{ $t('login.username') }} : admin</span>
@@ -102,13 +135,26 @@ export default {
       }
     }
     return {
+      codeUrl: process.env.VUE_APP_BASE_API + '/common/getCapcha',
+      // codeUrl: '',
+      code: {
+        src: '/code',
+        value: '',
+        len: 4,
+        type: 'image'
+      },
       loginForm: {
         username: '',
-        password: '' // 123456
+        password: '', // 123456
+        code: '' // 123456
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }, { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        code: [
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { min: 4, max: 4, message: '验证码长度为4位', trigger: 'blur' }
+        ]
       },
       passwordType: 'password',
       capsTooltip: false,
@@ -126,6 +172,7 @@ export default {
     }
   },
   created() {
+    this.refreshCode()
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
@@ -133,12 +180,17 @@ export default {
       this.$refs.username.focus()
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
+    } else if (this.loginForm.code === '') {
+      this.$refs.code.focus()
     }
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    refreshCode() {
+      this.codeUrl = process.env.VUE_APP_BASE_API + '/common/getCapcha?' + Math.random()
+    },
     checkCapslock({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
         if (shiftKey && (key >= 'a' && key <= 'z') || !shiftKey && (key >= 'A' && key <= 'Z')) {
@@ -329,6 +381,28 @@ $light_gray:#eee;
     .thirdparty-button {
       display: none;
     }
+  }
+
+  .login-code {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: 0 0 0 10px;
+  }
+
+  .login-code-img {
+    margin-top: 2px;
+    width: 100px;
+    height: 48px;
+    background-color: #fdfdfd;
+    border: 1px solid #f0f0f0;
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 5px;
+    line-height: 48px;
+    text-indent: 5px;
+    text-align: center;
   }
 }
 </style>
