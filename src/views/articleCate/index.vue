@@ -172,7 +172,7 @@ export default {
       console.log('handleAddProductCate')
     },
     handleUpdate(index, row) {
-      this.$router.push({ path: '/articleCate/update', query: { id: row.id }})
+      this.$router.push({ path: '/article/update', query: { id: row.id }})
     },
     handleDelete(index, row) {
       this.$confirm('是否要删除该分类？', '提示', {

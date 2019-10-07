@@ -384,6 +384,7 @@
     <el-dialog title="讲解内容" :fullscreen="isFullScreen" :visible.sync="showSetAnalysis">
       <div>
         <el-form ref="postForm" :model="postForm.article_analysis" :rules="rules" size="small" class="">
+          <!--文章段落结构等的讲解-->
           <el-form-item prop="words" label-width="45px" label="单词:" style="margin-bottom: 30px;">
             <div>
               <el-tag
@@ -400,6 +401,24 @@
               <el-button class="button-new-tag" size="small" @click="goAddOneWord">+ New Word</el-button>
             </div>
           </el-form-item>
+          <!--单词讲解-->
+          <el-form-item prop="words" label-width="45px" label="单词:" style="margin-bottom: 30px;">
+            <div>
+              <el-tag
+                v-for="(item, index) in postForm.article_analysis.words"
+                :key="index"
+                closable
+                type="success"
+                :disable-transitions="false"
+                @click="editWord(item)"
+                @close="deleteWord(item)"
+              >
+                {{ item.ename }}
+              </el-tag>
+              <el-button class="button-new-tag" size="small" @click="goAddOneWord">+ New Word</el-button>
+            </div>
+          </el-form-item>
+          <!--句子讲解-->
           <el-form-item prop="sentence" label-width="45px" label="句子:" style="margin-bottom: 30px;">
             <div>
               <el-tag
@@ -439,6 +458,32 @@
         <el-button size="small" @click="showSetAnalysis = false">取 消</el-button>
         <el-button size="small" type="primary" @click="setAllAnalysis">确 定</el-button>
       </div>
+      <!--添加段落讲解-->
+      <el-dialog
+        width="70%"
+        :close-on-click-modal="false"
+        :modal-append-to-body="false"
+        title="添加段落讲解"
+        :visible.sync="showPageBox"
+        append-to-body
+        lock-scroll
+        @close="showPageBox = false"
+      >
+        <div>
+          <el-form ref="postForm4" :model="analysisPage" :rules="rules" size="small" class="">
+            <el-form-item prop="ename" label-width="80px" label="英文原文">
+              <el-input v-model="analysisPage.paragraph" placeholder="请输入内容" />
+            </el-form-item>
+            <el-form-item prop="symbol" label-width="80px" label="讲解内容">
+              <Tinymce v-if="showPageBox" ref="editor2" v-model="analysisWords.explain" :height="320" />
+            </el-form-item>
+          </el-form>
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button size="small" @click="showPageBox = false">关 闭</el-button>
+          <el-button type="primary" size="small" @click="setOnePage">设 置</el-button>
+        </div>
+      </el-dialog>
       <!--添加单词 5个-->
       <el-dialog
         width="70%"
@@ -833,6 +878,11 @@ export default {
         teacherAudio: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm',
         video: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm'
       },
+      analysisPage: {
+        paragraph: '',
+        explain: ''
+      },
+      isEditPage: false,
       isEditWord: false,
       isEditSentence: false,
       showExamWordBox: false,
@@ -842,6 +892,7 @@ export default {
       addExamSentenceTitle: '添加考试句子',
       isEditSentenceWord: false,
       showExamSentenceBox: false,
+      showPageBox: false,
       showWordBox: false,
       showSentenceBox: false,
       showSetAnalysis: false,
@@ -1081,6 +1132,11 @@ export default {
       this.analysisWords = item
       this.showWordBox = true
     },
+    editPage(item) {
+      this.isEditPage = true
+      this.analysisPage = item
+      this.showPageBox = true
+    },
     // 添加讲解数据
     setAllAnalysis() {
       console.log(this.postForm.article_analysis)
@@ -1109,6 +1165,13 @@ export default {
       }
       this.showWordBox = false
     },
+    setOnePage() {
+      if (!this.isEditPage) {
+        const newPage = JSON.parse(JSON.stringify(this.analysisPage))
+        this.postForm.article_analysis.pages.push(newPage)
+      }
+      this.showPageBox = false
+    },
     goAddOneSentence() {
       this.showSentenceBox = true
       this.isEditSentence = false
@@ -1116,6 +1179,10 @@ export default {
     goAddOneWord() {
       this.showWordBox = true
       this.isEditWord = false
+    },
+    goAddOnePage() {
+      this.showPageBox = true
+      this.isEditPage = false
     },
     goSetAnalysis() {
       this.showSetAnalysis = true
