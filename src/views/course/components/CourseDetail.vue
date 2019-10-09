@@ -66,7 +66,7 @@
 
 <script>
 import { fetchCourseDetail, createCourse, updateCourse } from '@/api/course'
-import { fetchAllList as fetchCategory } from '@/api/articleCate'
+import { fetchAllList as fetchCategory } from '@/api/courseCate'
 import SingleUpload from '@/components/Upload/singleUpload'
 // import MarkdownEditor from '@/components/MarkdownEditor'
 import Tinymce from '@/components/Tinymce'

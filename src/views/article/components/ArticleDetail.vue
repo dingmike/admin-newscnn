@@ -438,14 +438,14 @@
           </el-form-item>
 
           <el-form-item prop="analysis_audio" label-width="80px" label="音频:" style="margin-bottom: 30px;">
-            <el-input v-model="postForm.article_analysis.analysis_audio" type="text" placeholder="请输入音频链接" />
+            <el-input v-model="postForm.article_analysis.analysis_audio" type="text" placeholder="请输入文章相关音频链接" />
             <audio :src="postForm.article_analysis.analysis_audio" controls="controls" style="margin-top: 10px">
               您的浏览器不支持 audio 标签。
             </audio>
             <SingleFile v-model="postForm.article_analysis.analysis_audio" />
           </el-form-item>
           <el-form-item prop="analysis_video" label-width="80px" label="视频:" style="margin-bottom: 30px;">
-            <el-input v-model="postForm.article_analysis.analysis_video" type="text" placeholder="请输入视频链接" />
+            <el-input v-model="postForm.article_analysis.analysis_video" type="text" placeholder="请输入文章相关视频链接" />
             <div style="width: 320px; height: 240px; padding: 10px 0 0 0">
               <video autoplay controls="controls" :src="postForm.article_analysis.analysis_video" width="100%">
                 您的浏览器不支持 video 标签。
