@@ -185,7 +185,7 @@
 <script>
 // import {fetchList,deleteProductCate,updateShowStatus,updateNavStatus} from '@/api/articleCate'
 import { fetchList, deleteCourse, updateCourseStatus } from '@/api/course'
-import { fetchAllList as fetchCategory } from '@/api/articleCate'
+import { fetchAllList as fetchCategory } from '@/api/courseCate'
 import waves from '@/directive/waves' // Waves directive
 
 export default {
@@ -316,7 +316,7 @@ export default {
     },
     goCourseArticle(index, row) {
       // this.$router.push({ name: 'CourseArticle', params: {id: row.id, courseName: row.course_title, courseCategory: row.course_category}})
-      this.$router.push({ path: '/articleCate/courseArticle', query: { id: row.id }})
+      this.$router.push({ path: '/courseCate/courseArticle', query: { id: row.id }})
     },
     resetParentId() {
       if (this.$route.query.parentId != null) {
@@ -331,7 +331,7 @@ export default {
       })
     },
     handleAddProductCate() {
-      this.$router.push('/articleCate/addCourse')
+      this.$router.push('/courseCate/addCourse')
     },
     getList() {
       this.listLoading = true

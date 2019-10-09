@@ -385,24 +385,24 @@
       <div>
         <el-form ref="postForm" :model="postForm.article_analysis" :rules="rules" size="small" class="">
           <!--文章段落结构等的讲解-->
-          <el-form-item prop="words" label-width="45px" label="单词:" style="margin-bottom: 30px;">
+          <el-form-item prop="words" label-width="80px" label="段落模块:" style="margin-bottom: 30px;">
             <div>
               <el-tag
-                v-for="(item, index) in postForm.article_analysis.words"
+                v-for="(item, index) in postForm.article_analysis.pages"
                 :key="index"
                 closable
                 type="success"
                 :disable-transitions="false"
-                @click="editWord(item)"
-                @close="deleteWord(item)"
+                @click="editPage(item)"
+                @close="deletePage(item)"
               >
-                {{ item.ename }}
+                {{ item.pageTitle }}
               </el-tag>
-              <el-button class="button-new-tag" size="small" @click="goAddOneWord">+ New Word</el-button>
+              <el-button class="button-new-tag" size="small" @click="goAddOnePage">+ New Page</el-button>
             </div>
           </el-form-item>
           <!--单词讲解-->
-          <el-form-item prop="words" label-width="45px" label="单词:" style="margin-bottom: 30px;">
+          <el-form-item prop="words" label-width="80px" label="单词模块:" style="margin-bottom: 30px;">
             <div>
               <el-tag
                 v-for="(item, index) in postForm.article_analysis.words"
@@ -419,7 +419,7 @@
             </div>
           </el-form-item>
           <!--句子讲解-->
-          <el-form-item prop="sentence" label-width="45px" label="句子:" style="margin-bottom: 30px;">
+          <el-form-item prop="sentence" label-width="80px" label="句子模块:" style="margin-bottom: 30px;">
             <div>
               <el-tag
                 v-for="(item, index) in postForm.article_analysis.sentence"
@@ -436,15 +436,16 @@
               <el-button class="button-new-tag" size="small" @click="goAddOneSentence">+ New Sentence</el-button>
             </div>
           </el-form-item>
-          <el-form-item prop="analysis_audio" label-width="45px" label="音频:" style="margin-bottom: 30px;">
-            <el-input v-model="postForm.article_analysis.analysis_audio" placeholder="请输入音频链接" />
-            <audio :src="postForm.article_analysis.analysis_audio" controls="controls" style="padiding: 10px">
+
+          <el-form-item prop="analysis_audio" label-width="80px" label="音频:" style="margin-bottom: 30px;">
+            <el-input v-model="postForm.article_analysis.analysis_audio" type="text" placeholder="请输入音频链接" />
+            <audio :src="postForm.article_analysis.analysis_audio" controls="controls" style="margin-top: 10px">
               您的浏览器不支持 audio 标签。
             </audio>
             <SingleFile v-model="postForm.article_analysis.analysis_audio" />
           </el-form-item>
-          <el-form-item prop="analysis_video" label-width="45px" label="视频:" style="margin-bottom: 30px;">
-            <el-input v-model="postForm.article_analysis.analysis_video" placeholder="请输入视频链接" />
+          <el-form-item prop="analysis_video" label-width="80px" label="视频:" style="margin-bottom: 30px;">
+            <el-input v-model="postForm.article_analysis.analysis_video" type="text" placeholder="请输入视频链接" />
             <div style="width: 320px; height: 240px; padding: 10px 0 0 0">
               <video autoplay controls="controls" :src="postForm.article_analysis.analysis_video" width="100%">
                 您的浏览器不支持 video 标签。
@@ -471,11 +472,15 @@
       >
         <div>
           <el-form ref="postForm4" :model="analysisPage" :rules="rules" size="small" class="">
-            <el-form-item prop="ename" label-width="80px" label="英文原文">
-              <el-input v-model="analysisPage.paragraph" placeholder="请输入内容" />
+            <el-form-item prop="ename" label-width="80px" label="段落标题">
+              <el-input v-model="analysisPage.pageTitle" type="text" maxlength="20" placeholder="请输入讲解内容标题" show-word-limit />
+            </el-form-item>
+            <el-form-item prop="ename" label-width="80px" label="段落">
+              <!--<el-input v-model="analysisPage.paragraph" placeholder="请输入段落内容" />-->
+              <Tinymce v-if="showPageBox" ref="editor2" v-model="analysisPage.paragraph" :height="320" />
             </el-form-item>
             <el-form-item prop="symbol" label-width="80px" label="讲解内容">
-              <Tinymce v-if="showPageBox" ref="editor2" v-model="analysisWords.explain" :height="320" />
+              <Tinymce v-if="showPageBox" ref="editor2" v-model="analysisPage.explain" :height="320" />
             </el-form-item>
           </el-form>
         </div>
@@ -498,13 +503,13 @@
         <div>
           <el-form ref="postForm2" :model="analysisWords" :rules="rules" size="small" class="">
             <el-form-item prop="ename" label-width="80px" label="英文单词">
-              <el-input v-model="analysisWords.ename" placeholder="请输入内容" />
+              <el-input v-model="analysisWords.ename" type="text" placeholder="请输入英文单词" maxlength="40" show-word-limit />
             </el-form-item>
             <el-form-item prop="symbol" label-width="80px" label="单词音标">
-              <el-input v-model="analysisWords.symbol" placeholder="请输入内容" />
+              <el-input v-model="analysisWords.symbol" type="text" placeholder="请输入内容" maxlength="40" show-word-limit />
             </el-form-item>
             <el-form-item prop="cname" label-width="80px" label="单词中文">
-              <el-input v-model="analysisWords.cname" placeholder="请输入内容" />
+              <el-input v-model="analysisWords.cname" type="text" placeholder="请输入内容" maxlength="60" show-word-limit />
             </el-form-item>
             <el-form-item prop="sentence" label-width="80px" label="单词讲解">
               <Tinymce v-if="showWordBox" ref="editor2" v-model="analysisWords.sentence" :height="320" />
@@ -515,7 +520,8 @@
             <!--  <el-form-item prop="csentence" label-width="80px" label="例句中文">
               <el-input v-model="analysisWords.csentence" placeholder="请输入内容" />
             </el-form-item>-->
-            <el-form-item prop="wordAudio" label-width="80px" label="单词发音">
+
+            <!--<el-form-item prop="wordAudio" label-width="80px" label="单词发音">
               <el-input v-model="analysisWords.wordAudio" placeholder="请输入音频连接" />
               <audio :src="analysisWords.wordAudio" controls="controls" style="padding: 10px">
                 您的浏览器不支持 audio 标签。
@@ -528,16 +534,16 @@
                 您的浏览器不支持 audio 标签。
               </audio>
               <SingleFile v-model="analysisWords.sentenceAudio" />
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item prop="teacherAudio" label-width="80px" label="老师音频">
-              <el-input v-model="analysisWords.teacherAudio" placeholder="请输入内容" />
+              <el-input v-model="analysisWords.teacherAudio" type="text" placeholder="请输入内容" maxlength="2000" show-word-limit />
               <audio :src="analysisWords.teacherAudio" controls="controls" style="padding: 10px">
                 您的浏览器不支持 audio 标签。
               </audio>
               <SingleFile v-model="analysisWords.teacherAudio" />
             </el-form-item>
-            <el-form-item prop="video" label-width="80px" label="视频">
-              <el-input v-model="analysisWords.video" placeholder="请输入视频连接" />
+            <el-form-item prop="video" label-width="80px" label="单词视频">
+              <el-input v-model="analysisWords.video" type="text" placeholder="请输入单词视频连接" maxlength="2000" show-word-limit />
               <div style="width: 320px; height: 240px; padding: 10px 0 0 0">
                 <video autoplay controls="controls" :src="analysisWords.video" width="100%">
                   您的浏览器不支持 video 标签。
@@ -566,13 +572,13 @@
         <div>
           <el-form ref="postForm3" :model="analysisSentence" :rules="rules" size="small" class="">
 
-            <el-form-item prop="ename" label-width="80px" label="标题">
-              <el-input v-model="analysisSentence.title" placeholder="请输入标题" />
+            <el-form-item prop="ename" label-width="80px" label="句子标题">
+              <el-input v-model="analysisSentence.title" type="text" placeholder="请输入句子标题" maxlength="20" show-word-limit />
             </el-form-item>
 
             <el-form-item prop="ename" label-width="80px" label="句子英文">
-              <!--<el-input v-model="analysisSentence.ename" placeholder="请输入内容" />-->
-              <Tinymce v-if="showSentenceBox" ref="editor3" v-model="analysisSentence.ename" :height="300" />
+              <el-input v-model="analysisSentence.ename" placeholder="请输入重点句子" />
+              <!--<Tinymce v-if="showSentenceBox" ref="editor3" v-model="analysisSentence.ename" :height="300"/>-->
             </el-form-item>
             <el-form-item prop="cname" label-width="80px" label="句子讲解">
               <Tinymce v-if="showSentenceBox" ref="editor4" v-model="analysisSentence.cname" :height="300" />
@@ -764,6 +770,7 @@ const defaultForm = {
   article_content: '', // 文章内容
   article_translate: '', // 文章翻译
   article_analysis: {
+    pages: [],
     words: [],
     sentence: [],
     analysis_audio: '',
@@ -784,42 +791,32 @@ const defaultForm = {
   favour: '' // 点赞数
 }
 const defaultAnalysisForm = {
+  pages: [
+    {
+      pageTitle: 'day1',
+      paragraph: '',
+      explain: ''
+    }
+  ],
   words: [
     {
-      ename: 'learn',
-      symbol: '美 /lɝn/ ',
-      cname: 'vt. 学习；得知；认识到',
-      sentence: 'we learn a lot language!',
-      csentence: '我学了好多',
-      wordAudio: 'http://www.bejson.com/',
-      sentenceAudio: 'http://www.bejson.com/',
-      teacherAudio: 'http://www.bejson.com/',
-      video: 'http://www.bejson.com/'
-    },
-    {
-      ename: 'learn2',
-      symbol: '美 /lɝn/ ',
-      cname: 'vt. 学习；得知；认识到',
+      ename: '',
+      symbol: '',
+      cname: '',
       sentence: '',
-      csentence: '我学了好多',
-      wordAudio: 'http://www.bejson.com/',
-      sentenceAudio: 'http://www.bejson.com/',
-      teacherAudio: 'http://www.bejson.com/',
-      video: 'http://www.bejson.com/'
+      csentence: '',
+      wordAudio: '',
+      sentenceAudio: '',
+      teacherAudio: '',
+      video: ''
     }
   ],
   sentence: [
     {
-      ename: 'Shortcut for saving one or more documents to the database.Shortcut for saving one or more documents to the database.',
-      cname: '将一个或多个文档保存到数据库的快捷方式。',
-      audio: 'http://www.bejson.com/',
-      video: 'http://www.bejson.com/'
-    },
-    {
-      ename: 'Shortcut for saving one or more documents to the database.  ',
-      cname: '将一个或多个文档保存到数据库的快捷方式。',
-      audio: 'http://www.bejson.com/',
-      video: 'http://www.bejson.com/'
+      ename: '',
+      cname: '',
+      audio: '',
+      video: ''
     }
   ],
   analysis_audio: '',
@@ -879,6 +876,7 @@ export default {
         video: 'http://psnkebui3.bkt.clouddn.com/FmSrG_ao5eWwo0_LksTgWX9Tlkfm'
       },
       analysisPage: {
+        pageTitle: '',
         paragraph: '',
         explain: ''
       },
@@ -1151,6 +1149,10 @@ export default {
       // this.postForm.article_analysis.words.splice(this.postForm.article_analysis.words.indexOf(item), 1)
       this.postForm.article_analysis.words.splice(this.postForm.article_analysis.words.indexOf(item), 1)
     },
+    deletePage(item) {
+      // this.postForm.article_analysis.words.splice(this.postForm.article_analysis.words.indexOf(item), 1)
+      this.postForm.article_analysis.pages.splice(this.postForm.article_analysis.pages.indexOf(item), 1)
+    },
     setOneSentence() {
       if (!this.isEditSentence) {
         const newSentence = JSON.parse(JSON.stringify(this.analysisSentence))
@@ -1173,14 +1175,37 @@ export default {
       this.showPageBox = false
     },
     goAddOneSentence() {
+      this.analysisSentence = {
+        ename: '',
+        cname: '',
+        sentenceAudio: '',
+        teacherAudio: '',
+        video: ''
+      }
       this.showSentenceBox = true
       this.isEditSentence = false
     },
     goAddOneWord() {
+      this.analysisWords = {
+        ename: '',
+        symbol: '',
+        cname: '',
+        sentence: '',
+        csentence: '',
+        wordAudio: '',
+        sentenceAudio: '',
+        teacherAudio: '',
+        video: ''
+      }
       this.showWordBox = true
       this.isEditWord = false
     },
     goAddOnePage() {
+      this.analysisPage = {
+        pageTitle: '',
+        paragraph: '',
+        explain: ''
+      }
       this.showPageBox = true
       this.isEditPage = false
     },
@@ -1195,6 +1220,7 @@ export default {
         if (!response.data.article_analysis) {
           response.data.article_analysis =
             {
+              pages: [],
               words: [],
               sentence: [],
               analysis_audio: '',
@@ -1203,6 +1229,9 @@ export default {
         }
         // response.data.exam_words = response.data.exam_words.join('*')
         // response.data.exam_sentences = response.data.exam_sentences.join('*')
+
+        // this.postForm = response.data
+        response.data.article_analysis = Object.assign(defaultAnalysisForm, response.data.article_analysis)
         this.postForm = response.data
         // this.analysisForm = JSON.parse(JSON.stringify(this.postForm.article_analysis));
         // this.postForm.article_analysis = JSON.stringify(this.analysisForm)
@@ -1321,10 +1350,10 @@ export default {
     top: 0;
   }
   .el-tag + .el-tag {
-    margin-left: 10px;
+    margin: 0 8px;
   }
   .button-new-tag {
-    margin-left: 10px;
+    margin-left: 0px;
     height: 32px;
     line-height: 30px;
     padding-top: 0;

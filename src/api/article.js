@@ -9,7 +9,14 @@ export function fetchList(query) {
 }
 export function fetchCateArticleList(query) {
   return request({
-    url: '/backend/article/category/list',
+    url: '/backend/article/cate/list',
+    method: 'get',
+    params: query
+  })
+}
+export function fetchCourseCateArticleList(query) {
+  return request({
+    url: '/backend/article/courseCate/list',
     method: 'get',
     params: query
   })

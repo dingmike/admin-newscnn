@@ -93,7 +93,7 @@
           :rules="rules"
           label-width="200px"
         >
-          <el-form-item label="文章类型：" prop="course_category">
+          <el-form-item label="课程类型：" prop="course_category">
             <el-select v-model="courseArticle.course_category" style="width: 400px" filterable size="small" placeholder="请选择分类" @change="changeCate">
               <el-option
                 v-for="item in categories"
@@ -137,7 +137,8 @@
 import { fetchList as fetchCourseArticle, createCourseArticle, updateCourseArticle, deleteCourseArticle } from '@/api/courseArticle'
 // import { fetchList, deleteCourse, updateCourseStatus } from '@/api/course'
 import { updateCourseStatus, fetchCourseDetail } from '@/api/course'
-import { fetchAllList as fetchCategory } from '@/api/articleCate'
+// import { fetchAllList as fetchCategory } from '@/api/articleCate'
+import { fetchAllList as fetchCategory } from '@/api/courseCate'
 import { fetchCateArticleList } from '@/api/article'
 import loadmore from '@/directive/loadmore'
 
