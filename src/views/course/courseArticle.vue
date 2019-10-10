@@ -81,6 +81,7 @@
       title="课程中的文章"
       :visible.sync="dialogVisible"
       width="60%"
+      @close="closeDialog"
     >
       <el-card v-if="isEdit">
         <span>课程名称：</span>
@@ -172,18 +173,20 @@ export default {
     gradeFilter(grade) {
       switch (grade) {
         case 0 :
-          return '高中'
+          return '初中'
         case 1 :
-          return 'CET-4'
+          return '高中'
         case 2 :
-          return 'CET-6'
+          return 'CET-4'
         case 3 :
-          return '雅思'
+          return 'CET-6'
         case 4 :
-          return '托福'
+          return '雅思'
         case 5 :
-          return '专6'
+          return '托福'
         case 6 :
+          return '专6'
+        case 7 :
           return '专8'
         default:
           break
@@ -337,6 +340,7 @@ export default {
     getList() {
       this.listLoading = true
       fetchCourseArticle(this.listQuery).then(response => {
+        debugger
         this.listLoading = false
         this.list = response.data.docs
         this.total = response.data.total
@@ -367,7 +371,7 @@ export default {
       console.log('handleAddProductCate')
     },
     handleUpdate(index, row) {
-      this.courseArticle = row
+      this.courseArticle = JSON.parse(JSON.stringify(row))
       this.courseArticle.course_category = row.course.course_category
       this.isEdit = true
       this.dialogVisible = true
@@ -383,9 +387,9 @@ export default {
           console.log(response)
           this.$message({
             message: '删除成功',
-            type: 'success',
-            duration: 1000
+            type: 'success'
           })
+          this.listQuery.limit = 10
           this.getList()
         })
       })
@@ -402,10 +406,8 @@ export default {
               updateCourseArticle(this.courseArticle).then(response => {
                 this.$message({
                   message: '修改成功',
-                  type: 'success',
-                  duration: 1000
+                  type: 'success'
                 })
-                this.getList()
               })
             } else {
               createCourseArticle(this.courseArticle).then(response => {
@@ -413,10 +415,8 @@ export default {
                 this.resetForm(formName)
                 this.$message({
                   message: '提交成功',
-                  type: 'success',
-                  duration: 1000
+                  type: 'success'
                 })
-                this.getList()
               })
             }
           })
@@ -433,6 +433,10 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.course = Object.assign({}, defaultCourseArticle)
+    },
+    closeDialog() {
+      this.listQuery.limit = 10
+      this.getList()
     }
   }
 }

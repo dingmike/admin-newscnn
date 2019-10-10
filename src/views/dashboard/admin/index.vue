@@ -279,7 +279,7 @@ export default {
         }
       ],
       pushParams: {
-        title: ''
+        title: '早上好~新的一天，记得坚持学习哦!'
       },
       LoadingOptions: {
         lock: true,
