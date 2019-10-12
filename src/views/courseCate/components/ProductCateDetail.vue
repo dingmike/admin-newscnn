@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { fetchCategoryDetail, createCategory, updateCategory } from '@/api/articleCate'
+import { fetchCategoryDetail, createCategory, updateCategory } from '@/api/courseCate'
 import SingleUpload from '@/components/Upload/singleUpload'
 import { Loading } from 'element-ui'
 
