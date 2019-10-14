@@ -79,7 +79,7 @@
         </el-table-column>
         <el-table-column align="center" label="文章类型">
           <template slot-scope="scope">
-            <span>{{ scope.row.articleCate ? scope.row.articleCate.category_name: '无' }}</span>
+            <span>{{ scope.row.article.articleCate ? scope.row.article.articleCate.category_name: '无' }}</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="阅读累计时长">
