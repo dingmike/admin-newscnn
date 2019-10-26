@@ -31,18 +31,19 @@
         </el-table-column>
         <el-table-column label="文章标题" width="" align="left">
           <template slot-scope="scope">
-            <span class="font-extra-small">{{ scope.row.article.article_title }}</span>
+            <span class="font-extra-small">{{ scope.row.article !==null ? scope.row.article.article_title : '无' }}</span>
           </template>
         </el-table-column>
         <el-table-column label="中文标题" width="" align="left">
           <template slot-scope="scope">
-            <span class="font-extra-small">{{ scope.row.article.chinese_title }}</span>
+            <span class="font-extra-small">{{ scope.row.article !== null ? scope.row.article.chinese_title : '无' }}</span>
           </template>
         </el-table-column>
 
         <el-table-column align="center" label="难度">
           <template slot-scope="scope">
-            <span>{{ scope.row.article.article_grade | gradeFilter }}</span>
+            <span v-if="scope.row.article !== null">{{ scope.row.article.article_grade | gradeFilter }}</span>
+            <span v-else>无</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150" align="center">
