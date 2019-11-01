@@ -9,20 +9,20 @@ const wechatRouter = {
   name: 'wechat',
   meta: {
     title: 'wechat',
-    icon: 'table'
+    icon: 'wechat'
   },
   children: [
     {
       path: 'wechat/menu',
       component: () => import('@/views/wechat/menu'),
       name: 'wechat-menu',
-      meta: { title: 'menu' }
+      meta: { title: 'menu', icon: 'form' }
     },
     {
       path: '',
       component: () => import('@/views/wechat/user'),
       name: 'wechat/user',
-      meta: { title: 'user' }
+      meta: { title: 'user', icon: 'peoples' }
     }
   ]
 }

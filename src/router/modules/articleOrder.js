@@ -9,7 +9,7 @@ const orderRouter = {
   name: 'order',
   meta: {
     title: 'order',
-    icon: 'table'
+    icon: 'money'
   },
   children: [
     {

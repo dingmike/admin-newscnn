@@ -9,26 +9,26 @@ const systemRouter = {
   name: 'system',
   meta: {
     title: 'system',
-    icon: 'table'
+    icon: 'tree'
   },
   children: [
     {
       path: 'controlPanel',
       component: () => import('@/views/system/controlPanel'),
       name: 'controlPanel',
-      meta: { title: 'controlPanel' }
+      meta: { title: 'controlPanel', icon: 'star' }
     },
     {
       path: 'schedule',
       component: () => import('@/views/system/schedule'),
       name: 'schedule',
-      meta: { title: 'schedule' }
+      meta: { title: 'schedule', icon: 'nested' }
     },
     {
       path: 'files',
       component: () => import('@/views/system/files'),
       name: 'files',
-      meta: { title: 'files' }
+      meta: { title: 'files', icon: 'size' }
     },
     {
       path: 'requestLog',
