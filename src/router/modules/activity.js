@@ -9,14 +9,14 @@ const articleRouter = {
   name: 'Activity',
   meta: {
     title: 'activity',
-    icon: 'shopping'
+    icon: 'activity'
   },
   children: [
     {
       path: 'index',
       component: () => import('@/views/activity/index'),
       name: 'Activitylist',
-      meta: { title: 'activitylist', icon: 'shopping' }
+      meta: { title: 'activitylist', icon: 'activity' }
     }
   ]
 }

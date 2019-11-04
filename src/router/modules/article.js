@@ -9,7 +9,7 @@ const articleRouter = {
   name: 'Article',
   meta: {
     title: 'article',
-    icon: 'example'
+    icon: 'article'
   },
   children: [
     // 添加文章分类
@@ -17,7 +17,7 @@ const articleRouter = {
       path: 'add',
       component: () => import('@/views/articleCate/add'),
       name: 'AddArticleCate',
-      meta: { title: 'addArticleCate', icon: 'edit' },
+      meta: { title: 'addArticleCate', icon: 'createArticle' },
       hidden: true
     },
     // 跟新文章分类
@@ -33,7 +33,7 @@ const articleRouter = {
       path: 'articleCateList',
       component: () => import('@/views/articleCate/index'),
       name: 'ArticleCateList',
-      meta: { title: 'articleCateList', icon: 'list' }
+      meta: { title: 'articleCateList', icon: 'category' }
     },
     {
       path: 'create',
@@ -52,7 +52,7 @@ const articleRouter = {
       path: 'list',
       component: () => import('@/views/article/list'),
       name: 'ArticleList',
-      meta: { title: 'articleList', icon: 'list' }
+      meta: { title: 'articleList', icon: 'article' }
     }
   ]
 }

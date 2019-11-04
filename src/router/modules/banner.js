@@ -9,14 +9,14 @@ const articleRouter = {
   name: 'Banner',
   meta: {
     title: 'banner',
-    icon: 'example'
+    icon: 'adBanner'
   },
   children: [
     {
       path: 'index',
       component: () => import('@/views/banner/index'),
       name: 'Bannerlist',
-      meta: { title: 'bannerlist', icon: 'list' }
+      meta: { title: 'bannerlist', icon: 'adBanner' }
     }
   ]
 }

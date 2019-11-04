@@ -16,19 +16,19 @@ const orderRouter = {
       path: '/order/articleOrder',
       component: () => import('@/views/order/articleOrder'),
       name: 'articleOrder',
-      meta: { title: 'articleOrder', icon: 'list' }
+      meta: { title: 'articleOrder', icon: 'order' }
     },
     {
       path: 'userPayedArticle',
       component: () => import('@/views/order/userPayedArticle'),
       name: 'UserPayedArticle',
-      meta: { title: 'userPayedArticle', icon: 'list' }
+      meta: { title: 'userPayedArticle', icon: 'articleOrder' }
     },
     {
       path: 'userCourseList',
       component: () => import('@/views/userCourse/index'),
       name: 'UserCourseList',
-      meta: { title: 'userCourseList', icon: 'list' }
+      meta: { title: 'userCourseList', icon: 'courseOrder' }
     },
     {
       path: 'courseArticle',

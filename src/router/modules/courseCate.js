@@ -9,14 +9,14 @@ const courseCateRouter = {
   name: 'CourseCate',
   meta: {
     title: 'courseCate',
-    icon: 'example'
+    icon: 'course'
   },
   children: [
     {
       path: 'add',
       component: () => import('@/views/courseCate/add'),
       name: 'AddCourseCate',
-      meta: { title: 'addCourseCate', icon: 'edit' },
+      meta: { title: 'addCourseCate', icon: 'course' },
       hidden: true
     },
     {
@@ -30,7 +30,7 @@ const courseCateRouter = {
       path: 'list',
       component: () => import('@/views/courseCate/index'),
       name: 'CourseCateList',
-      meta: { title: 'courseCateList', icon: 'list' }
+      meta: { title: 'courseCateList', icon: 'category' }
     },
     // 课程目录
     {
@@ -51,7 +51,7 @@ const courseCateRouter = {
       path: 'courseList',
       component: () => import('@/views/course/index'),
       name: 'CourseList',
-      meta: { title: 'courseList', icon: 'list' }
+      meta: { title: 'courseList', icon: 'course' }
     },
     {
       path: 'courseArticle',

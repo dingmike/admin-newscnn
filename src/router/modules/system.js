@@ -22,13 +22,13 @@ const systemRouter = {
       path: 'schedule',
       component: () => import('@/views/system/schedule'),
       name: 'schedule',
-      meta: { title: 'schedule', icon: 'nested' }
+      meta: { title: 'schedule', icon: 'schedule' }
     },
     {
       path: 'files',
       component: () => import('@/views/system/files'),
       name: 'files',
-      meta: { title: 'files', icon: 'size' }
+      meta: { title: 'files', icon: 'file' }
     },
     {
       path: 'requestLog',

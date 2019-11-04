@@ -9,14 +9,14 @@ const examRouter = {
   name: 'Exam',
   meta: {
     title: 'exam',
-    icon: 'example'
+    icon: 'exam'
   },
   children: [
     {
       path: 'create',
       component: () => import('@/views/exam/create'),
       name: 'CreateExam',
-      meta: { title: 'createExam', icon: 'edit' }
+      meta: { title: 'createExam', icon: 'exam' }
     },
     {
       path: 'edit/:id',
@@ -29,13 +29,13 @@ const examRouter = {
       path: 'list',
       component: () => import('@/views/exam/list'),
       name: 'ExamList',
-      meta: { title: 'examList', icon: 'list' }
+      meta: { title: 'examList', icon: 'examList' }
     },
     {
       path: 'record',
       component: () => import('@/views/exam/recordList'),
       name: 'ExamRecord',
-      meta: { title: 'examRecord', icon: 'list' }
+      meta: { title: 'examRecord', icon: 'examRecord' }
     }
   ]
 }
